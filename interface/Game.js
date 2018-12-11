@@ -1,3 +1,3 @@
-interface Intertae {
+interface Interface {
     [key: string]: any
   }
