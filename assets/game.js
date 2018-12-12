@@ -1,25 +1,26 @@
 import { Display } from "../../lib/index.js";
+import { Tiles } from "./tiles.js"
 import { playScreen, startScreen, winScreen, loseScreen } from "./screens.js"
 import { KEYS } from "../lib/constants.js"
 
 
 export class Game {
 	constructor() {
-		this._display= null,
-		this._currentScreen= null,
+		this._display= null;
+		this._currentScreen= null;
 		this.Screen = {
 			startScreen : startScreen(),
 			playScreen : playScreen(),
 			winScreen : winScreen(),
 			loseScreen : loseScreen()
 		}
+		this._glyphs = Tiles();
+		this._map = null;
 	}
 
 	init() {
 		// Any necessary initialization will go here.
 		this._display = new Display({width: 80, height: 24});
-		// Create a helper function for binding to an event
-		// and making it send it to the screen
 		let game = this; // So that we don't lose this
 	}
 
@@ -38,7 +39,7 @@ export class Game {
 	    // and then render it
         this._currentScreen = screen;
 	    if (!this._currentScreen !== null) {
-	        this._currentScreen.enter()
+	        this._currentScreen.enter(this)
 	        this._currentScreen.render(this._display);
 	    }
 	}
@@ -49,7 +50,6 @@ export class Game {
 window.onload = function() {
 	// Check if rot.js can work on this browser
 	let game = new Game();
-
 	// Initialize the game
 	game.init();
 	// Add the container to our HTML page
@@ -61,6 +61,7 @@ window.onload = function() {
 	window.addEventListener(event, e => {
 		// When an event is received, send it to the
 		// screen if there is one
+		console.log(game._glyphs['wallTile']['char'])
 		if (game._currentScreen !== null) {
 			// Send the event type and data to the screen
 			game._currentScreen.handleInput(event, e, game);

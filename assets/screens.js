@@ -1,4 +1,5 @@
 import { Game } from "./game.js"
+import { Map } from "./map.js"
 import { KEYS } from "../lib/constants.js"
 import * as Color from "../lib/color.js"
 
@@ -29,8 +30,10 @@ export function startScreen() {
 
 export function playScreen() {
     return {
-        enter : () => {    
-            console.log("Entered play screen."); 
+        enter : (game) => {   
+            game._map = Map(50, 60);
+            console.log(game._map)
+            console.log("Entered play screen.");
         },
         exit : () => { console.log("Exited play screen."); 
         },
