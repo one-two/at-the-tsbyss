@@ -86,201 +86,6 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "../../AppData/Roaming/npm/node_modules/webpack/node_modules/process/browser.js":
-/*!*************************************************!*\
-  !*** (webpack)/node_modules/process/browser.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-
-/***/ }),
-
 /***/ "./lib/color.js":
 /*!**********************!*\
   !*** ./lib/color.js ***!
@@ -1414,7 +1219,7 @@ class Term extends _backend_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     computeSize() { return [process.stdout.columns, process.stdout.rows]; }
 }
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../AppData/Roaming/npm/node_modules/webpack/node_modules/process/browser.js */ "../../AppData/Roaming/npm/node_modules/webpack/node_modules/process/browser.js")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../node_modules/process/browser.js */ "./node_modules/process/browser.js")))
 
 /***/ }),
 
@@ -5170,6 +4975,201 @@ format.map = {
 
 /***/ }),
 
+/***/ "./node_modules/process/browser.js":
+/*!*****************************************!*\
+  !*** ./node_modules/process/browser.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+
+/***/ }),
+
 /***/ "./src/game.ts":
 /*!*********************!*\
   !*** ./src/game.ts ***!
@@ -5217,7 +5217,7 @@ class Game {
         this._currentScreen = screen;
         if (!this._currentScreen !== null) {
             this._currentScreen.enter(this);
-            this._currentScreen.render(this._display);
+            this._currentScreen.render(this._display, this);
         }
     }
 }
@@ -5276,10 +5276,21 @@ exports.Objeto = Objeto;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const tiles_1 = __webpack_require__(/*! ./tiles */ "./src/tiles.ts");
 class Map {
     constructor(width, height) {
-        this.width = width;
-        this.height = height;
+        this._width = width;
+        this._height = height;
+        this._tiles = [];
+    }
+    getTile(x, y) {
+        let tiles = new tiles_1.Tiles();
+        if (x < 0 || x >= this._width || y < 0 || y >= this._height) {
+            return tiles.nullTile;
+        }
+        else {
+            return this._tiles[x][y] || tiles.nullTile;
+        }
     }
 }
 exports.Map = Map;
@@ -5298,8 +5309,10 @@ exports.Map = Map;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const map_1 = __webpack_require__(/*! ./map */ "./src/map.ts");
-const constants_js_1 = __webpack_require__(/*! ../lib/constants.js */ "./lib/constants.js");
-const Color = __webpack_require__(/*! ../lib/color.js */ "./lib/color.js");
+const constants_1 = __webpack_require__(/*! ../lib/constants */ "./lib/constants.js");
+const Color = __webpack_require__(/*! ../lib/color */ "./lib/color.js");
+const tiles_1 = __webpack_require__(/*! ./tiles */ "./src/tiles.ts");
+const maps = __webpack_require__(/*! ../lib/map */ "./lib/map/index.js");
 function startScreen() {
     //Game.Screen.startScreen = {
     return {
@@ -5317,7 +5330,7 @@ function startScreen() {
         handleInput: (inputType, inputData, game) => {
             // When [Enter] is pressed, go to the play screen
             if (inputType === "keydown") {
-                if (inputData.keyCode === constants_js_1.KEYS.VK_RETURN) {
+                if (inputData.keyCode === constants_1.KEYS.VK_RETURN) {
                     game.switchScreen(game.Screen.playScreen);
                 }
             }
@@ -5328,26 +5341,64 @@ exports.startScreen = startScreen;
 function playScreen() {
     return {
         enter: (game) => {
-            game._map = new map_1.Map(50, 60);
-            console.log(game._map);
+            game._map = new map_1.Map(80, 24);
+            let tiles = new tiles_1.Tiles();
             console.log("Entered play screen.");
+            for (let x = 0; x < 80; x++) {
+                // Create the nested array for the y values
+                game._map._tiles.push([]);
+                // Add all the tiles
+                for (let y = 0; y < 24; y++) {
+                    game._map._tiles[x].push(tiles.nullTile);
+                }
+            }
+            let generator = new maps.default.Cellular(80, 24);
+            generator.randomize(0.5);
+            let totalIterations = 3;
+            // Iteratively smoothen the map
+            for (let i = 0; i < totalIterations - 1; i++) {
+                generator.create();
+            }
+            // Smoothen it one last time and then update our map
+            generator.create(function (x, y, v) {
+                if (v === 1) {
+                    game._map._tiles[x][y] = tiles.floorTile;
+                }
+                else {
+                    game._map._tiles[x][y] = tiles.wallTile;
+                }
+            });
+            // Create our map from the tiles
+            this._map = game._map;
         },
         exit: () => {
             console.log("Exited play screen.");
         },
         render: (display) => {
-            display.drawText(3, 5, "%c{red}%b{white}This game is so much fun!");
-            display.drawText(4, 6, "Press [Enter] to win, or [Esc] to lose!");
+            // Iterate through all map cells
+            for (let x = 0; x < this._map._width; x++) {
+                for (let y = 0; y < this._map._height; y++) {
+                    // Fetch the glyph for the tile and render it to the screen
+                    let glyph = this._map.getTile(x, y);
+                    display.draw(x, y, glyph.char, glyph.foreground, glyph.background);
+                }
+            }
         },
         handleInput: (inputType, inputData, game) => {
             if (inputType === 'keydown') {
                 // If enter is pressed, go to the win screen
                 // If escape is pressed, go to lose screen
-                if (inputData.keyCode === constants_js_1.KEYS.VK_RETURN) {
-                    game.switchScreen(game.Screen.winScreen);
-                }
-                else if (inputData.keyCode === constants_js_1.KEYS.VK_ESCAPE) {
-                    game.switchScreen(game.Screen.loseScreen);
+                switch (inputData.keyCode) {
+                    case constants_1.KEYS.VK_RETURN:
+                        game.switchScreen(game.Screen.winScreen);
+                        break;
+                    case constants_1.KEYS.VK_ESCAPE:
+                        game.switchScreen(game.Screen.loseScreen);
+                        break;
+                    case constants_1.KEYS.VK_SPACE:
+                        game.switchScreen(game.Screen.playScreen);
+                    default:
+                        break;
                 }
             }
         }

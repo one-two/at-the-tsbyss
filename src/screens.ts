@@ -1,7 +1,10 @@
 import { Game } from "./game"
 import { Map } from "./map"
-import { KEYS } from "../lib/constants.js"
-import * as Color from "../lib/color.js"
+import { KEYS } from "../lib/constants"
+import * as Color from "../lib/color"
+import { Tiles } from "./tiles";
+import * as maps from "../lib/map"
+import { Glyph } from "./glyph";
 
 export function startScreen() {
     //Game.Screen.startScreen = {
@@ -31,24 +34,66 @@ export function startScreen() {
 export function playScreen() {
     return {
         enter : (game : Game) => {   
-            game._map = new Map(50, 60);
-            console.log(game._map)
+            game._map = new Map(80, 24);
+            let tiles = new Tiles();
             console.log("Entered play screen.");
+            for (let x = 0; x < 80; x++) {
+                // Create the nested array for the y values
+                game._map._tiles.push([]);
+                // Add all the tiles
+                for (let y = 0; y < 24; y++) {
+                    game._map._tiles[x].push(tiles.nullTile);
+                }
+            }
+
+            let generator = new maps.default.Cellular(80, 24);
+            generator.randomize(0.5);
+            let totalIterations = 3;
+            // Iteratively smoothen the map
+            for (let i = 0; i < totalIterations - 1; i++) {
+                generator.create();
+            }
+            // Smoothen it one last time and then update our map
+            generator.create(function(x,y,v) {
+                if (v === 1) {
+                    game._map._tiles[x][y] = tiles.floorTile;
+                } else {
+                    game._map._tiles[x][y] = tiles.wallTile;
+                }
+            });
+            // Create our map from the tiles
+            this._map = game._map;
         },
         exit : () => { console.log("Exited play screen."); 
         },
         render : (display : any) => {
-            display.drawText(3,5, "%c{red}%b{white}This game is so much fun!");
-            display.drawText(4,6, "Press [Enter] to win, or [Esc] to lose!");
+            // Iterate through all map cells
+            for (let x = 0; x < this._map._width; x++) {
+                for (let y = 0; y < this._map._height; y++) {
+                    // Fetch the glyph for the tile and render it to the screen
+                    let glyph = this._map.getTile(x, y) as Glyph;
+                    display.draw(x, y,
+                        glyph.char, 
+                        glyph.foreground, 
+                        glyph.background);
+                }
+            }
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {
             if (inputType === 'keydown') {
                 // If enter is pressed, go to the win screen
                 // If escape is pressed, go to lose screen
-                if (inputData.keyCode === KEYS.VK_RETURN) {
-                    game.switchScreen(game.Screen.winScreen);
-                } else if (inputData.keyCode === KEYS.VK_ESCAPE) {
-                    game.switchScreen(game.Screen.loseScreen);
+                switch (inputData.keyCode) {
+                    case KEYS.VK_RETURN:
+                        game.switchScreen(game.Screen.winScreen);
+                        break;
+                    case KEYS.VK_ESCAPE:
+                        game.switchScreen(game.Screen.loseScreen);
+                        break;
+                    case KEYS.VK_SPACE:
+                        game.switchScreen(game.Screen.playScreen);
+                    default:
+                        break;
                 }
             }    
         }

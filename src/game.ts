@@ -46,7 +46,7 @@ export class Game {
         this._currentScreen = screen;
 	    if (!this._currentScreen !== null) {
 	        this._currentScreen.enter(this)
-	        this._currentScreen.render(this._display);
+	        this._currentScreen.render(this._display, this);
 	    }
 	}
 
