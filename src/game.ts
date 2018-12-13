@@ -1,10 +1,16 @@
-import { Display } from "../../lib/index.js";
-import { Tiles } from "./tiles.js"
-import { playScreen, startScreen, winScreen, loseScreen } from "./screens.js"
-import { KEYS } from "../lib/constants.js"
+import { Display } from "../lib/index";
+import { Tiles } from "./tiles"
+import { playScreen, startScreen, winScreen, loseScreen } from "./screens"
+import { KEYS } from "../lib/constants"
+import { Objeto } from "./interface/objeto"
 
 
 export class Game {
+	_display : any;
+	_currentScreen : any;
+	Screen : any;
+	_glyphs : any;
+	_map : any;
 	constructor() {
 		this._display= null;
 		this._currentScreen= null;
@@ -14,7 +20,7 @@ export class Game {
 			winScreen : winScreen(),
 			loseScreen : loseScreen()
 		}
-		this._glyphs = Tiles();
+		this._glyphs = new Tiles();
 		this._map = null;
 	}
 
@@ -28,7 +34,7 @@ export class Game {
 		return this._display;
 	}
 
-	switchScreen(screen) {
+	switchScreen(screen : any) {
 	    // If we had a screen before, notify it that we exited
 	    if (this._currentScreen !== null) {
 	        this._currentScreen.exit();
@@ -52,6 +58,10 @@ window.onload = function() {
 	let game = new Game();
 	// Initialize the game
 	game.init();
+
+	let ob = new Objeto();
+	ob.chave = "a";
+	ob.valor = 1;
 	// Add the container to our HTML page
 	document.body.appendChild(game.getDisplay().getContainer());
 	// Load the start screen

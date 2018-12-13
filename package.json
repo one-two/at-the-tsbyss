@@ -1,0 +1,32 @@
+{
+  "name": "at-the-abyss",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/one-two/at-the-tsbyss.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/one-two/at-the-tsbyss/issues"
+  },
+  "homepage": "https://github.com/one-two/at-the-tsbyss#readme",
+  "dependencies": {
+    "awesome-typescript-loader": "^5.2.1",
+    "rot-js": "^2.0.2",
+    "source-map-loader": "^0.2.4",
+    "typescript": "^3.2.2"
+  },
+  "devDependencies": {
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2"
+  }
+}

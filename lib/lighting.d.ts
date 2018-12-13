@@ -1,4 +1,4 @@
-import FOV from "fov/fov.js";
+import FOV from "./fov/fov.js";
 declare type LightColor = [number, number, number];
 interface ReflectivityCallback {
     (x: number, y: number): number;
