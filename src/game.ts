@@ -8,10 +8,16 @@ import { Objeto } from "./interface/objeto"
 export class Game {
 	_display : any;
 	_currentScreen : any;
+	_screenWidth: number = 100;
+	_screenHeight: number = 36;
+	_centerX: number;
+	_centerY: number;
 	Screen : any;
 	_glyphs : any;
 	_map : any;
 	constructor() {
+		this._centerX = 0;
+		this._centerY = 0;
 		this._display= null;
 		this._currentScreen= null;
 		this.Screen = {
@@ -26,8 +32,8 @@ export class Game {
 
 	init() {
 		// Any necessary initialization will go here.
-		this._display = new Display({width: 80, height: 24});
-		let game = this; // So that we don't lose this
+		this._display = new Display({width: this._screenWidth, height: this._screenHeight});
+		//let game = this; // So that we don't lose this
 	}
 
 	getDisplay() {
@@ -50,18 +56,27 @@ export class Game {
 	    }
 	}
 
+	move(dX: number, dY: number) {
+		// Positive dX means movement right
+		// negative means movement left
+		// 0 means none
+		this._centerX = Math.max(0,
+			Math.min(this._map._width - 1, this._centerX + dX));
+		// Positive dY means movement down
+		// negative means movement up
+		// 0 means none
+		this._centerY = Math.max(0,
+			Math.min(this._map._height - 1, this._centerY + dY));
+	}
+
 }
 
 
 window.onload = function() {
-	// Check if rot.js can work on this browser
 	let game = new Game();
 	// Initialize the game
 	game.init();
 
-	let ob = new Objeto();
-	ob.chave = "a";
-	ob.valor = 1;
 	// Add the container to our HTML page
 	document.body.appendChild(game.getDisplay().getContainer());
 	// Load the start screen
@@ -71,10 +86,11 @@ window.onload = function() {
 	window.addEventListener(event, e => {
 		// When an event is received, send it to the
 		// screen if there is one
-		console.log(game._glyphs['wallTile']['char'])
 		if (game._currentScreen !== null) {
 			// Send the event type and data to the screen
 			game._currentScreen.handleInput(event, e, game);
+			game._display.clear();
+			game._currentScreen.render(game._display, game);
 		}
 	});
 }

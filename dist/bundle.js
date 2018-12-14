@@ -5183,9 +5183,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = __webpack_require__(/*! ../lib/index */ "./lib/index.js");
 const tiles_1 = __webpack_require__(/*! ./tiles */ "./src/tiles.ts");
 const screens_1 = __webpack_require__(/*! ./screens */ "./src/screens.ts");
-const objeto_1 = __webpack_require__(/*! ./interface/objeto */ "./src/interface/objeto.ts");
 class Game {
     constructor() {
+        this._screenWidth = 100;
+        this._screenHeight = 36;
+        this._centerX = 0;
+        this._centerY = 0;
         this._display = null;
         this._currentScreen = null;
         this.Screen = {
@@ -5199,8 +5202,8 @@ class Game {
     }
     init() {
         // Any necessary initialization will go here.
-        this._display = new index_1.Display({ width: 80, height: 24 });
-        let game = this; // So that we don't lose this
+        this._display = new index_1.Display({ width: this._screenWidth, height: this._screenHeight });
+        //let game = this; // So that we don't lose this
     }
     getDisplay() {
         return this._display;
@@ -5220,16 +5223,22 @@ class Game {
             this._currentScreen.render(this._display, this);
         }
     }
+    move(dX, dY) {
+        // Positive dX means movement right
+        // negative means movement left
+        // 0 means none
+        this._centerX = Math.max(0, Math.min(this._map._width - 1, this._centerX + dX));
+        // Positive dY means movement down
+        // negative means movement up
+        // 0 means none
+        this._centerY = Math.max(0, Math.min(this._map._height - 1, this._centerY + dY));
+    }
 }
 exports.Game = Game;
 window.onload = function () {
-    // Check if rot.js can work on this browser
     let game = new Game();
     // Initialize the game
     game.init();
-    let ob = new objeto_1.Objeto();
-    ob.chave = "a";
-    ob.valor = 1;
     // Add the container to our HTML page
     document.body.appendChild(game.getDisplay().getContainer());
     // Load the start screen
@@ -5238,30 +5247,14 @@ window.onload = function () {
     window.addEventListener(event, e => {
         // When an event is received, send it to the
         // screen if there is one
-        console.log(game._glyphs['wallTile']['char']);
         if (game._currentScreen !== null) {
             // Send the event type and data to the screen
             game._currentScreen.handleInput(event, e, game);
+            game._display.clear();
+            game._currentScreen.render(game._display, game);
         }
     });
 };
-
-
-/***/ }),
-
-/***/ "./src/interface/objeto.ts":
-/*!*********************************!*\
-  !*** ./src/interface/objeto.ts ***!
-  \*********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class Objeto {
-}
-exports.Objeto = Objeto;
 
 
 /***/ }),
@@ -5324,7 +5317,7 @@ function startScreen() {
         },
         render: (display) => {
             // Render our prompt to the screen
-            display.drawText(1, 1, "%c{yellow}Javascript Roguelike");
+            display.drawText(1, 1, "%c{yellow}no rl");
             display.drawText(1, 2, "Press [Enter] to start!");
         },
         handleInput: (inputType, inputData, game) => {
@@ -5341,26 +5334,28 @@ exports.startScreen = startScreen;
 function playScreen() {
     return {
         enter: (game) => {
-            game._map = new map_1.Map(80, 24);
+            let mapWidth = 300;
+            let mapHeight = 300;
+            game._map = new map_1.Map(mapWidth, mapHeight);
             let tiles = new tiles_1.Tiles();
             console.log("Entered play screen.");
-            for (let x = 0; x < 80; x++) {
+            for (let x = 0; x < mapWidth; x++) {
                 // Create the nested array for the y values
                 game._map._tiles.push([]);
                 // Add all the tiles
-                for (let y = 0; y < 24; y++) {
+                for (let y = 0; y < mapHeight; y++) {
                     game._map._tiles[x].push(tiles.nullTile);
                 }
             }
-            let generator = new maps.default.Cellular(80, 24);
-            generator.randomize(0.5);
+            let generator = new maps.default.Cellular(mapWidth, mapHeight);
+            generator.randomize(0.6);
             let totalIterations = 3;
             // Iteratively smoothen the map
             for (let i = 0; i < totalIterations - 1; i++) {
                 generator.create();
             }
             // Smoothen it one last time and then update our map
-            generator.create(function (x, y, v) {
+            generator.create((x, y, v) => {
                 if (v === 1) {
                     game._map._tiles[x][y] = tiles.floorTile;
                 }
@@ -5368,26 +5363,35 @@ function playScreen() {
                     game._map._tiles[x][y] = tiles.wallTile;
                 }
             });
-            // Create our map from the tiles
-            this._map = game._map;
         },
         exit: () => {
             console.log("Exited play screen.");
         },
-        render: (display) => {
+        render: (display, game) => {
+            let screenWidth = game._screenWidth;
+            let screenHeight = game._screenHeight;
+            // Make sure the x-axis doesn't go to the left of the left bound
+            let topLeftX = Math.max(0, game._centerX - (screenWidth / 2));
+            // Make sure we still have enough space to fit an entire game screen
+            topLeftX = Math.min(topLeftX, game._map._width - screenWidth);
+            // Make sure the y-axis doesn't above the top bound
+            let topLeftY = Math.max(0, game._centerY - (screenHeight / 2));
+            // Make sure we still have enough space to fit an entire game screen
+            topLeftY = Math.min(topLeftY, game._map._height - screenHeight);
             // Iterate through all map cells
-            for (let x = 0; x < this._map._width; x++) {
-                for (let y = 0; y < this._map._height; y++) {
+            //console.log('topleftx: ' + topLeftX + ' ' + screenWidth)
+            //console.log('toplefty: ' + topLeftY + ' ' + screenHeight)
+            for (let x = topLeftX; x < topLeftX + screenWidth; x++) {
+                for (let y = topLeftY; y < topLeftY + screenHeight; y++) {
                     // Fetch the glyph for the tile and render it to the screen
-                    let glyph = this._map.getTile(x, y);
-                    display.draw(x, y, glyph.char, glyph.foreground, glyph.background);
+                    let glyph = game._map.getTile(x, y);
+                    display.draw(x - topLeftX, y - topLeftY, glyph.char, glyph.foreground, glyph.background);
                 }
             }
+            display.draw(game._centerX - topLeftX, game._centerY - topLeftY, '@', 'deepskyblue', 'black');
         },
         handleInput: (inputType, inputData, game) => {
             if (inputType === 'keydown') {
-                // If enter is pressed, go to the win screen
-                // If escape is pressed, go to lose screen
                 switch (inputData.keyCode) {
                     case constants_1.KEYS.VK_RETURN:
                         game.switchScreen(game.Screen.winScreen);
@@ -5397,6 +5401,19 @@ function playScreen() {
                         break;
                     case constants_1.KEYS.VK_SPACE:
                         game.switchScreen(game.Screen.playScreen);
+                        break;
+                    case constants_1.KEYS.VK_LEFT:
+                        game.move(-1, 0);
+                        break;
+                    case constants_1.KEYS.VK_DOWN:
+                        game.move(0, 1);
+                        break;
+                    case constants_1.KEYS.VK_UP:
+                        game.move(0, -1);
+                        break;
+                    case constants_1.KEYS.VK_RIGHT:
+                        game.move(1, 0);
+                        break;
                     default:
                         break;
                 }
