@@ -1,13 +1,15 @@
 import { Glyph } from "./glyph"
 
-export class Tiles {
-    nullTile: Glyph;
-    floorTile: Glyph;
-    wallTile: Glyph;
+export class Tile {
+    tile: Glyph;
+    _isWalkable: boolean = false;
+    _isDiggable: boolean = false;
+    name: string;
 
-    constructor() {
-        this.nullTile = {char: " ", background: "black", foreground: "white"};
-        this.floorTile = {char: ".", background: "black", foreground: "white"};
-        this.wallTile = {char: "#", background: "black", foreground: "goldenrod"};
+    constructor(name: string, char: string=' ', background: string='black', foreground: string='white', walkable: boolean=false, diggable: boolean=false) {
+        this.name = name;
+        this._isDiggable = diggable;
+        this._isWalkable = walkable;
+        this.tile = new Glyph(char, background, foreground);
     }
 }

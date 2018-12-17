@@ -1,8 +1,10 @@
 import { Display } from "../lib/index";
-import { Tiles } from "./tiles"
-import { playScreen, startScreen, winScreen, loseScreen } from "./screens"
-import { KEYS } from "../lib/constants"
-import { Objeto } from "./interface/objeto"
+import { Tile } from "./tiles";
+import { Entity } from "./entity";
+import { playScreen, startScreen, winScreen, loseScreen } from "./screens";
+import { KEYS } from "../lib/constants";
+import { Objeto } from "./interface/objeto";
+import { Glyph } from "./glyph";
 
 
 export class Game {
@@ -13,8 +15,11 @@ export class Game {
 	_centerX: number;
 	_centerY: number;
 	Screen : any;
-	_glyphs : any;
 	_map : any;
+	_player: Entity;
+	_entities: Entity[];
+	GlobalTime: number;
+
 	constructor() {
 		this._centerX = 0;
 		this._centerY = 0;
@@ -26,7 +31,6 @@ export class Game {
 			winScreen : winScreen(),
 			loseScreen : loseScreen()
 		}
-		this._glyphs = new Tiles();
 		this._map = null;
 	}
 
@@ -34,6 +38,17 @@ export class Game {
 		// Any necessary initialization will go here.
 		this._display = new Display({width: this._screenWidth, height: this._screenHeight});
 		//let game = this; // So that we don't lose this
+		let event = "keydown";
+		window.addEventListener(event, e => {
+			// When an event is received, send it to the
+			// screen if there is one
+			if (this._currentScreen !== null) {
+				// Send the event type and data to the screen
+				this._currentScreen.handleInput(event, e, this);
+				this._display.clear();
+				this._currentScreen.render(this._display, this);
+			}
+		});
 	}
 
 	getDisplay() {
@@ -48,11 +63,12 @@ export class Game {
 	    // Clear the display
 	    this.getDisplay().clear();
 	    // Update our current screen, notify it we entered
-	    // and then render it
-        this._currentScreen = screen;
+		// and then render it
+		this.GlobalTime = 0;
+		this._currentScreen = screen;
 	    if (!this._currentScreen !== null) {
-	        this._currentScreen.enter(this)
-	        this._currentScreen.render(this._display, this);
+			this._currentScreen.enter(this)
+			this.refresh();
 	    }
 	}
 
@@ -69,6 +85,11 @@ export class Game {
 			Math.min(this._map._height - 1, this._centerY + dY));
 	}
 
+	refresh() {
+		this._display.clear();
+		this._currentScreen.render(this._display, this);
+	}
+
 }
 
 
@@ -76,21 +97,22 @@ window.onload = function() {
 	let game = new Game();
 	// Initialize the game
 	game.init();
-
+	let player = new Entity(150, 150, new Glyph('@', 'black', 'deepskyblue'), 'Player', 1);
+	game._player = player;
 	// Add the container to our HTML page
 	document.body.appendChild(game.getDisplay().getContainer());
 	// Load the start screen
 	game.switchScreen(game.Screen.startScreen);
-
 	let event = "keydown";
-	window.addEventListener(event, e => {
-		// When an event is received, send it to the
-		// screen if there is one
-		if (game._currentScreen !== null) {
-			// Send the event type and data to the screen
-			game._currentScreen.handleInput(event, e, game);
-			game._display.clear();
-			game._currentScreen.render(game._display, game);
-		}
-	});
+	// window.addEventListener(event, e => {
+	// 	// When an event is received, send it to the
+	// 	// screen if there is one
+	// 	if (game._currentScreen !== null) {
+	// 		// Send the event type and data to the screen
+	// 		game._currentScreen.handleInput(event, e, game);
+	// 		game._display.clear();
+	// 		game._currentScreen.render(game._display, game);
+	// 	}
+	// });
 }
+

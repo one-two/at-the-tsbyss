@@ -1,10 +1,10 @@
-import { Tiles } from "./tiles"
+import { Tile } from "./tiles"
 import { Glyph } from "./glyph";
 
 export class Map {
     _width: Number;
     _height: Number;
-    _tiles: Glyph[][];
+    _tiles: Tile[][];
 
     constructor(width : number, height : number) {
         this._width = width;
@@ -13,11 +13,23 @@ export class Map {
     }
 
     getTile(x: number, y: number) {
-        let tiles = new Tiles();
+        let emptyTile = new Tile('Empty', ' ', 'black', 'white', false, false);
         if (x < 0 || x >= this._width || y < 0 || y >= this._height) {
-            return tiles.nullTile;
+            return emptyTile;
         } else {
-            return this._tiles[x][y] || tiles.nullTile;
+            return this._tiles[x][y] || emptyTile;
         }
+    }
+
+    getMovableArea(x: number, x2: number, y:number, y2: number): boolean {
+        let moveable = true;
+        for (let i = x; i <= x2; i++) {
+            for (let j = y; j <= y2; j++) {
+                if (!this.getTile(i,j)._isWalkable) {
+                    moveable = false;
+                }
+            }
+        }
+        return moveable;
     }
 }

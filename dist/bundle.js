@@ -5170,6 +5170,59 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ "./src/entity.ts":
+/*!***********************!*\
+  !*** ./src/entity.ts ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Entity {
+    // fighter
+    // ai
+    // item
+    // inventory
+    // cooldown
+    // maxCooldown 
+    // damage
+    // stairs
+    // level
+    // equipment
+    // equippable
+    constructor(x, y, glyph, name, size = 0, blocks = false, maxStamina = 0, render_order = 99, fighter = undefined, ai = undefined, item = undefined, inventory = undefined, damage = undefined, stairs = undefined, level = undefined, equipment = undefined, equippable = undefined) {
+        this.x = x;
+        this.y = y;
+        this.x2 = x + size;
+        this.y2 = y + size;
+        this.glyph = glyph;
+        this.name = name;
+        this.blocks = blocks;
+        this.render_order = render_order;
+        this.maxStamina = maxStamina;
+        this.stamina = 0;
+    }
+    move(dx, dy, map) {
+        let tx = this.x + dx;
+        let tx2 = this.x2 + dx;
+        let ty = this.y + dy;
+        let ty2 = this.y2 + dy;
+        let dest = map.getTile(tx, ty);
+        if (map.getMovableArea(tx, tx2, ty, ty2)) {
+            this.x = tx;
+            this.x2 = tx2;
+            this.y = ty;
+            this.y2 = ty2;
+        }
+    }
+}
+exports.Entity = Entity;
+
+
+/***/ }),
+
 /***/ "./src/game.ts":
 /*!*********************!*\
   !*** ./src/game.ts ***!
@@ -5181,8 +5234,9 @@ process.umask = function() { return 0; };
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = __webpack_require__(/*! ../lib/index */ "./lib/index.js");
-const tiles_1 = __webpack_require__(/*! ./tiles */ "./src/tiles.ts");
+const entity_1 = __webpack_require__(/*! ./entity */ "./src/entity.ts");
 const screens_1 = __webpack_require__(/*! ./screens */ "./src/screens.ts");
+const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
 class Game {
     constructor() {
         this._screenWidth = 100;
@@ -5197,13 +5251,23 @@ class Game {
             winScreen: screens_1.winScreen(),
             loseScreen: screens_1.loseScreen()
         };
-        this._glyphs = new tiles_1.Tiles();
         this._map = null;
     }
     init() {
         // Any necessary initialization will go here.
         this._display = new index_1.Display({ width: this._screenWidth, height: this._screenHeight });
         //let game = this; // So that we don't lose this
+        let event = "keydown";
+        window.addEventListener(event, e => {
+            // When an event is received, send it to the
+            // screen if there is one
+            if (this._currentScreen !== null) {
+                // Send the event type and data to the screen
+                this._currentScreen.handleInput(event, e, this);
+                this._display.clear();
+                this._currentScreen.render(this._display, this);
+            }
+        });
     }
     getDisplay() {
         return this._display;
@@ -5217,10 +5281,11 @@ class Game {
         this.getDisplay().clear();
         // Update our current screen, notify it we entered
         // and then render it
+        this.GlobalTime = 0;
         this._currentScreen = screen;
         if (!this._currentScreen !== null) {
             this._currentScreen.enter(this);
-            this._currentScreen.render(this._display, this);
+            this.refresh();
         }
     }
     move(dX, dY) {
@@ -5233,28 +5298,59 @@ class Game {
         // 0 means none
         this._centerY = Math.max(0, Math.min(this._map._height - 1, this._centerY + dY));
     }
+    refresh() {
+        this._display.clear();
+        this._currentScreen.render(this._display, this);
+    }
 }
 exports.Game = Game;
 window.onload = function () {
     let game = new Game();
     // Initialize the game
     game.init();
+    let player = new entity_1.Entity(150, 150, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 1);
+    game._player = player;
     // Add the container to our HTML page
     document.body.appendChild(game.getDisplay().getContainer());
     // Load the start screen
     game.switchScreen(game.Screen.startScreen);
     let event = "keydown";
-    window.addEventListener(event, e => {
-        // When an event is received, send it to the
-        // screen if there is one
-        if (game._currentScreen !== null) {
-            // Send the event type and data to the screen
-            game._currentScreen.handleInput(event, e, game);
-            game._display.clear();
-            game._currentScreen.render(game._display, game);
-        }
-    });
+    // window.addEventListener(event, e => {
+    // 	// When an event is received, send it to the
+    // 	// screen if there is one
+    // 	if (game._currentScreen !== null) {
+    // 		// Send the event type and data to the screen
+    // 		game._currentScreen.handleInput(event, e, game);
+    // 		game._display.clear();
+    // 		game._currentScreen.render(game._display, game);
+    // 	}
+    // });
 };
+
+
+/***/ }),
+
+/***/ "./src/glyph.ts":
+/*!**********************!*\
+  !*** ./src/glyph.ts ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Glyph {
+    constructor(char, background, foreground) {
+        this.char = ' ';
+        this.foreground = 'white';
+        this.background = 'black';
+        this.char = char;
+        this.background = background;
+        this.foreground = foreground;
+    }
+}
+exports.Glyph = Glyph;
 
 
 /***/ }),
@@ -5277,13 +5373,24 @@ class Map {
         this._tiles = [];
     }
     getTile(x, y) {
-        let tiles = new tiles_1.Tiles();
+        let emptyTile = new tiles_1.Tile('Empty', ' ', 'black', 'white', false, false);
         if (x < 0 || x >= this._width || y < 0 || y >= this._height) {
-            return tiles.nullTile;
+            return emptyTile;
         }
         else {
-            return this._tiles[x][y] || tiles.nullTile;
+            return this._tiles[x][y] || emptyTile;
         }
+    }
+    getMovableArea(x, x2, y, y2) {
+        let moveable = true;
+        for (let i = x; i <= x2; i++) {
+            for (let j = y; j <= y2; j++) {
+                if (!this.getTile(i, j)._isWalkable) {
+                    moveable = false;
+                }
+            }
+        }
+        return moveable;
     }
 }
 exports.Map = Map;
@@ -5337,14 +5444,14 @@ function playScreen() {
             let mapWidth = 300;
             let mapHeight = 300;
             game._map = new map_1.Map(mapWidth, mapHeight);
-            let tiles = new tiles_1.Tiles();
+            let emptyTile = new tiles_1.Tile('Empty', ' ', 'black', 'white', true, false);
             console.log("Entered play screen.");
             for (let x = 0; x < mapWidth; x++) {
                 // Create the nested array for the y values
                 game._map._tiles.push([]);
                 // Add all the tiles
                 for (let y = 0; y < mapHeight; y++) {
-                    game._map._tiles[x].push(tiles.nullTile);
+                    game._map._tiles[x].push(emptyTile);
                 }
             }
             let generator = new maps.default.Cellular(mapWidth, mapHeight);
@@ -5357,10 +5464,10 @@ function playScreen() {
             // Smoothen it one last time and then update our map
             generator.create((x, y, v) => {
                 if (v === 1) {
-                    game._map._tiles[x][y] = tiles.floorTile;
+                    game._map._tiles[x][y] = new tiles_1.Tile('Floor', ' ', 'black', 'white', true, false); //floor
                 }
                 else {
-                    game._map._tiles[x][y] = tiles.wallTile;
+                    game._map._tiles[x][y] = new tiles_1.Tile('Wall', '#', 'black', 'goldenrod', false, true);
                 }
             });
         },
@@ -5370,25 +5477,29 @@ function playScreen() {
         render: (display, game) => {
             let screenWidth = game._screenWidth;
             let screenHeight = game._screenHeight;
+            let player = game._player;
             // Make sure the x-axis doesn't go to the left of the left bound
-            let topLeftX = Math.max(0, game._centerX - (screenWidth / 2));
+            let topLeftX = Math.max(0, player.x - (screenWidth / 2));
             // Make sure we still have enough space to fit an entire game screen
             topLeftX = Math.min(topLeftX, game._map._width - screenWidth);
             // Make sure the y-axis doesn't above the top bound
-            let topLeftY = Math.max(0, game._centerY - (screenHeight / 2));
+            let topLeftY = Math.max(0, player.y - (screenHeight / 2));
             // Make sure we still have enough space to fit an entire game screen
             topLeftY = Math.min(topLeftY, game._map._height - screenHeight);
-            // Iterate through all map cells
-            //console.log('topleftx: ' + topLeftX + ' ' + screenWidth)
-            //console.log('toplefty: ' + topLeftY + ' ' + screenHeight)
             for (let x = topLeftX; x < topLeftX + screenWidth; x++) {
                 for (let y = topLeftY; y < topLeftY + screenHeight; y++) {
                     // Fetch the glyph for the tile and render it to the screen
-                    let glyph = game._map.getTile(x, y);
+                    let glyph = game._map.getTile(x, y).tile;
                     display.draw(x - topLeftX, y - topLeftY, glyph.char, glyph.foreground, glyph.background);
                 }
             }
-            display.draw(game._centerX - topLeftX, game._centerY - topLeftY, '@', 'deepskyblue', 'black');
+            let size = Math.abs(player.x2 - player.x);
+            for (let i = 0; i <= size; i++) {
+                for (let j = 0; j <= size; j++) {
+                    display.draw(player.x - topLeftX + i, player.y - topLeftY + j, player.glyph.char, player.glyph.foreground, player.glyph.background);
+                }
+            }
+            console.log(game.GlobalTime);
         },
         handleInput: (inputType, inputData, game) => {
             if (inputType === 'keydown') {
@@ -5403,16 +5514,16 @@ function playScreen() {
                         game.switchScreen(game.Screen.playScreen);
                         break;
                     case constants_1.KEYS.VK_LEFT:
-                        game.move(-1, 0);
+                        game._player.move(-1, 0, game._map);
                         break;
                     case constants_1.KEYS.VK_DOWN:
-                        game.move(0, 1);
+                        game._player.move(0, 1, game._map);
                         break;
                     case constants_1.KEYS.VK_UP:
-                        game.move(0, -1);
+                        game._player.move(0, -1, game._map);
                         break;
                     case constants_1.KEYS.VK_RIGHT:
-                        game.move(1, 0);
+                        game._player.move(1, 0, game._map);
                         break;
                     default:
                         break;
@@ -5478,14 +5589,18 @@ exports.loseScreen = loseScreen;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-class Tiles {
-    constructor() {
-        this.nullTile = { char: " ", background: "black", foreground: "white" };
-        this.floorTile = { char: ".", background: "black", foreground: "white" };
-        this.wallTile = { char: "#", background: "black", foreground: "goldenrod" };
+const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
+class Tile {
+    constructor(name, char = ' ', background = 'black', foreground = 'white', walkable = false, diggable = false) {
+        this._isWalkable = false;
+        this._isDiggable = false;
+        this.name = name;
+        this._isDiggable = diggable;
+        this._isWalkable = walkable;
+        this.tile = new glyph_1.Glyph(char, background, foreground);
     }
 }
-exports.Tiles = Tiles;
+exports.Tile = Tile;
 
 
 /***/ })

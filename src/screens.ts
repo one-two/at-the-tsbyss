@@ -2,9 +2,10 @@ import { Game } from "./game"
 import { Map } from "./map"
 import { KEYS } from "../lib/constants"
 import * as Color from "../lib/color"
-import { Tiles } from "./tiles";
+import { Tile } from "./tiles";
 import * as maps from "../lib/map"
 import { Glyph } from "./glyph";
+import { Entity } from "./entity";
 
 export function startScreen() {
     //Game.Screen.startScreen = {
@@ -37,14 +38,14 @@ export function playScreen() {
             let mapWidth = 300;
             let mapHeight = 300;
             game._map = new Map(mapWidth, mapHeight);
-            let tiles = new Tiles();
+            let emptyTile = new Tile('Empty', ' ', 'black', 'white', true, false);
             console.log("Entered play screen.");
             for (let x = 0; x < mapWidth; x++) {
                 // Create the nested array for the y values
                 game._map._tiles.push([]);
                 // Add all the tiles
                 for (let y = 0; y < mapHeight; y++) {
-                    game._map._tiles[x].push(tiles.nullTile);
+                    game._map._tiles[x].push(emptyTile);
                 }
             }
 
@@ -58,9 +59,9 @@ export function playScreen() {
             // Smoothen it one last time and then update our map
             generator.create((x,y,v) => {
                 if (v === 1) {
-                    game._map._tiles[x][y] = tiles.floorTile;
+                    game._map._tiles[x][y] = new Tile('Floor', ' ', 'black', 'white', true, false); //floor
                 } else {
-                    game._map._tiles[x][y] = tiles.wallTile;
+                    game._map._tiles[x][y] = new Tile('Wall', '#', 'black', 'goldenrod', false, true);
                 }
             });
         },
@@ -69,21 +70,19 @@ export function playScreen() {
         render : (display : any, game: Game) => {
             let screenWidth = game._screenWidth;
             let screenHeight = game._screenHeight;
+            let player = game._player;
             // Make sure the x-axis doesn't go to the left of the left bound
-            let topLeftX = Math.max(0, game._centerX - (screenWidth / 2));
+            let topLeftX = Math.max(0, player.x - (screenWidth / 2));
             // Make sure we still have enough space to fit an entire game screen
             topLeftX = Math.min(topLeftX, game._map._width - screenWidth);
             // Make sure the y-axis doesn't above the top bound
-            let topLeftY = Math.max(0, game._centerY - (screenHeight / 2));
+            let topLeftY = Math.max(0, player.y - (screenHeight / 2));
             // Make sure we still have enough space to fit an entire game screen
             topLeftY = Math.min(topLeftY, game._map._height - screenHeight);
-            // Iterate through all map cells
-            //console.log('topleftx: ' + topLeftX + ' ' + screenWidth)
-            //console.log('toplefty: ' + topLeftY + ' ' + screenHeight)
             for (let x = topLeftX; x < topLeftX + screenWidth; x++) {
                 for (let y = topLeftY; y < topLeftY + screenHeight; y++) {
                     // Fetch the glyph for the tile and render it to the screen
-                    let glyph = game._map.getTile(x, y) as Glyph;
+                    let glyph = game._map.getTile(x, y).tile as Glyph;
                     display.draw(
                         x - topLeftX, 
                         y - topLeftY,
@@ -92,12 +91,20 @@ export function playScreen() {
                         glyph.background);
                 }
             }
-            display.draw(
-                game._centerX - topLeftX,
-                game._centerY - topLeftY,
-                '@',
-                'deepskyblue',
-                'black');
+            let size = Math.abs(player.x2 - player.x);
+            for (let i = 0; i <= size; i++) {
+                for (let j = 0; j <= size; j++) {
+                    display.draw(
+                        player.x - topLeftX + i,
+                        player.y - topLeftY + j,
+                        player.glyph.char,
+                        player.glyph.foreground,
+                        player.glyph.background);
+                    
+                }
+
+            }
+            console.log(game.GlobalTime);
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {
             if (inputType === 'keydown') {
@@ -112,16 +119,16 @@ export function playScreen() {
                         game.switchScreen(game.Screen.playScreen);
                         break;
                     case KEYS.VK_LEFT:
-                        game.move(-1, 0);
+                        game._player.move(-1, 0, game._map);
                         break;
                     case KEYS.VK_DOWN:
-                        game.move(0, 1);
+                        game._player.move(0, 1, game._map);
                         break;
                     case KEYS.VK_UP:
-                        game.move(0, -1);
+                        game._player.move(0, -1, game._map);
                         break;
                     case KEYS.VK_RIGHT:
-                        game.move(1, 0);
+                        game._player.move(1, 0, game._map);
                         break;
                     default:
                         break;
