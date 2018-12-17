@@ -1,6 +1,6 @@
-import {Tile} from "./tiles"
 import { Glyph } from "./glyph";
-import {Map} from "./map";
+import { Map } from "./map";
+import { Ai } from "./ai";
 
 export class Entity {
     x: number;
@@ -10,11 +10,11 @@ export class Entity {
     glyph: Glyph;
     name: string;
     blocks: boolean;
-    render_order: number
-    maxStamina: number
-    stamina: number
+    render_order: number;
+    maxStamina: number;
+    stamina: number;
     // fighter
-    // ai
+    //ai: Ai;
     // item
     // inventory
     // cooldown
@@ -25,7 +25,7 @@ export class Entity {
     // equipment
     // equippable
 
-    constructor(x:number, y:number, glyph: Glyph, name: string, size:number = 0, blocks: boolean = false, maxStamina:number=0, render_order:number = 99, fighter: any = undefined, ai: any = undefined,
+    constructor(x:number, y:number, glyph: Glyph, name: string, size:number = 0, blocks: boolean = false, maxStamina:number=0, render_order:number = 99, fighter: any = undefined, ai: Ai = undefined,
         item: any = undefined, inventory: any = undefined, damage: any = undefined, stairs: any = undefined, level: any = undefined, 
         equipment: any = undefined, equippable: any = undefined) {
             this.x = x;
@@ -38,6 +38,10 @@ export class Entity {
             this.render_order = render_order;
             this.maxStamina = maxStamina;
             this.stamina = 0;
+
+            if (this.maxStamina > 0) {
+                this.startCountDown(this.maxStamina);
+            }
         }
 
     move(dx: number, dy: number, map: Map) {
@@ -52,5 +56,25 @@ export class Entity {
             this.y = ty;
             this.y2 = ty2;
         }
+    }
+
+    startCountDown(seconds: number){
+        var counter = seconds;
+        var interval = setInterval(() => {
+            //console.log(counter);
+            counter--;
+            if (counter < 0 ) {
+                
+                // code here will run when the counter reaches zero.
+                
+                //clearInterval(interval);
+                counter = this.maxStamina;
+                this.act();
+            }	
+        }, 1000);
+    }
+
+    act() {
+        console.log('ACT!');
     }
 }

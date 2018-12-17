@@ -104,7 +104,6 @@ export function playScreen() {
                 }
 
             }
-            console.log(game.GlobalTime);
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {
             if (inputType === 'keydown') {

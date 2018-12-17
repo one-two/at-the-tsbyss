@@ -5,6 +5,7 @@ import { playScreen, startScreen, winScreen, loseScreen } from "./screens";
 import { KEYS } from "../lib/constants";
 import { Objeto } from "./interface/objeto";
 import { Glyph } from "./glyph";
+import { Ai } from "./ai";
 
 
 export class Game {
@@ -97,7 +98,8 @@ window.onload = function() {
 	let game = new Game();
 	// Initialize the game
 	game.init();
-	let player = new Entity(150, 150, new Glyph('@', 'black', 'deepskyblue'), 'Player', 1);
+	let player = new Entity(150, 150, new Glyph('@', 'black', 'deepskyblue'), 'Player', 1, undefined, 20);
+	let player2 = new Entity(150, 150, new Glyph('@', 'black', 'deepskyblue'), 'Player', 1, undefined, 13);
 	game._player = player;
 	// Add the container to our HTML page
 	document.body.appendChild(game.getDisplay().getContainer());

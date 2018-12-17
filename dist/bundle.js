@@ -5182,7 +5182,7 @@ process.umask = function() { return 0; };
 Object.defineProperty(exports, "__esModule", { value: true });
 class Entity {
     // fighter
-    // ai
+    //ai: Ai;
     // item
     // inventory
     // cooldown
@@ -5203,6 +5203,9 @@ class Entity {
         this.render_order = render_order;
         this.maxStamina = maxStamina;
         this.stamina = 0;
+        if (this.maxStamina > 0) {
+            this.startCountDown(this.maxStamina);
+        }
     }
     move(dx, dy, map) {
         let tx = this.x + dx;
@@ -5216,6 +5219,22 @@ class Entity {
             this.y = ty;
             this.y2 = ty2;
         }
+    }
+    startCountDown(seconds) {
+        var counter = seconds;
+        var interval = setInterval(() => {
+            console.log(counter);
+            counter--;
+            if (counter < 0) {
+                // code here will run when the counter reaches zero.
+                //clearInterval(interval);
+                counter = this.maxStamina;
+                this.act();
+            }
+        }, 1000);
+    }
+    act() {
+        console.log('ACT!');
     }
 }
 exports.Entity = Entity;
@@ -5308,7 +5327,8 @@ window.onload = function () {
     let game = new Game();
     // Initialize the game
     game.init();
-    let player = new entity_1.Entity(150, 150, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 1);
+    let player = new entity_1.Entity(150, 150, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 1, undefined, 20);
+    let player2 = new entity_1.Entity(150, 150, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 1, undefined, 13);
     game._player = player;
     // Add the container to our HTML page
     document.body.appendChild(game.getDisplay().getContainer());
@@ -5499,7 +5519,6 @@ function playScreen() {
                     display.draw(player.x - topLeftX + i, player.y - topLeftY + j, player.glyph.char, player.glyph.foreground, player.glyph.background);
                 }
             }
-            console.log(game.GlobalTime);
         },
         handleInput: (inputType, inputData, game) => {
             if (inputType === 'keydown') {
