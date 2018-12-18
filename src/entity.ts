@@ -13,6 +13,7 @@ export class Entity {
     render_order: number;
     maxStamina: number;
     stamina: number;
+    _map: Map;
     // fighter
     //ai: Ai;
     // item
@@ -25,7 +26,7 @@ export class Entity {
     // equipment
     // equippable
 
-    constructor(x:number, y:number, glyph: Glyph, name: string, size:number = 0, blocks: boolean = false, maxStamina:number=0, render_order:number = 99, fighter: any = undefined, ai: Ai = undefined,
+    constructor(x:number, y:number, glyph: Glyph, name: string, size:number = 0, blocks: boolean = false, maxStamina:number=0, _map: Map = undefined, _entities: Entity[] = undefined, render_order:number = 99, fighter: any = undefined, ai: Ai = undefined,
         item: any = undefined, inventory: any = undefined, damage: any = undefined, stairs: any = undefined, level: any = undefined, 
         equipment: any = undefined, equippable: any = undefined) {
             this.x = x;
@@ -38,6 +39,7 @@ export class Entity {
             this.render_order = render_order;
             this.maxStamina = maxStamina;
             this.stamina = 0;
+            this._map = _map;
 
             if (this.maxStamina > 0) {
                 this.startCountDown(this.maxStamina);
@@ -49,7 +51,6 @@ export class Entity {
         let tx2 = this.x2 + dx;
         let ty = this.y + dy;
         let ty2 = this.y2 + dy;
-        let dest = map.getTile(tx,ty);
         if (map.getMovableArea(tx, tx2, ty, ty2)) {
             this.x = tx;
             this.x2 = tx2;
@@ -61,7 +62,7 @@ export class Entity {
     startCountDown(seconds: number){
         var counter = seconds;
         var interval = setInterval(() => {
-            //console.log(counter);
+            console.log(counter);
             counter--;
             if (counter < 0 ) {
                 
@@ -75,6 +76,6 @@ export class Entity {
     }
 
     act() {
-        console.log('ACT!');
+        this.move(1, 1, this._map);
     }
 }

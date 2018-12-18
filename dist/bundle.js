@@ -5192,7 +5192,7 @@ class Entity {
     // level
     // equipment
     // equippable
-    constructor(x, y, glyph, name, size = 0, blocks = false, maxStamina = 0, render_order = 99, fighter = undefined, ai = undefined, item = undefined, inventory = undefined, damage = undefined, stairs = undefined, level = undefined, equipment = undefined, equippable = undefined) {
+    constructor(x, y, glyph, name, size = 0, blocks = false, maxStamina = 0, _map = undefined, _entities = undefined, render_order = 99, fighter = undefined, ai = undefined, item = undefined, inventory = undefined, damage = undefined, stairs = undefined, level = undefined, equipment = undefined, equippable = undefined) {
         this.x = x;
         this.y = y;
         this.x2 = x + size;
@@ -5203,6 +5203,7 @@ class Entity {
         this.render_order = render_order;
         this.maxStamina = maxStamina;
         this.stamina = 0;
+        this._map = _map;
         if (this.maxStamina > 0) {
             this.startCountDown(this.maxStamina);
         }
@@ -5212,7 +5213,6 @@ class Entity {
         let tx2 = this.x2 + dx;
         let ty = this.y + dy;
         let ty2 = this.y2 + dy;
-        let dest = map.getTile(tx, ty);
         if (map.getMovableArea(tx, tx2, ty, ty2)) {
             this.x = tx;
             this.x2 = tx2;
@@ -5234,7 +5234,7 @@ class Entity {
         }, 1000);
     }
     act() {
-        console.log('ACT!');
+        this.move(1, 1, this._map);
     }
 }
 exports.Entity = Entity;
@@ -5260,6 +5260,7 @@ class Game {
     constructor() {
         this._screenWidth = 100;
         this._screenHeight = 36;
+        this.timer = true;
         this._centerX = 0;
         this._centerY = 0;
         this._display = null;
@@ -5300,51 +5301,43 @@ class Game {
         this.getDisplay().clear();
         // Update our current screen, notify it we entered
         // and then render it
-        this.GlobalTime = 0;
         this._currentScreen = screen;
         if (!this._currentScreen !== null) {
             this._currentScreen.enter(this);
             this.refresh();
         }
     }
-    move(dX, dY) {
-        // Positive dX means movement right
-        // negative means movement left
-        // 0 means none
-        this._centerX = Math.max(0, Math.min(this._map._width - 1, this._centerX + dX));
-        // Positive dY means movement down
-        // negative means movement up
-        // 0 means none
-        this._centerY = Math.max(0, Math.min(this._map._height - 1, this._centerY + dY));
-    }
     refresh() {
         this._display.clear();
         this._currentScreen.render(this._display, this);
+    }
+    startCountDown() {
+        let counter = 1;
+        var interval = setInterval(() => {
+            //console.log(counter);
+            counter--;
+            if (counter < 0) {
+                // code here will run when the counter reaches zero.
+                if (!this.timer)
+                    clearInterval(interval);
+                else
+                    counter = 1;
+                this.refresh();
+            }
+        }, 100);
     }
 }
 exports.Game = Game;
 window.onload = function () {
     let game = new Game();
     // Initialize the game
-    game.init();
-    let player = new entity_1.Entity(150, 150, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 1, undefined, 20);
-    let player2 = new entity_1.Entity(150, 150, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 1, undefined, 13);
+    let player = new entity_1.Entity(150, 150, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 2, undefined, 5);
     game._player = player;
+    game.init();
     // Add the container to our HTML page
     document.body.appendChild(game.getDisplay().getContainer());
     // Load the start screen
     game.switchScreen(game.Screen.startScreen);
-    let event = "keydown";
-    // window.addEventListener(event, e => {
-    // 	// When an event is received, send it to the
-    // 	// screen if there is one
-    // 	if (game._currentScreen !== null) {
-    // 		// Send the event type and data to the screen
-    // 		game._currentScreen.handleInput(event, e, game);
-    // 		game._display.clear();
-    // 		game._currentScreen.render(game._display, game);
-    // 	}
-    // });
 };
 
 
@@ -5411,6 +5404,19 @@ class Map {
             }
         }
         return moveable;
+    }
+    getEntitiesAt(x, x2, y, y2, entities) {
+        let targets = [];
+        for (let entity of entities) {
+            for (let i = x; i <= x2; i++) {
+                for (let j = y; j <= y2; j++) {
+                    if (entity.x == i && entity.y == j) {
+                        targets.push(entity);
+                    }
+                }
+            }
+        }
+        return targets;
     }
 }
 exports.Map = Map;
@@ -5490,6 +5496,9 @@ function playScreen() {
                     game._map._tiles[x][y] = new tiles_1.Tile('Wall', '#', 'black', 'goldenrod', false, true);
                 }
             });
+            game._player._map = game._map;
+            game.timer = true;
+            game.startCountDown();
         },
         exit: () => {
             console.log("Exited play screen.");
@@ -5525,9 +5534,11 @@ function playScreen() {
                 switch (inputData.keyCode) {
                     case constants_1.KEYS.VK_RETURN:
                         game.switchScreen(game.Screen.winScreen);
+                        game.timer = false;
                         break;
                     case constants_1.KEYS.VK_ESCAPE:
                         game.switchScreen(game.Screen.loseScreen);
+                        game.timer = false;
                         break;
                     case constants_1.KEYS.VK_SPACE:
                         game.switchScreen(game.Screen.playScreen);

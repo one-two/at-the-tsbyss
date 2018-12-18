@@ -1,5 +1,6 @@
 import { Tile } from "./tiles"
 import { Glyph } from "./glyph";
+import { Entity } from "./entity";
 
 export class Map {
     _width: Number;
@@ -32,4 +33,20 @@ export class Map {
         }
         return moveable;
     }
+
+    getEntitiesAt(x: number, x2: number, y:number, y2: number, entities: Entity[]): Entity[] {
+        let targets: Entity[] = [];
+        for (let entity of entities) {
+            for (let i = x; i <= x2; i++) {
+                for (let j = y; j <= y2; j++) {
+                    if (entity.x == i && entity.y == j) {
+                        targets.push(entity);
+                    }
+                }
+            }
+        }
+        return targets;
+    }
 }
+
+

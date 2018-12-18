@@ -64,6 +64,9 @@ export function playScreen() {
                     game._map._tiles[x][y] = new Tile('Wall', '#', 'black', 'goldenrod', false, true);
                 }
             });
+            game._player._map = game._map;  
+            game.timer = true;
+            game.startCountDown();
         },
         exit : () => { console.log("Exited play screen."); 
         },
@@ -110,9 +113,11 @@ export function playScreen() {
                 switch (inputData.keyCode) {
                     case KEYS.VK_RETURN:
                         game.switchScreen(game.Screen.winScreen);
+                        game.timer = false;
                         break;
                     case KEYS.VK_ESCAPE:
                         game.switchScreen(game.Screen.loseScreen);
+                        game.timer = false;
                         break;
                     case KEYS.VK_SPACE:
                         game.switchScreen(game.Screen.playScreen);
