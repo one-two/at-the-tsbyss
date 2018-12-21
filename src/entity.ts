@@ -15,7 +15,7 @@ export class Entity {
     stamina: number;
     _map: Map;
     // fighter
-    //ai: Ai;
+    ai: Ai;
     // item
     // inventory
     // cooldown
@@ -26,9 +26,10 @@ export class Entity {
     // equipment
     // equippable
 
-    constructor(x:number, y:number, glyph: Glyph, name: string, size:number = 0, blocks: boolean = false, maxStamina:number=0, _map: Map = undefined, _entities: Entity[] = undefined, render_order:number = 99, fighter: any = undefined, ai: Ai = undefined,
+    constructor(x:number, y:number, glyph: Glyph, name: string, size:number = 0, blocks: boolean = false, maxStamina:number=0,
+        render_order:number = 99, fighter: any = undefined, ai: Ai = undefined,
         item: any = undefined, inventory: any = undefined, damage: any = undefined, stairs: any = undefined, level: any = undefined, 
-        equipment: any = undefined, equippable: any = undefined) {
+        equipment: any = undefined, equippable: any = undefined, _map: Map = undefined, _entities: Entity[] = undefined) {
             this.x = x;
             this.y = y;
             this.x2 = x+size;
@@ -40,9 +41,11 @@ export class Entity {
             this.maxStamina = maxStamina;
             this.stamina = 0;
             this._map = _map;
+            this.ai = ai;
 
-            if (this.maxStamina > 0) {
-                this.startCountDown(this.maxStamina);
+            if (this.ai != undefined) {
+                this.ai.entity = this;
+                this.ai.startCountDown(this.maxStamina);
             }
         }
 
@@ -76,6 +79,5 @@ export class Entity {
     }
 
     act() {
-        this.move(1, 1, this._map);
     }
 }

@@ -5170,6 +5170,61 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ "./src/ai.ts":
+/*!*******************!*\
+  !*** ./src/ai.ts ***!
+  \*******************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Ai {
+    constructor(speed = 0) {
+        if (speed > 0) {
+        }
+    }
+    startCountDown(seconds) {
+        var counter = seconds;
+        var interval = setInterval(() => {
+            //console.log(counter);
+            counter--;
+            if (counter < 0) {
+                // code here will run when the counter reaches zero.
+                //clearInterval(interval);
+                counter = this.entity.maxStamina;
+                this.act();
+            }
+        }, 1000);
+    }
+    act() {
+        this.entity.move(Math.random() + 1, Math.random() + 1, this.entity._map);
+    }
+}
+exports.Ai = Ai;
+// // An asynchronous timer  
+// function startCountDown(seconds: number){
+// 	var counter = seconds;
+// 	var interval = setInterval(() => {
+// 		console.log(counter);
+// 		counter--;
+// 		if (counter < 0 ) {
+// 			// code here will run when the counter reaches zero.
+// 			clearInterval(interval);
+// 			console.log('Ding!');
+// 		}	
+// 	}, 1000);
+// }
+// startCountDown(10);
+// console.log('que')
+// console.log('que')
+// startCountDown(30);
+// console.log('que')
+
+
+/***/ }),
+
 /***/ "./src/entity.ts":
 /*!***********************!*\
   !*** ./src/entity.ts ***!
@@ -5181,8 +5236,6 @@ process.umask = function() { return 0; };
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class Entity {
-    // fighter
-    //ai: Ai;
     // item
     // inventory
     // cooldown
@@ -5192,7 +5245,7 @@ class Entity {
     // level
     // equipment
     // equippable
-    constructor(x, y, glyph, name, size = 0, blocks = false, maxStamina = 0, _map = undefined, _entities = undefined, render_order = 99, fighter = undefined, ai = undefined, item = undefined, inventory = undefined, damage = undefined, stairs = undefined, level = undefined, equipment = undefined, equippable = undefined) {
+    constructor(x, y, glyph, name, size = 0, blocks = false, maxStamina = 0, render_order = 99, fighter = undefined, ai = undefined, item = undefined, inventory = undefined, damage = undefined, stairs = undefined, level = undefined, equipment = undefined, equippable = undefined, _map = undefined, _entities = undefined) {
         this.x = x;
         this.y = y;
         this.x2 = x + size;
@@ -5204,8 +5257,10 @@ class Entity {
         this.maxStamina = maxStamina;
         this.stamina = 0;
         this._map = _map;
-        if (this.maxStamina > 0) {
-            this.startCountDown(this.maxStamina);
+        this.ai = ai;
+        if (this.ai != undefined) {
+            this.ai.entity = this;
+            this.ai.startCountDown(this.maxStamina);
         }
     }
     move(dx, dy, map) {
@@ -5234,7 +5289,6 @@ class Entity {
         }, 1000);
     }
     act() {
-        this.move(1, 1, this._map);
     }
 }
 exports.Entity = Entity;
@@ -5260,6 +5314,7 @@ class Game {
     constructor() {
         this._screenWidth = 100;
         this._screenHeight = 36;
+        this._entities = [];
         this.timer = true;
         this._centerX = 0;
         this._centerY = 0;
@@ -5272,6 +5327,7 @@ class Game {
             loseScreen: screens_1.loseScreen()
         };
         this._map = null;
+        this._entities = new Array();
     }
     init() {
         // Any necessary initialization will go here.
@@ -5331,7 +5387,7 @@ exports.Game = Game;
 window.onload = function () {
     let game = new Game();
     // Initialize the game
-    let player = new entity_1.Entity(150, 150, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 2, undefined, 5);
+    let player = new entity_1.Entity(150, 150, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 0, undefined, 5);
     game._player = player;
     game.init();
     // Add the container to our HTML page
@@ -5439,6 +5495,9 @@ const constants_1 = __webpack_require__(/*! ../lib/constants */ "./lib/constants
 const Color = __webpack_require__(/*! ../lib/color */ "./lib/color.js");
 const tiles_1 = __webpack_require__(/*! ./tiles */ "./src/tiles.ts");
 const maps = __webpack_require__(/*! ../lib/map */ "./lib/map/index.js");
+const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
+const entity_1 = __webpack_require__(/*! ./entity */ "./src/entity.ts");
+const ai_1 = __webpack_require__(/*! ./ai */ "./src/ai.ts");
 function startScreen() {
     //Game.Screen.startScreen = {
     return {
@@ -5496,9 +5555,15 @@ function playScreen() {
                     game._map._tiles[x][y] = new tiles_1.Tile('Wall', '#', 'black', 'goldenrod', false, true);
                 }
             });
+            console.log(game);
             game._player._map = game._map;
             game.timer = true;
             game.startCountDown();
+            let fungai = new ai_1.Ai(20);
+            let fung = new entity_1.Entity(140, 140, new glyph_1.Glyph('f', 'black', 'green'), 'fungi', 0, true, 2, 2, undefined, fungai);
+            fung._map = game._map;
+            game._entities.push(fung);
+            console.log(game);
         },
         exit: () => {
             console.log("Exited play screen.");
@@ -5521,6 +5586,11 @@ function playScreen() {
                     let glyph = game._map.getTile(x, y).tile;
                     display.draw(x - topLeftX, y - topLeftY, glyph.char, glyph.foreground, glyph.background);
                 }
+            }
+            let szet = game._entities.length;
+            for (let i = 0; i < game._entities.length; i++) {
+                console.log(game._entities[i]);
+                display.draw(game._entities[i].x - topLeftX, game._entities[i].y - topLeftY, game._entities[i].glyph.char, game._entities[i].glyph.foreground, game._entities[i].glyph.background);
             }
             let size = Math.abs(player.x2 - player.x);
             for (let i = 0; i <= size; i++) {

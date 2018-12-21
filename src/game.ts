@@ -18,7 +18,7 @@ export class Game {
 	Screen : any;
 	_map : any;
 	_player: Entity;
-	_entities: Entity[];
+	_entities: Entity[] = [];
 	timer: boolean = true;
 
 	constructor() {
@@ -33,6 +33,7 @@ export class Game {
 			loseScreen : loseScreen()
 		}
 		this._map = null;
+		this._entities = new Array<Entity>();
 	}
 
 	init() {
@@ -99,7 +100,7 @@ export class Game {
 window.onload = function() {
 	let game = new Game();
 	// Initialize the game
-	let player = new Entity(150, 150, new Glyph('@', 'black', 'deepskyblue'), 'Player', 2, undefined, 5);
+	let player = new Entity(150, 150, new Glyph('@', 'black', 'deepskyblue'), 'Player', 0, undefined, 5);
 	game._player = player;
 	game.init();
 	// Add the container to our HTML page

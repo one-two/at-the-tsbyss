@@ -6,6 +6,7 @@ import { Tile } from "./tiles";
 import * as maps from "../lib/map"
 import { Glyph } from "./glyph";
 import { Entity } from "./entity";
+import { Ai } from "./ai";
 
 export function startScreen() {
     //Game.Screen.startScreen = {
@@ -64,9 +65,16 @@ export function playScreen() {
                     game._map._tiles[x][y] = new Tile('Wall', '#', 'black', 'goldenrod', false, true);
                 }
             });
+            console.log(game);
             game._player._map = game._map;  
             game.timer = true;
             game.startCountDown();
+
+            let fungai = new Ai(20);
+            let fung = new Entity(140, 140, new Glyph('f', 'black', 'green'), 'fungi', 0, true, 2, 2, undefined, fungai);
+            fung._map = game._map;
+            game._entities.push(fung);
+            console.log(game);
         },
         exit : () => { console.log("Exited play screen."); 
         },
@@ -94,6 +102,19 @@ export function playScreen() {
                         glyph.background);
                 }
             }
+            
+            let szet = game._entities.length;
+            for (let i = 0; i < game._entities.length; i++) {
+                console.log(game._entities[i]);
+                display.draw(
+                    game._entities[i].x - topLeftX,
+                    game._entities[i].y - topLeftY,
+                    game._entities[i].glyph.char,
+                    game._entities[i].glyph.foreground,
+                    game._entities[i].glyph.background);
+                
+            }
+
             let size = Math.abs(player.x2 - player.x);
             for (let i = 0; i <= size; i++) {
                 for (let j = 0; j <= size; j++) {
@@ -103,9 +124,7 @@ export function playScreen() {
                         player.glyph.char,
                         player.glyph.foreground,
                         player.glyph.background);
-                    
                 }
-
             }
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {
