@@ -6,7 +6,7 @@ import { Tile } from "./tiles";
 import * as maps from "../lib/map"
 import { Glyph } from "./glyph";
 import { Entity } from "./entity";
-import { Ai } from "./ai";
+import * as monsters from "./monsters";
 
 export function startScreen() {
     //Game.Screen.startScreen = {
@@ -70,7 +70,7 @@ export function playScreen() {
             game.timer = true;
             game.startCountDown();
 
-            let fungai = new Ai(20);
+            let fungai = new monsters.Fungi(20);
             let fung = new Entity(140, 140, new Glyph('f', 'black', 'green'), 'fungi', 0, true, 2, 2, undefined, fungai);
             fung._map = game._map;
             game._entities.push(fung);
@@ -105,7 +105,7 @@ export function playScreen() {
             
             let szet = game._entities.length;
             for (let i = 0; i < game._entities.length; i++) {
-                console.log(game._entities[i]);
+                //console.log(game._entities[i]);
                 display.draw(
                     game._entities[i].x - topLeftX,
                     game._entities[i].y - topLeftY,

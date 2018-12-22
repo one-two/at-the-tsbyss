@@ -1,7 +1,8 @@
 import { Entity } from "./entity";
+import { randint } from "./helper/randint";
 
-export class Ai {
-    speed:number ;
+export class Fungi {
+    speed: number;
     entity: Entity;
 
     constructor(speed:number = 0) {
@@ -26,8 +27,13 @@ export class Ai {
     }
 
     act() {
-        this.entity.move(Math.random()+1, Math.random()+1, this.entity._map);
+        console.log(randint(-1, 1))
+        let dy = randint(-1,1);
+        let dx = randint(-1,1);
+        this.entity.move(dx, dy, this.entity._map);
     }
+
+
 }
 
 // // An asynchronous timer  

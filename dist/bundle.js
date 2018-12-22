@@ -5170,61 +5170,6 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
-/***/ "./src/ai.ts":
-/*!*******************!*\
-  !*** ./src/ai.ts ***!
-  \*******************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class Ai {
-    constructor(speed = 0) {
-        if (speed > 0) {
-        }
-    }
-    startCountDown(seconds) {
-        var counter = seconds;
-        var interval = setInterval(() => {
-            //console.log(counter);
-            counter--;
-            if (counter < 0) {
-                // code here will run when the counter reaches zero.
-                //clearInterval(interval);
-                counter = this.entity.maxStamina;
-                this.act();
-            }
-        }, 1000);
-    }
-    act() {
-        this.entity.move(Math.random() + 1, Math.random() + 1, this.entity._map);
-    }
-}
-exports.Ai = Ai;
-// // An asynchronous timer  
-// function startCountDown(seconds: number){
-// 	var counter = seconds;
-// 	var interval = setInterval(() => {
-// 		console.log(counter);
-// 		counter--;
-// 		if (counter < 0 ) {
-// 			// code here will run when the counter reaches zero.
-// 			clearInterval(interval);
-// 			console.log('Ding!');
-// 		}	
-// 	}, 1000);
-// }
-// startCountDown(10);
-// console.log('que')
-// console.log('que')
-// startCountDown(30);
-// console.log('que')
-
-
-/***/ }),
-
 /***/ "./src/entity.ts":
 /*!***********************!*\
   !*** ./src/entity.ts ***!
@@ -5278,7 +5223,7 @@ class Entity {
     startCountDown(seconds) {
         var counter = seconds;
         var interval = setInterval(() => {
-            console.log(counter);
+            //(counter);
             counter--;
             if (counter < 0) {
                 // code here will run when the counter reaches zero.
@@ -5424,6 +5369,25 @@ exports.Glyph = Glyph;
 
 /***/ }),
 
+/***/ "./src/helper/randint.ts":
+/*!*******************************!*\
+  !*** ./src/helper/randint.ts ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function randint(floor, ceil) {
+    let t = (Math.random() * (ceil - floor + 1)) + floor - 0.5;
+    return Math.round(t);
+}
+exports.randint = randint;
+
+
+/***/ }),
+
 /***/ "./src/map.ts":
 /*!********************!*\
   !*** ./src/map.ts ***!
@@ -5480,6 +5444,65 @@ exports.Map = Map;
 
 /***/ }),
 
+/***/ "./src/monsters.ts":
+/*!*************************!*\
+  !*** ./src/monsters.ts ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const randint_1 = __webpack_require__(/*! ./helper/randint */ "./src/helper/randint.ts");
+class Fungi {
+    constructor(speed = 0) {
+        if (speed > 0) {
+        }
+    }
+    startCountDown(seconds) {
+        var counter = seconds;
+        var interval = setInterval(() => {
+            //console.log(counter);
+            counter--;
+            if (counter < 0) {
+                // code here will run when the counter reaches zero.
+                //clearInterval(interval);
+                counter = this.entity.maxStamina;
+                this.act();
+            }
+        }, 1000);
+    }
+    act() {
+        console.log(randint_1.randint(-1, 1));
+        let dy = randint_1.randint(-1, 1);
+        let dx = randint_1.randint(-1, 1);
+        this.entity.move(dx, dy, this.entity._map);
+    }
+}
+exports.Fungi = Fungi;
+// // An asynchronous timer  
+// function startCountDown(seconds: number){
+// 	var counter = seconds;
+// 	var interval = setInterval(() => {
+// 		console.log(counter);
+// 		counter--;
+// 		if (counter < 0 ) {
+// 			// code here will run when the counter reaches zero.
+// 			clearInterval(interval);
+// 			console.log('Ding!');
+// 		}	
+// 	}, 1000);
+// }
+// startCountDown(10);
+// console.log('que')
+// console.log('que')
+// startCountDown(30);
+// console.log('que')
+
+
+/***/ }),
+
 /***/ "./src/screens.ts":
 /*!************************!*\
   !*** ./src/screens.ts ***!
@@ -5497,7 +5520,7 @@ const tiles_1 = __webpack_require__(/*! ./tiles */ "./src/tiles.ts");
 const maps = __webpack_require__(/*! ../lib/map */ "./lib/map/index.js");
 const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
 const entity_1 = __webpack_require__(/*! ./entity */ "./src/entity.ts");
-const ai_1 = __webpack_require__(/*! ./ai */ "./src/ai.ts");
+const monsters = __webpack_require__(/*! ./monsters */ "./src/monsters.ts");
 function startScreen() {
     //Game.Screen.startScreen = {
     return {
@@ -5559,7 +5582,7 @@ function playScreen() {
             game._player._map = game._map;
             game.timer = true;
             game.startCountDown();
-            let fungai = new ai_1.Ai(20);
+            let fungai = new monsters.Fungi(20);
             let fung = new entity_1.Entity(140, 140, new glyph_1.Glyph('f', 'black', 'green'), 'fungi', 0, true, 2, 2, undefined, fungai);
             fung._map = game._map;
             game._entities.push(fung);
@@ -5589,7 +5612,7 @@ function playScreen() {
             }
             let szet = game._entities.length;
             for (let i = 0; i < game._entities.length; i++) {
-                console.log(game._entities[i]);
+                //console.log(game._entities[i]);
                 display.draw(game._entities[i].x - topLeftX, game._entities[i].y - topLeftY, game._entities[i].glyph.char, game._entities[i].glyph.foreground, game._entities[i].glyph.background);
             }
             let size = Math.abs(player.x2 - player.x);

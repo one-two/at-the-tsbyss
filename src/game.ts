@@ -5,7 +5,6 @@ import { playScreen, startScreen, winScreen, loseScreen } from "./screens";
 import { KEYS } from "../lib/constants";
 import { Objeto } from "./interface/objeto";
 import { Glyph } from "./glyph";
-import { Ai } from "./ai";
 
 
 export class Game {

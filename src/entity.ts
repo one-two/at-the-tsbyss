@@ -1,6 +1,5 @@
 import { Glyph } from "./glyph";
 import { Map } from "./map";
-import { Ai } from "./ai";
 
 export class Entity {
     x: number;
@@ -15,7 +14,7 @@ export class Entity {
     stamina: number;
     _map: Map;
     // fighter
-    ai: Ai;
+    ai: any;
     // item
     // inventory
     // cooldown
@@ -27,7 +26,7 @@ export class Entity {
     // equippable
 
     constructor(x:number, y:number, glyph: Glyph, name: string, size:number = 0, blocks: boolean = false, maxStamina:number=0,
-        render_order:number = 99, fighter: any = undefined, ai: Ai = undefined,
+        render_order:number = 99, fighter: any = undefined, ai: any = undefined,
         item: any = undefined, inventory: any = undefined, damage: any = undefined, stairs: any = undefined, level: any = undefined, 
         equipment: any = undefined, equippable: any = undefined, _map: Map = undefined, _entities: Entity[] = undefined) {
             this.x = x;
@@ -65,7 +64,7 @@ export class Entity {
     startCountDown(seconds: number){
         var counter = seconds;
         var interval = setInterval(() => {
-            console.log(counter);
+            //(counter);
             counter--;
             if (counter < 0 ) {
                 
