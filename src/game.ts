@@ -100,7 +100,8 @@ window.onload = function() {
 	let game = new Game();
 	// Initialize the game
 	let player = new Entity(150, 150, new Glyph('@', 'black', 'deepskyblue'), 'Player', 0, undefined, 5);
-	game._player = player;
+	game._player = player
+	game._entities = [game._player];
 	game.init();
 	// Add the container to our HTML page
 	document.body.appendChild(game.getDisplay().getContainer());

@@ -5170,6 +5170,80 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ "./src/content/monsters/fungi.ts":
+/*!***************************************!*\
+  !*** ./src/content/monsters/fungi.ts ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const randint_1 = __webpack_require__(/*! ../../helper/randint */ "./src/helper/randint.ts");
+class Fungi {
+    startCountDown(seconds) {
+        var counter = seconds;
+        var interval = setInterval(() => {
+            //console.log(counter);
+            counter--;
+            if (counter < 0) {
+                // code here will run when the counter reaches zero.
+                //clearInterval(interval);
+                counter = this.entity.maxStamina;
+                this.act();
+            }
+        }, 1000);
+    }
+    act() {
+        let dy = randint_1.randint(-1, 1);
+        let dx = randint_1.randint(-1, 1);
+        console.log('fungi move: ' + dx + ' ' + dy);
+        this.entity.move(dx, dy, this.entity._map);
+    }
+}
+exports.Fungi = Fungi;
+
+
+/***/ }),
+
+/***/ "./src/content/monsters/orc.ts":
+/*!*************************************!*\
+  !*** ./src/content/monsters/orc.ts ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const randint_1 = __webpack_require__(/*! ../../helper/randint */ "./src/helper/randint.ts");
+class Orc {
+    startCountDown(seconds) {
+        var counter = seconds;
+        var interval = setInterval(() => {
+            //console.log(counter);
+            counter--;
+            if (counter < 0) {
+                // code here will run when the counter reaches zero.
+                //clearInterval(interval);
+                counter = this.entity.maxStamina;
+                this.act();
+            }
+        }, 1000);
+    }
+    act() {
+        let dy = randint_1.randint(-1, 1);
+        let dx = randint_1.randint(-1, 1);
+        console.log('orc move: ' + dx + ' ' + dy);
+        this.entity.move(dx, dy, this.entity._map);
+    }
+}
+exports.Orc = Orc;
+
+
+/***/ }),
+
 /***/ "./src/entity.ts":
 /*!***********************!*\
   !*** ./src/entity.ts ***!
@@ -5209,15 +5283,22 @@ class Entity {
         }
     }
     move(dx, dy, map) {
+        console.log("move: " + this.name);
         let tx = this.x + dx;
         let tx2 = this.x2 + dx;
         let ty = this.y + dy;
         let ty2 = this.y2 + dy;
+        if (dx == 0 && dy == 0)
+            return;
         if (map.getMovableArea(tx, tx2, ty, ty2)) {
-            this.x = tx;
-            this.x2 = tx2;
-            this.y = ty;
-            this.y2 = ty2;
+            let targets = [];
+            targets = map.getEntitiesAt(tx, tx2, ty, ty2);
+            if (targets.length == 0) {
+                this.x = tx;
+                this.x2 = tx2;
+                this.y = ty;
+                this.y2 = ty2;
+            }
         }
     }
     startCountDown(seconds) {
@@ -5334,6 +5415,7 @@ window.onload = function () {
     // Initialize the game
     let player = new entity_1.Entity(150, 150, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 0, undefined, 5);
     game._player = player;
+    game._entities = [game._player];
     game.init();
     // Add the container to our HTML page
     document.body.appendChild(game.getDisplay().getContainer());
@@ -5369,6 +5451,109 @@ exports.Glyph = Glyph;
 
 /***/ }),
 
+/***/ "./src/helper/createMonters.ts":
+/*!*************************************!*\
+  !*** ./src/helper/createMonters.ts ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const entity_1 = __webpack_require__(/*! ../entity */ "./src/entity.ts");
+const fungi_1 = __webpack_require__(/*! ../content/monsters/fungi */ "./src/content/monsters/fungi.ts");
+const orc_1 = __webpack_require__(/*! ../content/monsters/orc */ "./src/content/monsters/orc.ts");
+const glyph_1 = __webpack_require__(/*! ../glyph */ "./src/glyph.ts");
+function CreateMonster(monster_choice, x, y) {
+    if (monster_choice == 'fungi') {
+        let ai_component = new fungi_1.Fungi();
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('f', 'black', 'green'), 'fungi', 1, true, 5, 99, undefined, ai_component);
+        return monster;
+    }
+    else if (monster_choice == 'orc') {
+        //fighter_component = Fighter(hp=20, defense=0, power=4, xp=35)
+        let ai_component = new orc_1.Orc();
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', 'black', 'green'), 'orc', 1, true, 5, 99, undefined, ai_component);
+        return monster;
+    }
+    else if (monster_choice == 'troll') {
+        // fighter_component = Fighter(hp=30, defense=2, power=8, xp=100)
+        // ai_component = Troll()
+        // monster = Entity(x,y, 'T', libtcod.darker_green, 0, 'troll', 200, blocks = True, render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component)
+        // return monster
+    }
+    else if (monster_choice == 'wyvern') {
+        // fighter_component = Fighter(hp=20, defense=0, power=5, xp=40)
+        // ai_component = Wyvern()
+        // monster = Entity(x,y, 'w', libtcod.dark_violet, 0, 'wyvern', 200, blocks = True, render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component)
+        // return monster
+    }
+    else if (monster_choice == 'ranger') {
+        // fighter_component = Fighter(hp=40, defense=1, power=7, xp=40)
+        // ai_component = Ranger()
+        // monster = Entity(x,y, 'r', libtcod.dark_sepia, 0, 'ranger', 200, blocks = True, render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component)
+        // return monster
+    }
+    else if (monster_choice == 'dragon') {
+        // fighter_component = Fighter(hp=100, defense=5, power=16, xp=300)
+        // ai_component = Dragon()
+        // monster = Entity(x,y, 'D', libtcod.crimson, 0, 'dragao', 200, blocks = True, render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component)
+        // return monster 
+    }
+}
+exports.CreateMonster = CreateMonster;
+
+
+/***/ }),
+
+/***/ "./src/helper/randFromLevel.ts":
+/*!*************************************!*\
+  !*** ./src/helper/randFromLevel.ts ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const randint_1 = __webpack_require__(/*! ./randint */ "./src/helper/randint.ts");
+function from_dungeon_level(table, dungeon_level) {
+    for (let x = table.length - 1; x > -1; x--) {
+        if (dungeon_level >= table[x][1])
+            return table[x][0];
+    }
+    return 0;
+}
+exports.from_dungeon_level = from_dungeon_level;
+function random_choice_index(chances) {
+    let sum = chances.reduce((a, b) => a + b, 0);
+    let random_chance = randint_1.randint(0, sum);
+    let running_sum = 0;
+    let choice = 0;
+    for (const n of chances) {
+        running_sum += n;
+        if (random_chance <= running_sum)
+            return choice;
+        choice += 1;
+    }
+    return 0;
+}
+exports.random_choice_index = random_choice_index;
+function random_choice_from_dict(choice_dict) {
+    let chances = [];
+    let choices = [];
+    for (let key in choice_dict) {
+        choices.push(key);
+        chances.push(choice_dict[key]);
+    }
+    return choices[random_choice_index(chances)];
+}
+exports.random_choice_from_dict = random_choice_from_dict;
+
+
+/***/ }),
+
 /***/ "./src/helper/randint.ts":
 /*!*******************************!*\
   !*** ./src/helper/randint.ts ***!
@@ -5399,11 +5584,16 @@ exports.randint = randint;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const tiles_1 = __webpack_require__(/*! ./tiles */ "./src/tiles.ts");
+const randFromLevel_1 = __webpack_require__(/*! ./helper/randFromLevel */ "./src/helper/randFromLevel.ts");
+const randint_1 = __webpack_require__(/*! ./helper/randint */ "./src/helper/randint.ts");
+const createMonters_1 = __webpack_require__(/*! ./helper/createMonters */ "./src/helper/createMonters.ts");
 class Map {
     constructor(width, height) {
         this._width = width;
         this._height = height;
         this._tiles = [];
+        this.dungeon_level = 1;
+        this._entities = [];
     }
     getTile(x, y) {
         let emptyTile = new tiles_1.Tile('Empty', ' ', 'black', 'white', false, false);
@@ -5425,80 +5615,66 @@ class Map {
         }
         return moveable;
     }
-    getEntitiesAt(x, x2, y, y2, entities) {
+    getEntitiesAt(x, x2, y, y2) {
         let targets = [];
-        for (let entity of entities) {
+        for (let index = 0; index < this._entities.length; index++) {
             for (let i = x; i <= x2; i++) {
                 for (let j = y; j <= y2; j++) {
-                    if (entity.x == i && entity.y == j) {
-                        targets.push(entity);
+                    if (this._entities[index].x == i && this._entities[index].y == j) {
+                        targets.push(this._entities[index]);
                     }
                 }
             }
         }
         return targets;
     }
+    addEntityToMap() {
+        let max_monsters_per_room = randFromLevel_1.from_dungeon_level([[20, 1], [3, 4], [5, 6]], this.dungeon_level);
+        let max_items_per_room = randFromLevel_1.from_dungeon_level([[1, 1], [2, 4]], this.dungeon_level);
+        console.log(max_items_per_room);
+        console.log(max_monsters_per_room);
+        let number_of_monsters = 20; //randint(0, max_monsters_per_room)
+        let number_of_items = randint_1.randint(0, max_items_per_room);
+        let monster_chances = {
+            'fungi': randFromLevel_1.from_dungeon_level([[200, 1]], this.dungeon_level),
+            'orc': randFromLevel_1.from_dungeon_level([[200, 1], [60, 3], [40, 7]], this.dungeon_level),
+            'troll': randFromLevel_1.from_dungeon_level([[5, 1], [10, 3], [30, 5], [60, 7]], this.dungeon_level),
+            'wyvern': randFromLevel_1.from_dungeon_level([[1, 1], [50, 2], [50, 5]], this.dungeon_level),
+            'dragon': randFromLevel_1.from_dungeon_level([[1, 1], [10, 3], [20, 7]], this.dungeon_level),
+            'ranger': randFromLevel_1.from_dungeon_level([[1, 1]], this.dungeon_level)
+        };
+        console.log('monster chances');
+        console.log(monster_chances);
+        let item_chances = {
+            'healing_potion': 35,
+            'dagger': randFromLevel_1.from_dungeon_level([[10, 0]], this.dungeon_level),
+            'sword': randFromLevel_1.from_dungeon_level([[5, 0], [10, 2]], this.dungeon_level),
+            'spear': randFromLevel_1.from_dungeon_level([[5, 1], [10, 3]], this.dungeon_level),
+            'shield': randFromLevel_1.from_dungeon_level([[5, 0]], this.dungeon_level)
+        };
+        for (let index = 0; index < number_of_monsters; index++) {
+            let x = randint_1.randint(0, this._width - 1);
+            let y = randint_1.randint(0, this._height - 1);
+            let emptyspace = true;
+            console.log('index: ' + index);
+            for (let index = 0; index < this._entities.length; index++) {
+                if (this._entities[index].x == x && this._entities[index].y == y) {
+                    console.log('what');
+                    emptyspace = false;
+                }
+            }
+            if (emptyspace == true) {
+                let monster_choice = randFromLevel_1.random_choice_from_dict(monster_chances);
+                console.log(monster_choice);
+                let q = createMonters_1.CreateMonster(monster_choice, x, y);
+                q._map = this;
+                this._entities.push(q);
+            }
+        }
+        return null;
+    }
 }
 exports.Map = Map;
-
-
-/***/ }),
-
-/***/ "./src/monsters.ts":
-/*!*************************!*\
-  !*** ./src/monsters.ts ***!
-  \*************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const randint_1 = __webpack_require__(/*! ./helper/randint */ "./src/helper/randint.ts");
-class Fungi {
-    constructor(speed = 0) {
-        if (speed > 0) {
-        }
-    }
-    startCountDown(seconds) {
-        var counter = seconds;
-        var interval = setInterval(() => {
-            //console.log(counter);
-            counter--;
-            if (counter < 0) {
-                // code here will run when the counter reaches zero.
-                //clearInterval(interval);
-                counter = this.entity.maxStamina;
-                this.act();
-            }
-        }, 1000);
-    }
-    act() {
-        console.log(randint_1.randint(-1, 1));
-        let dy = randint_1.randint(-1, 1);
-        let dx = randint_1.randint(-1, 1);
-        this.entity.move(dx, dy, this.entity._map);
-    }
-}
-exports.Fungi = Fungi;
-// // An asynchronous timer  
-// function startCountDown(seconds: number){
-// 	var counter = seconds;
-// 	var interval = setInterval(() => {
-// 		console.log(counter);
-// 		counter--;
-// 		if (counter < 0 ) {
-// 			// code here will run when the counter reaches zero.
-// 			clearInterval(interval);
-// 			console.log('Ding!');
-// 		}	
-// 	}, 1000);
-// }
-// startCountDown(10);
-// console.log('que')
-// console.log('que')
-// startCountDown(30);
-// console.log('que')
 
 
 /***/ }),
@@ -5518,9 +5694,6 @@ const constants_1 = __webpack_require__(/*! ../lib/constants */ "./lib/constants
 const Color = __webpack_require__(/*! ../lib/color */ "./lib/color.js");
 const tiles_1 = __webpack_require__(/*! ./tiles */ "./src/tiles.ts");
 const maps = __webpack_require__(/*! ../lib/map */ "./lib/map/index.js");
-const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
-const entity_1 = __webpack_require__(/*! ./entity */ "./src/entity.ts");
-const monsters = __webpack_require__(/*! ./monsters */ "./src/monsters.ts");
 function startScreen() {
     //Game.Screen.startScreen = {
     return {
@@ -5578,15 +5751,19 @@ function playScreen() {
                     game._map._tiles[x][y] = new tiles_1.Tile('Wall', '#', 'black', 'goldenrod', false, true);
                 }
             });
-            console.log(game);
             game._player._map = game._map;
             game.timer = true;
             game.startCountDown();
-            let fungai = new monsters.Fungi(20);
-            let fung = new entity_1.Entity(140, 140, new glyph_1.Glyph('f', 'black', 'green'), 'fungi', 0, true, 2, 2, undefined, fungai);
-            fung._map = game._map;
-            game._entities.push(fung);
-            console.log(game);
+            game._map._entities.push(game._player);
+            game._map.addEntityToMap();
+            console.log(game._map._entities);
+            // let fungai = new Fungi(20);
+            // let fung = new Entity(140, 140, new Glyph('f', 'black', 'green'), 'fungi', 0, true, 2, 2, undefined, fungai);
+            // fung._map = game._map;
+            // game._entities.push(fung);
+            game._entities = game._map._entities;
+            console.log(game._map._entities);
+            console.log(game._entities);
         },
         exit: () => {
             console.log("Exited play screen.");
@@ -5614,12 +5791,6 @@ function playScreen() {
             for (let i = 0; i < game._entities.length; i++) {
                 //console.log(game._entities[i]);
                 display.draw(game._entities[i].x - topLeftX, game._entities[i].y - topLeftY, game._entities[i].glyph.char, game._entities[i].glyph.foreground, game._entities[i].glyph.background);
-            }
-            let size = Math.abs(player.x2 - player.x);
-            for (let i = 0; i <= size; i++) {
-                for (let j = 0; j <= size; j++) {
-                    display.draw(player.x - topLeftX + i, player.y - topLeftY + j, player.glyph.char, player.glyph.foreground, player.glyph.background);
-                }
             }
         },
         handleInput: (inputType, inputData, game) => {

@@ -49,15 +49,21 @@ export class Entity {
         }
 
     move(dx: number, dy: number, map: Map) {
+        console.log("move: " + this.name);
         let tx = this.x + dx;
         let tx2 = this.x2 + dx;
         let ty = this.y + dy;
         let ty2 = this.y2 + dy;
+        if (dx == 0 && dy == 0) return;
         if (map.getMovableArea(tx, tx2, ty, ty2)) {
-            this.x = tx;
-            this.x2 = tx2;
-            this.y = ty;
-            this.y2 = ty2;
+            let targets: Entity[] = [];
+            targets = map.getEntitiesAt(tx, tx2, ty, ty2);
+            if (targets.length == 0) {
+                this.x = tx;
+                this.x2 = tx2;
+                this.y = ty;
+                this.y2 = ty2;
+            }
         }
     }
 
