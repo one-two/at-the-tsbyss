@@ -4,6 +4,7 @@ import { Entity } from "./entity";
 import { from_dungeon_level, random_choice_from_dict } from "./helper/randFromLevel";
 import { randint } from "./helper/randint";
 import { CreateMonster } from "./helper/createMonters"
+import { Color, FOV, Display } from "../lib";
 
 export class Map {
     _width: number;
@@ -11,6 +12,7 @@ export class Map {
     dungeon_level: number;
     _entities: Entity[];
     _tiles: Tile[][];
+    _fov: any[];
 
     constructor(width : number, height : number) {
         this._width = width;
@@ -58,8 +60,6 @@ export class Map {
     addEntityToMap(): void {
         let max_monsters_per_room = from_dungeon_level([[20, 1], [3, 4], [5, 6]], this.dungeon_level)
         let max_items_per_room = from_dungeon_level([[1, 1], [2, 4]], this.dungeon_level)
-        console.log(max_items_per_room);
-        console.log(max_monsters_per_room);
 
         let number_of_monsters = 20;//randint(0, max_monsters_per_room)
         let number_of_items = randint(0, max_items_per_room);
@@ -87,7 +87,6 @@ export class Map {
             let x = randint(0, this._width - 1)
             let y = randint(0, this._height - 1)
             let emptyspace = true;
-            console.log('index: ' + index);
             for (let index = 0; index < this._entities.length; index++) {
                 if (this._entities[index].x == x && this._entities[index].y == y) {
                     console.log('what');
@@ -97,15 +96,46 @@ export class Map {
 
             if (emptyspace == true) {
                 let monster_choice = random_choice_from_dict(monster_chances);
-                console.log(monster_choice);
                 let q = CreateMonster(monster_choice, x, y);
                 q._map = this;
                 this._entities.push(q);
             }
         }
-        
-
         return null;
+    }
+
+    lightPasses(x: number,y: number) {
+        return this._tiles[x][y]._blocksLight;
+    }
+
+    visibility(x: number, y: number, r: number, display: any) {
+        display.draw(x, y, 'q', 'white', 'black');
+    }
+
+    setupFov(display: any) {
+        let fov = new FOV.PreciseShadowcasting(this.lightPasses)
+        fov.compute(this._entities[0].x, this._entities[0].y, this._entities[0].sight, this.visibility)
+        //this._fov.push(new FOV.DiscreteShadowcasting(this.lightPasses(x,y)) )
+    }
+
+    getFov() {
+        return this._fov;
+    }
+
+    setFOV(x: number, y: number) {
+        let dx = Math.pow(this._entities[0].x - x, 2)
+        let dy = Math.pow(this._entities[0].y - y, 2)
+        let dist = Math.sqrt(dx+dy)
+        if (dist <= this._entities[0].sight) {
+            this._tiles[x][y].visited = true;
+            let fogRGB = Color.fromString(this._tiles[x][y].baseTile.foreground);
+            let perc = 1-((dist)/this._entities[0].sight)+0.1;
+            this._tiles[x][y].tile.foreground = Color.toRGB([Math.floor(fogRGB[0]*perc), Math.floor(fogRGB[1]*perc), Math.floor(fogRGB[2]*perc)]);
+        }
+        else {
+            let fogRGB = Color.fromString(this._tiles[x][y].baseTile.foreground);
+            this._tiles[x][y].tile.foreground = Color.toRGB([Math.floor(fogRGB[0]*0.1), Math.floor(fogRGB[1]*0.1), Math.floor(fogRGB[2]*0.1)]);
+        }
     }
 }
 

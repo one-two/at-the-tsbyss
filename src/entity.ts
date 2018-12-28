@@ -15,6 +15,7 @@ export class Entity {
     _map: Map;
     // fighter
     ai: any;
+    sight: number;
     // item
     // inventory
     // cooldown
@@ -45,11 +46,10 @@ export class Entity {
             if (this.ai != undefined) {
                 this.ai.entity = this;
                 this.ai.startCountDown(this.maxStamina);
-            }
+            } else this.sight = 15;
         }
 
     move(dx: number, dy: number, map: Map) {
-        console.log("move: " + this.name);
         let tx = this.x + dx;
         let tx2 = this.x2 + dx;
         let ty = this.y + dy;

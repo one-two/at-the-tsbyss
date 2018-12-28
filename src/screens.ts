@@ -39,7 +39,7 @@ export function playScreen() {
             let mapWidth = 300;
             let mapHeight = 300;
             game._map = new Map(mapWidth, mapHeight);
-            let emptyTile = new Tile('Empty', ' ', 'black', 'white', true, false);
+            let emptyTile = new Tile('Empty', ' ', 'black', 'white', true, false, false);
             console.log("Entered play screen.");
             for (let x = 0; x < mapWidth; x++) {
                 // Create the nested array for the y values
@@ -60,9 +60,9 @@ export function playScreen() {
             // Smoothen it one last time and then update our map
             generator.create((x,y,v) => {
                 if (v === 1) {
-                    game._map._tiles[x][y] = new Tile('Floor', ' ', 'black', 'white', true, false); //floor
+                    game._map._tiles[x][y] = new Tile('Floor', '.', Color.toRGB([0,0,0]) , Color.toRGB([84, 54, 11]), true, false); //floor
                 } else {
-                    game._map._tiles[x][y] = new Tile('Wall', '#', 'black', 'goldenrod', false, true);
+                    game._map._tiles[x][y] = new Tile('Wall', '#', 'black', 'goldenrod', false, true, true);
                 }
             });
             game._player._map = game._map;  
@@ -71,13 +71,7 @@ export function playScreen() {
             game._map._entities.push(game._player);
             game._map.addEntityToMap();
             console.log(game._map._entities);
-            // let fungai = new Fungi(20);
-            // let fung = new Entity(140, 140, new Glyph('f', 'black', 'green'), 'fungi', 0, true, 2, 2, undefined, fungai);
-            // fung._map = game._map;
-            // game._entities.push(fung);
             game._entities = game._map._entities;
-            console.log(game._map._entities);
-            console.log(game._entities);
         },
         exit : () => { console.log("Exited play screen."); 
         },
@@ -96,13 +90,22 @@ export function playScreen() {
             for (let x = topLeftX; x < topLeftX + screenWidth; x++) {
                 for (let y = topLeftY; y < topLeftY + screenHeight; y++) {
                     // Fetch the glyph for the tile and render it to the screen
-                    let glyph = game._map.getTile(x, y).tile as Glyph;
+                    //game._map.setFOV(x, y);
+                    let cell = game._map.getTile(x, y) as Tile;
+                    cell.visited ?
                     display.draw(
                         x - topLeftX, 
                         y - topLeftY,
-                        glyph.char, 
-                        glyph.foreground, 
-                        glyph.background);
+                        cell.tile.char, 
+                        cell.tile.foreground, 
+                        cell.tile.background) :
+                    display.draw(
+                        x - topLeftX, 
+                        y - topLeftY,
+                        ' ', 
+                        Color.toRGB([0,0,0]), 
+                        Color.toRGB([0,0,0]));
+                    game._map.setupFov(display);
                 }
             }
             let szet = game._entities.length;
