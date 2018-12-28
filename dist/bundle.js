@@ -5672,14 +5672,27 @@ class Map {
         return null;
     }
     lightPasses(x, y) {
+        console.log(this._tiles[x][y]);
         return this._tiles[x][y]._blocksLight;
     }
-    visibility(x, y, r, display) {
-        display.draw(x, y, 'q', 'white', 'black');
-    }
-    setupFov(display) {
-        let fov = new lib_1.FOV.PreciseShadowcasting(this.lightPasses);
-        fov.compute(this._entities[0].x, this._entities[0].y, this._entities[0].sight, this.visibility);
+    setupFov(topleftX, topleftY) {
+        let fov = new lib_1.FOV.PreciseShadowcasting((x, y) => { return !this._tiles[x][y]._blocksLight; });
+        fov.compute(this._entities[0].x, this._entities[0].y, this._entities[0].sight, (x, y, r, visibility) => {
+            let dx = Math.pow(this._entities[0].x - x, 2);
+            let dy = Math.pow(this._entities[0].y - y, 2);
+            let dist = Math.sqrt(dx + dy);
+            let fogRGB = lib_1.Color.fromString(this._tiles[x][y].baseTile.foreground);
+            if (dist <= this._entities[0].sight - 2) {
+                this._tiles[x][y].visited = true;
+                let perc = 1 - ((dist) / this._entities[0].sight) + 0.1;
+                this._tiles[x][y].tile.foreground = lib_1.Color.toRGB([Math.floor(fogRGB[0] * perc), Math.floor(fogRGB[1] * perc), Math.floor(fogRGB[2] * perc)]);
+            }
+            else {
+                this._tiles[x][y].tile.foreground = lib_1.Color.toRGB([Math.floor(fogRGB[0] * 0.1), Math.floor(fogRGB[1] * 0.1), Math.floor(fogRGB[2] * 0.1)]);
+            }
+            //console.log('draw at: ' + x + ', ' + y);
+            this._display.draw(x - topleftX, y - topleftY, this._tiles[x][y].tile.char, this._tiles[x][y].tile.foreground, 'black');
+        });
         //this._fov.push(new FOV.DiscreteShadowcasting(this.lightPasses(x,y)) )
     }
     getFov() {
@@ -5778,10 +5791,13 @@ function playScreen() {
                     game._map._tiles[x][y] = new tiles_1.Tile('Wall', '#', 'black', 'goldenrod', false, true, true);
                 }
             });
+            // Sync map and game variables
+            game._map._entities = [];
+            game._map._entities.push(game._player); //player always [0]
             game._player._map = game._map;
+            game._map._display = game._display;
             game.timer = true;
             game.startCountDown();
-            game._map._entities.push(game._player);
             game._map.addEntityToMap();
             console.log(game._map._entities);
             game._entities = game._map._entities;
@@ -5804,14 +5820,13 @@ function playScreen() {
             for (let x = topLeftX; x < topLeftX + screenWidth; x++) {
                 for (let y = topLeftY; y < topLeftY + screenHeight; y++) {
                     // Fetch the glyph for the tile and render it to the screen
-                    //game._map.setFOV(x, y);
                     let cell = game._map.getTile(x, y);
                     cell.visited ?
-                        display.draw(x - topLeftX, y - topLeftY, cell.tile.char, cell.tile.foreground, cell.tile.background) :
+                        display.draw(x - topLeftX, y - topLeftY, cell.visitedTile.char, cell.visitedTile.foreground, cell.visitedTile.background) :
                         display.draw(x - topLeftX, y - topLeftY, ' ', Color.toRGB([0, 0, 0]), Color.toRGB([0, 0, 0]));
-                    game._map.setupFov(display);
                 }
             }
+            game._map.setupFov(topLeftX, topLeftY);
             let szet = game._entities.length;
             for (let i = 0; i < game._entities.length; i++) {
                 //console.log(game._entities[i]);
@@ -5909,8 +5924,9 @@ exports.loseScreen = loseScreen;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
+const lib_1 = __webpack_require__(/*! ../lib */ "./lib/index.js");
 class Tile {
-    constructor(name, char = ' ', background = 'black', foreground = 'white', walkable = false, diggable = false, blockslight = false) {
+    constructor(name, char = ' ', background = [0, 0, 0], foreground = [255, 255, 255], walkable = false, diggable = false, blockslight = false) {
         this.visited = false;
         this._isWalkable = false;
         this._isDiggable = false;
@@ -5921,6 +5937,9 @@ class Tile {
         this._blocksLight = blockslight;
         this.tile = new glyph_1.Glyph(char, background, foreground);
         this.baseTile = new glyph_1.Glyph(char, background, foreground);
+        this.visitedTile = new glyph_1.Glyph(char, background, foreground);
+        let fogRGB = lib_1.Color.fromString(this.tile.foreground);
+        this.visitedTile.foreground = lib_1.Color.toRGB([Math.floor(fogRGB[0] * 0.1), Math.floor(fogRGB[1] * 0.1), Math.floor(fogRGB[2] * 0.1)]);
     }
 }
 exports.Tile = Tile;

@@ -65,10 +65,13 @@ export function playScreen() {
                     game._map._tiles[x][y] = new Tile('Wall', '#', 'black', 'goldenrod', false, true, true);
                 }
             });
+            // Sync map and game variables
+            game._map._entities = [];
+            game._map._entities.push(game._player); //player always [0]
             game._player._map = game._map;  
+            game._map._display = game._display;
             game.timer = true;
             game.startCountDown();
-            game._map._entities.push(game._player);
             game._map.addEntityToMap();
             console.log(game._map._entities);
             game._entities = game._map._entities;
@@ -90,25 +93,24 @@ export function playScreen() {
             for (let x = topLeftX; x < topLeftX + screenWidth; x++) {
                 for (let y = topLeftY; y < topLeftY + screenHeight; y++) {
                     // Fetch the glyph for the tile and render it to the screen
-                    //game._map.setFOV(x, y);
                     let cell = game._map.getTile(x, y) as Tile;
                     cell.visited ?
                     display.draw(
                         x - topLeftX, 
                         y - topLeftY,
-                        cell.tile.char, 
-                        cell.tile.foreground, 
-                        cell.tile.background) :
+                        cell.visitedTile.char, 
+                        cell.visitedTile.foreground, 
+                        cell.visitedTile.background) :
                     display.draw(
                         x - topLeftX, 
                         y - topLeftY,
                         ' ', 
                         Color.toRGB([0,0,0]), 
                         Color.toRGB([0,0,0]));
-                    game._map.setupFov(display);
+                    
                 }
             }
-            let szet = game._entities.length;
+            game._map.setupFov(topLeftX, topLeftY);
             for (let i = 0; i < game._entities.length; i++) {
                 //console.log(game._entities[i]);
                 display.draw(

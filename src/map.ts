@@ -7,6 +7,7 @@ import { CreateMonster } from "./helper/createMonters"
 import { Color, FOV, Display } from "../lib";
 
 export class Map {
+    _display: any;
     _width: number;
     _height: number;
     dungeon_level: number;
@@ -105,16 +106,31 @@ export class Map {
     }
 
     lightPasses(x: number,y: number) {
+        console.log(this._tiles[x][y]);
         return this._tiles[x][y]._blocksLight;
     }
 
-    visibility(x: number, y: number, r: number, display: any) {
-        display.draw(x, y, 'q', 'white', 'black');
-    }
 
-    setupFov(display: any) {
-        let fov = new FOV.PreciseShadowcasting(this.lightPasses)
-        fov.compute(this._entities[0].x, this._entities[0].y, this._entities[0].sight, this.visibility)
+    setupFov(topleftX: number, topleftY: number) {
+        let fov = new FOV.PreciseShadowcasting((x,y): boolean => {return !this._tiles[x][y]._blocksLight});
+
+        fov.compute(this._entities[0].x, this._entities[0].y, this._entities[0].sight, (x, y, r, visibility) => {
+            let dx = Math.pow(this._entities[0].x - x, 2);
+            let dy = Math.pow(this._entities[0].y - y, 2);
+            let dist = Math.sqrt(dx+dy);
+            let fogRGB = Color.fromString(this._tiles[x][y].baseTile.foreground);
+            if (dist <= this._entities[0].sight-2) {
+                this._tiles[x][y].visited = true;
+                let perc = 1-((dist)/this._entities[0].sight)+0.1;
+                this._tiles[x][y].tile.foreground = Color.toRGB([Math.floor(fogRGB[0]*perc), Math.floor(fogRGB[1]*perc), Math.floor(fogRGB[2]*perc)]);
+            }
+            else {
+                this._tiles[x][y].tile.foreground = Color.toRGB([Math.floor(fogRGB[0]*0.1), Math.floor(fogRGB[1]*0.1), Math.floor(fogRGB[2]*0.1)]);
+            }
+            
+            //console.log('draw at: ' + x + ', ' + y);
+            this._display.draw(x - topleftX, y - topleftY, this._tiles[x][y].tile.char, this._tiles[x][y].tile.foreground, 'black');
+        })
         //this._fov.push(new FOV.DiscreteShadowcasting(this.lightPasses(x,y)) )
     }
 
