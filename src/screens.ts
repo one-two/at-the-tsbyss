@@ -113,14 +113,20 @@ export function playScreen() {
             game._map.setupFov(topLeftX, topLeftY);
             for (let i = 0; i < game._entities.length; i++) {
                 //console.log(game._entities[i]);
-                display.draw(
-                    game._entities[i].x - topLeftX,
-                    game._entities[i].y - topLeftY,
-                    game._entities[i].glyph.char,
-                    game._entities[i].glyph.foreground,
-                    game._entities[i].glyph.background);
+                let dx = Math.pow(game._entities[0].x - game._entities[i].x, 2);
+                let dy = Math.pow(game._entities[0].y - game._entities[i].y, 2);
+                let dist = Math.sqrt(dx+dy);
+                if (dist == 0 || dist <= game._entities[0].sight) {
+                    display.draw(
+                        game._entities[i].x - topLeftX,
+                        game._entities[i].y - topLeftY,
+                        game._entities[i].glyph.char,
+                        game._entities[i].glyph.foreground,
+                        game._entities[i].glyph.background);
+                }
                 
             }
+
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {
             if (inputType === 'keydown') {

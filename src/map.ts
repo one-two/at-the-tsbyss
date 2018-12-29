@@ -121,11 +121,11 @@ export class Map {
             let fogRGB = Color.fromString(this._tiles[x][y].baseTile.foreground);
             if (dist <= this._entities[0].sight-2) {
                 this._tiles[x][y].visited = true;
-                let perc = 1-((dist)/this._entities[0].sight)+0.1;
+                let perc = 1-((dist)/this._entities[0].sight)+0.2;
                 this._tiles[x][y].tile.foreground = Color.toRGB([Math.floor(fogRGB[0]*perc), Math.floor(fogRGB[1]*perc), Math.floor(fogRGB[2]*perc)]);
             }
             else {
-                this._tiles[x][y].tile.foreground = Color.toRGB([Math.floor(fogRGB[0]*0.1), Math.floor(fogRGB[1]*0.1), Math.floor(fogRGB[2]*0.1)]);
+                this._tiles[x][y].tile.foreground = Color.toRGB([Math.floor(fogRGB[0]*0.2), Math.floor(fogRGB[1]*0.2), Math.floor(fogRGB[2]*0.2)]);
             }
             
             //console.log('draw at: ' + x + ', ' + y);

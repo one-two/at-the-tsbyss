@@ -5684,11 +5684,11 @@ class Map {
             let fogRGB = lib_1.Color.fromString(this._tiles[x][y].baseTile.foreground);
             if (dist <= this._entities[0].sight - 2) {
                 this._tiles[x][y].visited = true;
-                let perc = 1 - ((dist) / this._entities[0].sight) + 0.1;
+                let perc = 1 - ((dist) / this._entities[0].sight) + 0.2;
                 this._tiles[x][y].tile.foreground = lib_1.Color.toRGB([Math.floor(fogRGB[0] * perc), Math.floor(fogRGB[1] * perc), Math.floor(fogRGB[2] * perc)]);
             }
             else {
-                this._tiles[x][y].tile.foreground = lib_1.Color.toRGB([Math.floor(fogRGB[0] * 0.1), Math.floor(fogRGB[1] * 0.1), Math.floor(fogRGB[2] * 0.1)]);
+                this._tiles[x][y].tile.foreground = lib_1.Color.toRGB([Math.floor(fogRGB[0] * 0.2), Math.floor(fogRGB[1] * 0.2), Math.floor(fogRGB[2] * 0.2)]);
             }
             //console.log('draw at: ' + x + ', ' + y);
             this._display.draw(x - topleftX, y - topleftY, this._tiles[x][y].tile.char, this._tiles[x][y].tile.foreground, 'black');
@@ -5827,10 +5827,14 @@ function playScreen() {
                 }
             }
             game._map.setupFov(topLeftX, topLeftY);
-            let szet = game._entities.length;
             for (let i = 0; i < game._entities.length; i++) {
                 //console.log(game._entities[i]);
-                display.draw(game._entities[i].x - topLeftX, game._entities[i].y - topLeftY, game._entities[i].glyph.char, game._entities[i].glyph.foreground, game._entities[i].glyph.background);
+                let dx = Math.pow(game._entities[0].x - game._entities[i].x, 2);
+                let dy = Math.pow(game._entities[0].y - game._entities[i].y, 2);
+                let dist = Math.sqrt(dx + dy);
+                if (dist == 0 || dist <= game._entities[0].sight) {
+                    display.draw(game._entities[i].x - topLeftX, game._entities[i].y - topLeftY, game._entities[i].glyph.char, game._entities[i].glyph.foreground, game._entities[i].glyph.background);
+                }
             }
         },
         handleInput: (inputType, inputData, game) => {
@@ -5939,7 +5943,7 @@ class Tile {
         this.baseTile = new glyph_1.Glyph(char, background, foreground);
         this.visitedTile = new glyph_1.Glyph(char, background, foreground);
         let fogRGB = lib_1.Color.fromString(this.tile.foreground);
-        this.visitedTile.foreground = lib_1.Color.toRGB([Math.floor(fogRGB[0] * 0.1), Math.floor(fogRGB[1] * 0.1), Math.floor(fogRGB[2] * 0.1)]);
+        this.visitedTile.foreground = lib_1.Color.toRGB([Math.floor(fogRGB[0] * 0.2), Math.floor(fogRGB[1] * 0.2), Math.floor(fogRGB[2] * 0.2)]);
     }
 }
 exports.Tile = Tile;

@@ -20,6 +20,6 @@ export class Tile {
         this.baseTile = new Glyph(char, background, foreground);
         this.visitedTile = new Glyph(char, background, foreground);
         let fogRGB = Color.fromString(this.tile.foreground);
-        this.visitedTile.foreground = Color.toRGB([Math.floor(fogRGB[0]*0.1), Math.floor(fogRGB[1]*0.1), Math.floor(fogRGB[2]*0.1)]);
+        this.visitedTile.foreground = Color.toRGB([Math.floor(fogRGB[0]*0.2), Math.floor(fogRGB[1]*0.2), Math.floor(fogRGB[2]*0.2)]);
     }
 }
