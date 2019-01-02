@@ -68,6 +68,9 @@ export function playScreen() {
             // Sync map and game variables
             game._map._entities = [];
             game._map._entities.push(game._player); //player always [0]
+            let ai_component = new Fungi();
+            let monster = new Entity(201, 151, new Glyph('f', 'black', 'green'), 'fungi', 1, true, 5, 99, undefined, ai_component);
+            game._map._entities.push(monster);
             game._player._map = game._map;  
             game._map._display = game._display;
             game.timer = true;
@@ -113,18 +116,21 @@ export function playScreen() {
             game._map.setupFov(topLeftX, topLeftY);
             for (let i = 0; i < game._entities.length; i++) {
                 //console.log(game._entities[i]);
-                let dx = Math.pow(game._entities[0].x - game._entities[i].x, 2);
-                let dy = Math.pow(game._entities[0].y - game._entities[i].y, 2);
-                let dist = Math.sqrt(dx+dy);
-                if (dist == 0 || dist <= game._entities[0].sight) {
-                    display.draw(
-                        game._entities[i].x - topLeftX,
-                        game._entities[i].y - topLeftY,
-                        game._entities[i].glyph.char,
-                        game._entities[i].glyph.foreground,
-                        game._entities[i].glyph.background);
+                let cell = game._map.getTile(game._entities[0].x, game._entities[0].y) as Tile;
+                if (cell.tile != cell.visitedTile && cell.visited == true) {
+                    let dx = Math.pow(game._entities[0].x - game._entities[i].x, 2);
+                    let dy = Math.pow(game._entities[0].y - game._entities[i].y, 2);
+                    let dist = Math.sqrt(dx+dy);
+                    if (dist == 0 || dist <= game._entities[0].sight) {
+                        display.draw(
+                            game._entities[i].x - topLeftX,
+                            game._entities[i].y - topLeftY,
+                            game._entities[i].glyph.char,
+                            game._entities[i].glyph.foreground,
+                            game._entities[i].glyph.background);
+                    }
                 }
-                
+
             }
 
         },

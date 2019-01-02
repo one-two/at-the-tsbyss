@@ -99,7 +99,7 @@ export class Game {
 window.onload = function() {
 	let game = new Game();
 	// Initialize the game
-	let player = new Entity(150, 150, new Glyph('@', 'black', 'deepskyblue'), 'Player', 0, undefined, 5);
+	let player = new Entity(200, 150, new Glyph('@', 'black', 'deepskyblue'), 'Player', 0, undefined, 5);
 	game._player = player
 	game._entities = [game._player];
 	game.init();

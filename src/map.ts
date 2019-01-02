@@ -112,15 +112,29 @@ export class Map {
 
 
     setupFov(topleftX: number, topleftY: number) {
-        let fov = new FOV.PreciseShadowcasting((x,y): boolean => {return !this._tiles[x][y]._blocksLight});
+        
+        let fov = new FOV.PreciseShadowcasting((x,y): boolean => {
+            // x = x <= 0 ? this._entities[0].sight+1 : x >= this._width ? this._width-this._entities[0].sight-1 : x;
+            // y = y <= 0 ? this._entities[0].sight+1 : y >= this._height ? this._height-this._entities[0].sight-1 : y;
+            if ( x >= this._width) x = this._width-1;
+            if ( x <= 0) x = 0;
+            if ( y >= this._height) y = this._height-1;
+            if ( y <= 0) x = 0;
+            if (this._tiles[x] == undefined) console.log('x: ' + x + ' y: ' + y);
+            return !this._tiles[x][y]._blocksLight;
+        });
 
         fov.compute(this._entities[0].x, this._entities[0].y, this._entities[0].sight, (x, y, r, visibility) => {
             let dx = Math.pow(this._entities[0].x - x, 2);
             let dy = Math.pow(this._entities[0].y - y, 2);
             let dist = Math.sqrt(dx+dy);
+
+            if (x < 0 || x >= this._width || y < 0 || y >= this._height) {
+                return;
+            }
             let fogRGB = Color.fromString(this._tiles[x][y].baseTile.foreground);
             if (dist <= this._entities[0].sight-2) {
-                this._tiles[x][y].visited = true;
+                if (dist <= this._entities[0].sight/2) this._tiles[x][y].visited = true;
                 let perc = 1-((dist)/this._entities[0].sight)+0.2;
                 this._tiles[x][y].tile.foreground = Color.toRGB([Math.floor(fogRGB[0]*perc), Math.floor(fogRGB[1]*perc), Math.floor(fogRGB[2]*perc)]);
             }
@@ -131,27 +145,11 @@ export class Map {
             //console.log('draw at: ' + x + ', ' + y);
             this._display.draw(x - topleftX, y - topleftY, this._tiles[x][y].tile.char, this._tiles[x][y].tile.foreground, 'black');
         })
-        //this._fov.push(new FOV.DiscreteShadowcasting(this.lightPasses(x,y)) )
+        //this._fov.push(new FOV.DiscreteShadowcasting(this.lightPasses(x,y)) ) 
     }
 
     getFov() {
         return this._fov;
-    }
-
-    setFOV(x: number, y: number) {
-        let dx = Math.pow(this._entities[0].x - x, 2)
-        let dy = Math.pow(this._entities[0].y - y, 2)
-        let dist = Math.sqrt(dx+dy)
-        if (dist <= this._entities[0].sight) {
-            this._tiles[x][y].visited = true;
-            let fogRGB = Color.fromString(this._tiles[x][y].baseTile.foreground);
-            let perc = 1-((dist)/this._entities[0].sight)+0.1;
-            this._tiles[x][y].tile.foreground = Color.toRGB([Math.floor(fogRGB[0]*perc), Math.floor(fogRGB[1]*perc), Math.floor(fogRGB[2]*perc)]);
-        }
-        else {
-            let fogRGB = Color.fromString(this._tiles[x][y].baseTile.foreground);
-            this._tiles[x][y].tile.foreground = Color.toRGB([Math.floor(fogRGB[0]*0.1), Math.floor(fogRGB[1]*0.1), Math.floor(fogRGB[2]*0.1)]);
-        }
     }
 }
 

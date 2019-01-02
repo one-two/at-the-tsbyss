@@ -5414,7 +5414,7 @@ exports.Game = Game;
 window.onload = function () {
     let game = new Game();
     // Initialize the game
-    let player = new entity_1.Entity(150, 150, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 0, undefined, 5);
+    let player = new entity_1.Entity(200, 150, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 0, undefined, 5);
     game._player = player;
     game._entities = [game._player];
     game.init();
@@ -5676,14 +5676,32 @@ class Map {
         return this._tiles[x][y]._blocksLight;
     }
     setupFov(topleftX, topleftY) {
-        let fov = new lib_1.FOV.PreciseShadowcasting((x, y) => { return !this._tiles[x][y]._blocksLight; });
+        let fov = new lib_1.FOV.PreciseShadowcasting((x, y) => {
+            // x = x <= 0 ? this._entities[0].sight+1 : x >= this._width ? this._width-this._entities[0].sight-1 : x;
+            // y = y <= 0 ? this._entities[0].sight+1 : y >= this._height ? this._height-this._entities[0].sight-1 : y;
+            if (x >= this._width)
+                x = this._width - 1;
+            if (x <= 0)
+                x = 0;
+            if (y >= this._height)
+                y = this._height - 1;
+            if (y <= 0)
+                x = 0;
+            if (this._tiles[x] == undefined)
+                console.log('x: ' + x + ' y: ' + y);
+            return !this._tiles[x][y]._blocksLight;
+        });
         fov.compute(this._entities[0].x, this._entities[0].y, this._entities[0].sight, (x, y, r, visibility) => {
             let dx = Math.pow(this._entities[0].x - x, 2);
             let dy = Math.pow(this._entities[0].y - y, 2);
             let dist = Math.sqrt(dx + dy);
+            if (x < 0 || x >= this._width || y < 0 || y >= this._height) {
+                return;
+            }
             let fogRGB = lib_1.Color.fromString(this._tiles[x][y].baseTile.foreground);
             if (dist <= this._entities[0].sight - 2) {
-                this._tiles[x][y].visited = true;
+                if (dist <= this._entities[0].sight / 2)
+                    this._tiles[x][y].visited = true;
                 let perc = 1 - ((dist) / this._entities[0].sight) + 0.2;
                 this._tiles[x][y].tile.foreground = lib_1.Color.toRGB([Math.floor(fogRGB[0] * perc), Math.floor(fogRGB[1] * perc), Math.floor(fogRGB[2] * perc)]);
             }
@@ -5693,25 +5711,10 @@ class Map {
             //console.log('draw at: ' + x + ', ' + y);
             this._display.draw(x - topleftX, y - topleftY, this._tiles[x][y].tile.char, this._tiles[x][y].tile.foreground, 'black');
         });
-        //this._fov.push(new FOV.DiscreteShadowcasting(this.lightPasses(x,y)) )
+        //this._fov.push(new FOV.DiscreteShadowcasting(this.lightPasses(x,y)) ) 
     }
     getFov() {
         return this._fov;
-    }
-    setFOV(x, y) {
-        let dx = Math.pow(this._entities[0].x - x, 2);
-        let dy = Math.pow(this._entities[0].y - y, 2);
-        let dist = Math.sqrt(dx + dy);
-        if (dist <= this._entities[0].sight) {
-            this._tiles[x][y].visited = true;
-            let fogRGB = lib_1.Color.fromString(this._tiles[x][y].baseTile.foreground);
-            let perc = 1 - ((dist) / this._entities[0].sight) + 0.1;
-            this._tiles[x][y].tile.foreground = lib_1.Color.toRGB([Math.floor(fogRGB[0] * perc), Math.floor(fogRGB[1] * perc), Math.floor(fogRGB[2] * perc)]);
-        }
-        else {
-            let fogRGB = lib_1.Color.fromString(this._tiles[x][y].baseTile.foreground);
-            this._tiles[x][y].tile.foreground = lib_1.Color.toRGB([Math.floor(fogRGB[0] * 0.1), Math.floor(fogRGB[1] * 0.1), Math.floor(fogRGB[2] * 0.1)]);
-        }
     }
 }
 exports.Map = Map;
@@ -5734,6 +5737,9 @@ const constants_1 = __webpack_require__(/*! ../lib/constants */ "./lib/constants
 const Color = __webpack_require__(/*! ../lib/color */ "./lib/color.js");
 const tiles_1 = __webpack_require__(/*! ./tiles */ "./src/tiles.ts");
 const maps = __webpack_require__(/*! ../lib/map */ "./lib/map/index.js");
+const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
+const entity_1 = __webpack_require__(/*! ./entity */ "./src/entity.ts");
+const fungi_1 = __webpack_require__(/*! ./content/monsters/fungi */ "./src/content/monsters/fungi.ts");
 function startScreen() {
     //Game.Screen.startScreen = {
     return {
@@ -5794,6 +5800,9 @@ function playScreen() {
             // Sync map and game variables
             game._map._entities = [];
             game._map._entities.push(game._player); //player always [0]
+            let ai_component = new fungi_1.Fungi();
+            let monster = new entity_1.Entity(201, 151, new glyph_1.Glyph('f', 'black', 'green'), 'fungi', 1, true, 5, 99, undefined, ai_component);
+            game._map._entities.push(monster);
             game._player._map = game._map;
             game._map._display = game._display;
             game.timer = true;
@@ -5829,11 +5838,14 @@ function playScreen() {
             game._map.setupFov(topLeftX, topLeftY);
             for (let i = 0; i < game._entities.length; i++) {
                 //console.log(game._entities[i]);
-                let dx = Math.pow(game._entities[0].x - game._entities[i].x, 2);
-                let dy = Math.pow(game._entities[0].y - game._entities[i].y, 2);
-                let dist = Math.sqrt(dx + dy);
-                if (dist == 0 || dist <= game._entities[0].sight) {
-                    display.draw(game._entities[i].x - topLeftX, game._entities[i].y - topLeftY, game._entities[i].glyph.char, game._entities[i].glyph.foreground, game._entities[i].glyph.background);
+                let cell = game._map.getTile(game._entities[0].x, game._entities[0].y);
+                if (cell.tile != cell.visitedTile && cell.visited == true) {
+                    let dx = Math.pow(game._entities[0].x - game._entities[i].x, 2);
+                    let dy = Math.pow(game._entities[0].y - game._entities[i].y, 2);
+                    let dist = Math.sqrt(dx + dy);
+                    if (dist == 0 || dist <= game._entities[0].sight) {
+                        display.draw(game._entities[i].x - topLeftX, game._entities[i].y - topLeftY, game._entities[i].glyph.char, game._entities[i].glyph.foreground, game._entities[i].glyph.background);
+                    }
                 }
             }
         },
