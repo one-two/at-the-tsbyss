@@ -5371,6 +5371,14 @@ class Game {
                 this._currentScreen.render(this._display, this);
             }
         });
+        // add event listener to table
+        var el = document.getElementById("hit");
+        el.addEventListener("click", e => {
+            console.log('hey');
+            this._currentScreen.handleInput("click", e, this);
+            this._display.clear();
+            this._currentScreen.render(this._display, this);
+        });
     }
     getDisplay() {
         return this._display;
@@ -5740,6 +5748,7 @@ const maps = __webpack_require__(/*! ../lib/map */ "./lib/map/index.js");
 const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
 const entity_1 = __webpack_require__(/*! ./entity */ "./src/entity.ts");
 const fungi_1 = __webpack_require__(/*! ./content/monsters/fungi */ "./src/content/monsters/fungi.ts");
+const randint_1 = __webpack_require__(/*! ./helper/randint */ "./src/helper/randint.ts");
 function startScreen() {
     //Game.Screen.startScreen = {
     return {
@@ -5790,7 +5799,7 @@ function playScreen() {
             }
             // Smoothen it one last time and then update our map
             generator.create((x, y, v) => {
-                if (v === 1) {
+                if (v === 1 || x == 0 || y == 0 || x == mapWidth || x == mapHeight) {
                     game._map._tiles[x][y] = new tiles_1.Tile('Floor', '.', Color.toRGB([0, 0, 0]), Color.toRGB([84, 54, 11]), true, false); //floor
                 }
                 else {
@@ -5864,20 +5873,25 @@ function playScreen() {
                         game.switchScreen(game.Screen.playScreen);
                         break;
                     case constants_1.KEYS.VK_LEFT:
-                        game._player.move(-1, 0, game._map);
+                        game._entities[0].move(-1, 0, game._map);
                         break;
                     case constants_1.KEYS.VK_DOWN:
-                        game._player.move(0, 1, game._map);
+                        game._entities[0].move(0, 1, game._map);
                         break;
                     case constants_1.KEYS.VK_UP:
-                        game._player.move(0, -1, game._map);
+                        game._entities[0].move(0, -1, game._map);
                         break;
                     case constants_1.KEYS.VK_RIGHT:
-                        game._player.move(1, 0, game._map);
+                        game._entities[0].move(1, 0, game._map);
                         break;
                     default:
                         break;
                 }
+            }
+            if (inputType === 'click') {
+                let xx = randint_1.randint(-5, 5);
+                let yy = randint_1.randint(-5, 5);
+                game._entities[0].move(xx, yy, game._map);
             }
         }
     };

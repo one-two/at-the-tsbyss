@@ -119,8 +119,7 @@ export class Map {
             if ( x >= this._width) x = this._width-1;
             if ( x <= 0) x = 0;
             if ( y >= this._height) y = this._height-1;
-            if ( y <= 0) x = 0;
-            if (this._tiles[x] == undefined) console.log('x: ' + x + ' y: ' + y);
+            if ( y <= 0) y = 0;
             return !this._tiles[x][y]._blocksLight;
         });
 

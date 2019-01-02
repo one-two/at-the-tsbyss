@@ -7,6 +7,7 @@ import * as maps from "../lib/map"
 import { Glyph } from "./glyph";
 import { Entity } from "./entity";
 import { Fungi } from "./content/monsters/fungi";
+import { randint } from "./helper/randint";
 
 export function startScreen() {
     //Game.Screen.startScreen = {
@@ -59,7 +60,7 @@ export function playScreen() {
             }
             // Smoothen it one last time and then update our map
             generator.create((x,y,v) => {
-                if (v === 1) {
+                if (v === 1 || x == 0 || y == 0 || x == mapWidth || x == mapHeight) {
                     game._map._tiles[x][y] = new Tile('Floor', '.', Color.toRGB([0,0,0]) , Color.toRGB([84, 54, 11]), true, false); //floor
                 } else {
                     game._map._tiles[x][y] = new Tile('Wall', '#', 'black', 'goldenrod', false, true, true);
@@ -149,21 +150,26 @@ export function playScreen() {
                         game.switchScreen(game.Screen.playScreen);
                         break;
                     case KEYS.VK_LEFT:
-                        game._player.move(-1, 0, game._map);
+                        game._entities[0].move(-1, 0, game._map);
                         break;
                     case KEYS.VK_DOWN:
-                        game._player.move(0, 1, game._map);
+                        game._entities[0].move(0, 1, game._map);
                         break;
                     case KEYS.VK_UP:
-                        game._player.move(0, -1, game._map);
+                        game._entities[0].move(0, -1, game._map);
                         break;
                     case KEYS.VK_RIGHT:
-                        game._player.move(1, 0, game._map);
+                        game._entities[0].move(1, 0, game._map);
                         break;
                     default:
                         break;
                 }
-            }    
+            }
+            if (inputType === 'click') {
+                let xx = randint(-5, 5);
+                let yy = randint(-5, 5);
+                game._entities[0].move(xx, yy, game._map);
+            }
         }
     }
 }

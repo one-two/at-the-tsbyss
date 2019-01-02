@@ -50,6 +50,14 @@ export class Game {
 				this._currentScreen.render(this._display, this);
 			}
 		});
+		// add event listener to table
+		var el = document.getElementById("hit");
+		el.addEventListener("click", e => {
+			console.log('hey');
+			this._currentScreen.handleInput("click", e, this);
+			this._display.clear();
+			this._currentScreen.render(this._display, this);
+		});
 	}
 
 	getDisplay() {
@@ -109,3 +117,5 @@ window.onload = function() {
 	game.switchScreen(game.Screen.startScreen);
 }
 
+
+  
