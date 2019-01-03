@@ -8,7 +8,8 @@ import { Glyph } from "./glyph";
 
 
 export class Game {
-	_display : any;
+	_display : Display;
+	_inventory: Display;
 	_currentScreen : any;
 	_screenWidth: number = 100;
 	_screenHeight: number = 36;
@@ -38,11 +39,17 @@ export class Game {
 	init() {
 		// Any necessary initialization will go here.
 		this._display = new Display({width: this._screenWidth, height: this._screenHeight});
+		console.log(this._display);
+		this._inventory = new Display({width: 10, height: this._screenHeight});
+		this._inventory.drawText(0, 1, 'ola');
 		//let game = this; // So that we don't lose this
 		let event = "keydown";
+
+		let menu = document.getElementById("menu")
 		window.addEventListener(event, e => {
 			// When an event is received, send it to the
 			// screen if there is one
+			
 			if (this._currentScreen !== null) {
 				// Send the event type and data to the screen
 				this._currentScreen.handleInput(event, e, this);
@@ -50,9 +57,9 @@ export class Game {
 				this._currentScreen.render(this._display, this);
 			}
 		});
-		// add event listener to table
-		var el = document.getElementById("hit");
-		el.addEventListener("click", e => {
+		//add event listener to inv
+		menu.addEventListener("click", e => {
+			console.log(this._inventory.eventToPosition(e));
 			console.log('hey');
 			this._currentScreen.handleInput("click", e, this);
 			this._display.clear();
@@ -62,6 +69,10 @@ export class Game {
 
 	getDisplay() {
 		return this._display;
+	}
+
+	getInventory() {
+		return this._inventory;
 	}
 
 	switchScreen(screen : any) {
@@ -112,7 +123,14 @@ window.onload = function() {
 	game._entities = [game._player];
 	game.init();
 	// Add the container to our HTML page
-	document.body.appendChild(game.getDisplay().getContainer());
+	let doc = document.getElementById("game");
+	doc.appendChild(game.getDisplay().getContainer());
+	let inv = document.getElementById("menu");
+	inv.appendChild(game.getInventory().getContainer());
+
+	//doc = game.getDisplay().getContainer();
+	//document.body.appendChild(game.getDisplay().getContainer());
+	console.log(document.body);
 	// Load the start screen
 	game.switchScreen(game.Screen.startScreen);
 }

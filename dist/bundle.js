@@ -5359,8 +5359,12 @@ class Game {
     init() {
         // Any necessary initialization will go here.
         this._display = new index_1.Display({ width: this._screenWidth, height: this._screenHeight });
+        console.log(this._display);
+        this._inventory = new index_1.Display({ width: 10, height: this._screenHeight });
+        this._inventory.drawText(0, 1, 'ola');
         //let game = this; // So that we don't lose this
         let event = "keydown";
+        let menu = document.getElementById("menu");
         window.addEventListener(event, e => {
             // When an event is received, send it to the
             // screen if there is one
@@ -5371,9 +5375,9 @@ class Game {
                 this._currentScreen.render(this._display, this);
             }
         });
-        // add event listener to table
-        var el = document.getElementById("hit");
-        el.addEventListener("click", e => {
+        //add event listener to inv
+        menu.addEventListener("click", e => {
+            console.log(this._inventory.eventToPosition(e));
             console.log('hey');
             this._currentScreen.handleInput("click", e, this);
             this._display.clear();
@@ -5382,6 +5386,9 @@ class Game {
     }
     getDisplay() {
         return this._display;
+    }
+    getInventory() {
+        return this._inventory;
     }
     switchScreen(screen) {
         // If we had a screen before, notify it that we exited
@@ -5427,7 +5434,13 @@ window.onload = function () {
     game._entities = [game._player];
     game.init();
     // Add the container to our HTML page
-    document.body.appendChild(game.getDisplay().getContainer());
+    let doc = document.getElementById("game");
+    doc.appendChild(game.getDisplay().getContainer());
+    let inv = document.getElementById("menu");
+    inv.appendChild(game.getInventory().getContainer());
+    //doc = game.getDisplay().getContainer();
+    //document.body.appendChild(game.getDisplay().getContainer());
+    console.log(document.body);
     // Load the start screen
     game.switchScreen(game.Screen.startScreen);
 };
@@ -5694,9 +5707,7 @@ class Map {
             if (y >= this._height)
                 y = this._height - 1;
             if (y <= 0)
-                x = 0;
-            if (this._tiles[x] == undefined)
-                console.log('x: ' + x + ' y: ' + y);
+                y = 0;
             return !this._tiles[x][y]._blocksLight;
         });
         fov.compute(this._entities[0].x, this._entities[0].y, this._entities[0].sight, (x, y, r, visibility) => {
