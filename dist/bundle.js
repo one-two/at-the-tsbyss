@@ -5170,6 +5170,81 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ "./src/components/fighter.ts":
+/*!***********************************!*\
+  !*** ./src/components/fighter.ts ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Fighter {
+    constructor(hp, def, atk, xp) {
+        this.hp = hp;
+        this.base_max_hp = hp;
+        this.base_defense = def;
+        this.base_power = atk;
+        this.xp = xp;
+    }
+    power() {
+        let bonus = 0;
+        if (this.owner != undefined && this.owner.equipment != undefined) {
+            bonus = this.owner.equipment.power_bonus;
+        }
+        return this.base_power + bonus;
+    }
+    defense() {
+        let bonus = 0;
+        if (this.owner != undefined && this.owner.equipment != undefined) {
+            bonus = this.owner.equipment.defense_bonus;
+        }
+        return this.base_defense + bonus;
+    }
+    max_hp() {
+        let bonus = 0;
+        if (this.owner != undefined && this.owner.equipment != undefined) {
+            bonus = this.owner.equipment.hp_bonus;
+        }
+        return this.base_max_hp + bonus;
+    }
+    takeDamage(amount) {
+        let results = [];
+        this.hp -= amount;
+        if (this.hp <= 0) {
+            this.hp = 0;
+            results.append({ 'dead': this.owner, 'xp': this.xp });
+        }
+        return results;
+    }
+    heal(amount) {
+        this.hp += amount;
+        if (this.hp > this.max_hp()) {
+            this.hp = this.max_hp();
+        }
+    }
+    attack(target) {
+        let results = [];
+        let damage = this.power() - target.fighter.defense();
+        if (damage > 0) {
+            // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(
+            //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
+            // results.extend(target.fighter.take_damage(damage))
+        }
+        else {
+            // results.append({'message': Message('{0} ataca {1}, mas defendeu. 1 de dano.'.format(
+            //     this.owner.name.capitalize(), target.name), libtcod.white)})
+            // results.extend(target.fighter.take_damage(1))
+        }
+        return results;
+    }
+}
+exports.Fighter = Fighter;
+
+
+/***/ }),
+
 /***/ "./src/content/monsters/fungi.ts":
 /*!***************************************!*\
   !*** ./src/content/monsters/fungi.ts ***!
@@ -5255,14 +5330,6 @@ exports.Orc = Orc;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class Entity {
-    // item
-    // inventory
-    // cooldown
-    // maxCooldown 
-    // damage
-    // stairs
-    // level
-    // equipment
     // equippable
     constructor(x, y, glyph, name, size = 0, blocks = false, maxStamina = 0, render_order = 99, fighter = undefined, ai = undefined, item = undefined, inventory = undefined, damage = undefined, stairs = undefined, level = undefined, equipment = undefined, equippable = undefined, _map = undefined, _entities = undefined) {
         this.x = x;
@@ -5277,12 +5344,17 @@ class Entity {
         this.stamina = 0;
         this._map = _map;
         this.ai = ai;
+        this.fighter = fighter;
+        this.equipment = equipment;
         if (this.ai != undefined) {
             this.ai.entity = this;
             this.ai.startCountDown(this.maxStamina);
         }
         else
             this.sight = 15;
+        if (this.fighter != undefined) {
+            this.fighter.owner = this;
+        }
     }
     move(dx, dy, map) {
         let tx = this.x + dx;
@@ -5337,10 +5409,12 @@ const index_1 = __webpack_require__(/*! ../lib/index */ "./lib/index.js");
 const entity_1 = __webpack_require__(/*! ./entity */ "./src/entity.ts");
 const screens_1 = __webpack_require__(/*! ./screens */ "./src/screens.ts");
 const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
+const fighter_1 = __webpack_require__(/*! ./components/fighter */ "./src/components/fighter.ts");
+const messages_1 = __webpack_require__(/*! ./messages */ "./src/messages.ts");
 class Game {
     constructor() {
-        this._screenWidth = 100;
-        this._screenHeight = 36;
+        this._screenWidth = 90;
+        this._screenHeight = 30;
         this._entities = [];
         this.timer = true;
         this._centerX = 0;
@@ -5359,8 +5433,8 @@ class Game {
     init() {
         // Any necessary initialization will go here.
         this._display = new index_1.Display({ width: this._screenWidth, height: this._screenHeight });
-        console.log(this._display);
         this._inventory = new index_1.Display({ width: 10, height: this._screenHeight });
+        this._messaging = new index_1.Display({ width: this._screenWidth, height: 8 });
         this._inventory.drawText(0, 1, 'ola');
         //let game = this; // So that we don't lose this
         let event = "keydown";
@@ -5368,6 +5442,7 @@ class Game {
         window.addEventListener(event, e => {
             // When an event is received, send it to the
             // screen if there is one
+            console.log(this._player);
             if (this._currentScreen !== null) {
                 // Send the event type and data to the screen
                 this._currentScreen.handleInput(event, e, this);
@@ -5383,12 +5458,28 @@ class Game {
             this._display.clear();
             this._currentScreen.render(this._display, this);
         });
+        let log = new messages_1.Messagelog(0, 100, 10);
+        log.addMessage(new messages_1.Message("teste1"));
+        log.addMessage(new messages_1.Message("teste%c{red}2%c{} !"));
+        log.addMessage(new messages_1.Message("teste%c{#00cc00}3%c{} heh"));
+        this.writeMessages(log);
     }
     getDisplay() {
         return this._display;
     }
     getInventory() {
         return this._inventory;
+    }
+    getMessaging() {
+        return this._messaging;
+    }
+    writeMessages(log) {
+        let x = 0;
+        for (const iterator of log.messages) {
+            console.log(iterator.text);
+            this._messaging.drawText(1, x, iterator.text);
+            x += 1;
+        }
     }
     switchScreen(screen) {
         // If we had a screen before, notify it that we exited
@@ -5429,7 +5520,8 @@ exports.Game = Game;
 window.onload = function () {
     let game = new Game();
     // Initialize the game
-    let player = new entity_1.Entity(200, 150, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 0, undefined, 5);
+    let fighter = new fighter_1.Fighter(30, 1, 4, 0);
+    let player = new entity_1.Entity(200, 150, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 0, undefined, 5, 1, fighter);
     game._player = player;
     game._entities = [game._player];
     game.init();
@@ -5438,6 +5530,8 @@ window.onload = function () {
     doc.appendChild(game.getDisplay().getContainer());
     let inv = document.getElementById("menu");
     inv.appendChild(game.getInventory().getContainer());
+    let msg = document.getElementById("info");
+    msg.appendChild(game.getMessaging().getContainer());
     //doc = game.getDisplay().getContainer();
     //document.body.appendChild(game.getDisplay().getContainer());
     console.log(document.body);
@@ -5487,6 +5581,7 @@ const entity_1 = __webpack_require__(/*! ../entity */ "./src/entity.ts");
 const fungi_1 = __webpack_require__(/*! ../content/monsters/fungi */ "./src/content/monsters/fungi.ts");
 const orc_1 = __webpack_require__(/*! ../content/monsters/orc */ "./src/content/monsters/orc.ts");
 const glyph_1 = __webpack_require__(/*! ../glyph */ "./src/glyph.ts");
+const fighter_1 = __webpack_require__(/*! ../components/fighter */ "./src/components/fighter.ts");
 function CreateMonster(monster_choice, x, y) {
     if (monster_choice == 'fungi') {
         let ai_component = new fungi_1.Fungi();
@@ -5494,9 +5589,9 @@ function CreateMonster(monster_choice, x, y) {
         return monster;
     }
     else if (monster_choice == 'orc') {
-        //fighter_component = Fighter(hp=20, defense=0, power=4, xp=35)
+        let fighter_component = new fighter_1.Fighter(20, 0, 4, 35);
         let ai_component = new orc_1.Orc();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', 'black', 'green'), 'orc', 1, true, 5, 99, undefined, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', 'black', 'green'), 'orc', 1, true, 5, 99, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'troll') {
@@ -5737,6 +5832,41 @@ class Map {
     }
 }
 exports.Map = Map;
+
+
+/***/ }),
+
+/***/ "./src/messages.ts":
+/*!*************************!*\
+  !*** ./src/messages.ts ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Message {
+    constructor(text) {
+        this.text = text;
+    }
+}
+exports.Message = Message;
+class Messagelog {
+    constructor(x, width, height) {
+        this.messages = [];
+        this.x = x;
+        this.width = width;
+        this.height = height;
+    }
+    addMessage(message) {
+        if (this.messages.length == this.height) {
+            this.messages.shift();
+        }
+        this.messages.push(message);
+    }
+}
+exports.Messagelog = Messagelog;
 
 
 /***/ }),

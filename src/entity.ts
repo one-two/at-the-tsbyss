@@ -1,5 +1,6 @@
 import { Glyph } from "./glyph";
 import { Map } from "./map";
+import { Fighter } from "./components/fighter";
 
 export class Entity {
     x: number;
@@ -13,7 +14,7 @@ export class Entity {
     maxStamina: number;
     stamina: number;
     _map: Map;
-    // fighter
+    fighter: Fighter;
     ai: any;
     sight: number;
     // item
@@ -23,11 +24,11 @@ export class Entity {
     // damage
     // stairs
     // level
-    // equipment
+    equipment: any;
     // equippable
 
     constructor(x:number, y:number, glyph: Glyph, name: string, size:number = 0, blocks: boolean = false, maxStamina:number=0,
-        render_order:number = 99, fighter: any = undefined, ai: any = undefined,
+        render_order:number = 99, fighter: Fighter = undefined, ai: any = undefined,
         item: any = undefined, inventory: any = undefined, damage: any = undefined, stairs: any = undefined, level: any = undefined, 
         equipment: any = undefined, equippable: any = undefined, _map: Map = undefined, _entities: Entity[] = undefined) {
             this.x = x;
@@ -42,11 +43,17 @@ export class Entity {
             this.stamina = 0;
             this._map = _map;
             this.ai = ai;
+            this.fighter = fighter;
+            this.equipment = equipment;
 
             if (this.ai != undefined) {
                 this.ai.entity = this;
                 this.ai.startCountDown(this.maxStamina);
             } else this.sight = 15;
+
+            if (this.fighter != undefined) {
+                this.fighter.owner = this;
+            }
         }
 
     move(dx: number, dy: number, map: Map) {

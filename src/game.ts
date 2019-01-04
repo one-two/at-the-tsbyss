@@ -5,14 +5,17 @@ import { playScreen, startScreen, winScreen, loseScreen } from "./screens";
 import { KEYS } from "../lib/constants";
 import { Objeto } from "./interface/objeto";
 import { Glyph } from "./glyph";
+import { Fighter } from "./components/fighter";
+import { Messagelog, Message } from "./messages";
 
 
 export class Game {
 	_display : Display;
 	_inventory: Display;
+	_messaging: Display;
 	_currentScreen : any;
-	_screenWidth: number = 100;
-	_screenHeight: number = 36;
+	_screenWidth: number = 90;
+	_screenHeight: number = 30;
 	_centerX: number;
 	_centerY: number;
 	Screen : any;
@@ -39,8 +42,8 @@ export class Game {
 	init() {
 		// Any necessary initialization will go here.
 		this._display = new Display({width: this._screenWidth, height: this._screenHeight});
-		console.log(this._display);
 		this._inventory = new Display({width: 10, height: this._screenHeight});
+		this._messaging = new Display({width: this._screenWidth, height: 8});
 		this._inventory.drawText(0, 1, 'ola');
 		//let game = this; // So that we don't lose this
 		let event = "keydown";
@@ -49,6 +52,7 @@ export class Game {
 		window.addEventListener(event, e => {
 			// When an event is received, send it to the
 			// screen if there is one
+			console.log(this._player);
 			
 			if (this._currentScreen !== null) {
 				// Send the event type and data to the screen
@@ -65,6 +69,12 @@ export class Game {
 			this._display.clear();
 			this._currentScreen.render(this._display, this);
 		});
+
+		let log = new Messagelog(0, 100, 10);
+		log.addMessage(new Message("teste1"));
+		log.addMessage(new Message("teste%c{red}2%c{} !"));
+		log.addMessage(new Message("teste%c{#00cc00}3%c{} heh"));
+		this.writeMessages(log);
 	}
 
 	getDisplay() {
@@ -73,6 +83,19 @@ export class Game {
 
 	getInventory() {
 		return this._inventory;
+	}
+
+	getMessaging() {
+		return this._messaging;
+	}
+
+	writeMessages(log: Messagelog) {
+		let x = 0;
+		for (const iterator of log.messages) {
+			console.log(iterator.text);
+			this._messaging.drawText(1, x, iterator.text);
+			x += 1
+		}
 	}
 
 	switchScreen(screen : any) {
@@ -118,7 +141,8 @@ export class Game {
 window.onload = function() {
 	let game = new Game();
 	// Initialize the game
-	let player = new Entity(200, 150, new Glyph('@', 'black', 'deepskyblue'), 'Player', 0, undefined, 5);
+	let fighter = new Fighter(30, 1, 4, 0);
+	let player = new Entity(200, 150, new Glyph('@', 'black', 'deepskyblue'), 'Player', 0, undefined, 5, 1, fighter);
 	game._player = player
 	game._entities = [game._player];
 	game.init();
@@ -127,6 +151,8 @@ window.onload = function() {
 	doc.appendChild(game.getDisplay().getContainer());
 	let inv = document.getElementById("menu");
 	inv.appendChild(game.getInventory().getContainer());
+	let msg = document.getElementById("info");
+	msg.appendChild(game.getMessaging().getContainer());
 
 	//doc = game.getDisplay().getContainer();
 	//document.body.appendChild(game.getDisplay().getContainer());
