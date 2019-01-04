@@ -4975,6 +4975,41 @@ format.map = {
 
 /***/ }),
 
+/***/ "./logo/logo.ts":
+/*!**********************!*\
+  !*** ./logo/logo.ts ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function Logo() {
+    let i = ["%c{black}.%c{}.        . `  .: . :. : .  . :.  .  . . .     . .    '    '' .  .  . ..  ",
+        "%c{black}.%c{}   . .   :` . :   .  .'.' '....xxxxx...,'. '   ' .     ..",
+        "%c{black}.%c{}; . ` .  . : . .' :  . ..XXXXXXXXXXXXXXXXXXXXx.    `     . ",
+        ".    .  .  . . .   .  ..XXXXXXXXWWWWWWWWWWWWWWWWXXX.  .     .     ",
+        "%c{black}.%c{}   ' :  : . : .  ...XXXXXWWW'   W88N88@888888WWWWWXX.   .   .       . .",
+        ". ' .    . :   ...XXXXXXWWW'    M88N88GGGGGG888^8M 'WMBX.          .   ..  :",
+        "%c{black}.%c{}    :     ..XXXXXXXXWWW'     M88888WWRWWWMW8oo88M   WWMX.     .    :    .",
+        "%c{black}.%c{}      'XXXXXXXXXXXXWW'       WN8888WWWWW  W8@@@8M    BMBRX.         .  : :",
+        ".      XXXXXXXX=MMWW':  .      W8N888WWWWWWWW88888W      XRBRXX.  .       .",
+        "%c{black}.%c{}....  ''XXXXXMM::::. .        W8@889WWWWWM8@8N8W      . . :RRXx.    .",
+        "%c{black}.%c{}    ``...'''  MMM::.:.  .      W888N89999888@8W      . . ::::'RXV    .  :",
+        ".       ..'''''   MMMm::.  .      WW888N88888WW     .  . mmMMMMMRXx",
+        "%c{black}.%c{} ..' .            ''MMmm .  .       WWWWWWW   . :. :,miMM'''  : ''`    .",
+        ".                .       ''MMMMmm . .  .  .   ._,mMMMM'''  :  ' .  :",
+        "%c{black}.%c{}          .                  ''MMMMMMMMMMMMM''' .  : . '   .        .",
+        "%c{black}.%c{}     .              .     .    .                      .         .",
+        ".                                         .          .         ."];
+    return i;
+}
+exports.Logo = Logo;
+
+
+/***/ }),
+
 /***/ "./node_modules/process/browser.js":
 /*!*****************************************!*\
   !*** ./node_modules/process/browser.js ***!
@@ -5374,7 +5409,8 @@ class Entity {
             }
             else {
                 if (this.fighter != undefined && this.glyph.char == '@') {
-                    this._map.messageLog.addMessage("this is an attack");
+                    this._map.messageLog.addMessage("you kicked a %c{green}" + targets[0].name + "%c{}!");
+                    this.fighter.hp -= 1;
                 }
                 else {
                     let player = undefined;
@@ -5431,6 +5467,7 @@ const screens_1 = __webpack_require__(/*! ./screens */ "./src/screens.ts");
 const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
 const fighter_1 = __webpack_require__(/*! ./components/fighter */ "./src/components/fighter.ts");
 const messages_1 = __webpack_require__(/*! ./messages */ "./src/messages.ts");
+const logo_1 = __webpack_require__(/*! ../logo/logo */ "./logo/logo.ts");
 class Game {
     constructor() {
         this._messageBoxSize = 10;
@@ -5453,6 +5490,7 @@ class Game {
     }
     init() {
         // Any necessary initialization will go here.
+        this.logo = logo_1.Logo();
         this._display = new index_1.Display({ width: this._screenWidth, height: this._screenHeight });
         this._inventory = new index_1.Display({ width: 10, height: this._screenHeight });
         this._messaging = new index_1.Display({ width: this._screenWidth, height: this._messageBoxSize });
@@ -5928,10 +5966,16 @@ function startScreen() {
         exit: () => {
             console.log("Exited start screen.");
         },
-        render: (display) => {
+        render: (display, game) => {
+            let y = 8;
+            console.log(game.logo);
+            for (const line of game.logo) {
+                display.drawText(20, y, line);
+                y += 1;
+            }
             // Render our prompt to the screen
-            display.drawText(1, 1, "%c{yellow}no rl");
-            display.drawText(1, 2, "Press [Enter] to start!");
+            display.drawText((game._screenWidth / 2) + 6, game._screenHeight - 5, "%c{yellow}tfw no rl");
+            display.drawText((game._screenWidth / 2), game._screenHeight - 3, "Press [Enter] to start");
         },
         handleInput: (inputType, inputData, game) => {
             // When [Enter] is pressed, go to the play screen
@@ -6042,6 +6086,7 @@ function playScreen() {
                         break;
                     case constants_1.KEYS.VK_SPACE:
                         game.switchScreen(game.Screen.playScreen);
+                        game.messageLog.messages = [];
                         break;
                     case constants_1.KEYS.VK_LEFT:
                         game._entities[0].move(-1, 0, game._map);

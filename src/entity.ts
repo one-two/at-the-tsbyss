@@ -72,7 +72,8 @@ export class Entity {
                 this.y2 = ty2;
             } else {
                 if (this.fighter != undefined && this.glyph.char == '@') {
-                    this._map.messageLog.addMessage("this is an attack");
+                    this._map.messageLog.addMessage("you kicked a %c{green}" + targets[0].name + "%c{}!");
+                    this.fighter.hp -=1;
                 } else {
                     let player: any = undefined;
                     targets.forEach(element => {

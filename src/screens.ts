@@ -18,10 +18,17 @@ export function startScreen() {
         exit : () => { 
             console.log("Exited start screen."); 
         },
-        render : (display : any) => {
+        render : (display : any, game: Game) => {
+            let y = 8;
+            console.log(game.logo);
+            for (const line of game.logo) {
+                display.drawText(20,y, line);
+                y+=1;
+            }
+
              // Render our prompt to the screen
-            display.drawText(1,1, "%c{yellow}no rl");
-            display.drawText(1,2, "Press [Enter] to start!");
+            display.drawText((game._screenWidth/2)+6,game._screenHeight-5, "%c{yellow}tfw no rl");
+            display.drawText((game._screenWidth/2),game._screenHeight-3, "Press [Enter] to start");
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {
             // When [Enter] is pressed, go to the play screen
@@ -149,6 +156,7 @@ export function playScreen() {
                         break;
                     case KEYS.VK_SPACE:
                         game.switchScreen(game.Screen.playScreen);
+                        game.messageLog.messages = [];
                         break;
                     case KEYS.VK_LEFT:
                         game._entities[0].move(-1, 0, game._map);

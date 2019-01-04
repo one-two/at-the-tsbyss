@@ -8,6 +8,8 @@ import { Glyph } from "./glyph";
 import { Fighter } from "./components/fighter";
 import { Messagelog } from "./messages";
 import { Map } from "./map";
+import { Logo } from "../logo/logo";
+
 
 
 export class Game {
@@ -26,6 +28,7 @@ export class Game {
 	_player: Entity;
 	_entities: Entity[] = [];
 	timer: boolean = true;
+	logo: any;
 
 	constructor() {
 		this._centerX = 0;
@@ -44,6 +47,10 @@ export class Game {
 
 	init() {
 		// Any necessary initialization will go here.
+		
+		
+		this.logo = Logo();
+		
 		this._display = new Display({width: this._screenWidth, height: this._screenHeight});
 		this._inventory = new Display({width: 10, height: this._screenHeight});
 		this._messaging = new Display({width: this._screenWidth, height: this._messageBoxSize});
