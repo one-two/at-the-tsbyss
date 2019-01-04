@@ -1,14 +1,5 @@
-export class Message {
-    text: string;
-    color: string;
-
-    constructor(text: string) {
-        this.text = text;
-    }
-}
-
 export class Messagelog {
-    messages: Message[];
+    messages: string[];
     x: number;
     width: number;
     height: number;
@@ -20,7 +11,7 @@ export class Messagelog {
         this.height = height;
     }
 
-    addMessage(message: Message) {
+    addMessage(message: string) {
         if (this.messages.length == this.height) {
             this.messages.shift();
         }

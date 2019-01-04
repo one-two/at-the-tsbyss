@@ -70,25 +70,42 @@ export class Entity {
                 this.x2 = tx2;
                 this.y = ty;
                 this.y2 = ty2;
+            } else {
+                if (this.fighter != undefined && this.glyph.char == '@') {
+                    this._map.messageLog.addMessage("this is an attack");
+                } else {
+                    let player: any = undefined;
+                    targets.forEach(element => {
+                        if (element.glyph.char == '@') {
+                            player = element;
+                        }
+                    });
+                    if (this.fighter != undefined && player != undefined) { 
+                        console.log('apanhar');
+                    }
+                }
+
             }
+        } else {
+            if (this.glyph.char == '@') this._map.messageLog.addMessage("this is a %c{goldenrod}wall%c{}!");
         }
     }
 
-    startCountDown(seconds: number){
-        var counter = seconds;
-        var interval = setInterval(() => {
-            //(counter);
-            counter--;
-            if (counter < 0 ) {
+    // startCountDown(seconds: number){
+    //     var counter = seconds;
+    //     var interval = setInterval(() => {
+    //         //(counter);
+    //         counter--;
+    //         if (counter < 0 ) {
                 
-                // code here will run when the counter reaches zero.
+    //             // code here will run when the counter reaches zero.
                 
-                //clearInterval(interval);
-                counter = this.maxStamina;
-                this.act();
-            }	
-        }, 1000);
-    }
+    //             //clearInterval(interval);
+    //             counter = this.maxStamina;
+    //             this.act();
+    //         }	
+    //     }, 1000);
+    // }
 
     act() {
     }

@@ -5372,21 +5372,41 @@ class Entity {
                 this.y = ty;
                 this.y2 = ty2;
             }
+            else {
+                if (this.fighter != undefined && this.glyph.char == '@') {
+                    this._map.messageLog.addMessage("this is an attack");
+                }
+                else {
+                    let player = undefined;
+                    targets.forEach(element => {
+                        if (element.glyph.char == '@') {
+                            player = element;
+                        }
+                    });
+                    if (this.fighter != undefined && player != undefined) {
+                        console.log('apanhar');
+                    }
+                }
+            }
+        }
+        else {
+            if (this.glyph.char == '@')
+                this._map.messageLog.addMessage("this is a %c{goldenrod}wall%c{}!");
         }
     }
-    startCountDown(seconds) {
-        var counter = seconds;
-        var interval = setInterval(() => {
-            //(counter);
-            counter--;
-            if (counter < 0) {
-                // code here will run when the counter reaches zero.
-                //clearInterval(interval);
-                counter = this.maxStamina;
-                this.act();
-            }
-        }, 1000);
-    }
+    // startCountDown(seconds: number){
+    //     var counter = seconds;
+    //     var interval = setInterval(() => {
+    //         //(counter);
+    //         counter--;
+    //         if (counter < 0 ) {
+    //             // code here will run when the counter reaches zero.
+    //             //clearInterval(interval);
+    //             counter = this.maxStamina;
+    //             this.act();
+    //         }	
+    //     }, 1000);
+    // }
     act() {
     }
 }
@@ -5413,6 +5433,7 @@ const fighter_1 = __webpack_require__(/*! ./components/fighter */ "./src/compone
 const messages_1 = __webpack_require__(/*! ./messages */ "./src/messages.ts");
 class Game {
     constructor() {
+        this._messageBoxSize = 10;
         this._screenWidth = 90;
         this._screenHeight = 30;
         this._entities = [];
@@ -5434,7 +5455,8 @@ class Game {
         // Any necessary initialization will go here.
         this._display = new index_1.Display({ width: this._screenWidth, height: this._screenHeight });
         this._inventory = new index_1.Display({ width: 10, height: this._screenHeight });
-        this._messaging = new index_1.Display({ width: this._screenWidth, height: 8 });
+        this._messaging = new index_1.Display({ width: this._screenWidth, height: this._messageBoxSize });
+        this.messageLog = new messages_1.Messagelog(0, this._screenHeight, this._messageBoxSize);
         this._inventory.drawText(0, 1, 'ola');
         //let game = this; // So that we don't lose this
         let event = "keydown";
@@ -5458,11 +5480,10 @@ class Game {
             this._display.clear();
             this._currentScreen.render(this._display, this);
         });
-        let log = new messages_1.Messagelog(0, 100, 10);
-        log.addMessage(new messages_1.Message("teste1"));
-        log.addMessage(new messages_1.Message("teste%c{red}2%c{} !"));
-        log.addMessage(new messages_1.Message("teste%c{#00cc00}3%c{} heh"));
-        this.writeMessages(log);
+        this.messageLog.addMessage("teste1");
+        this.messageLog.addMessage("teste%c{red}2%c{} !");
+        this.messageLog.addMessage("teste%c{#00cc00}3%c{} welcome");
+        this.writeMessages();
     }
     getDisplay() {
         return this._display;
@@ -5473,13 +5494,21 @@ class Game {
     getMessaging() {
         return this._messaging;
     }
-    writeMessages(log) {
+    writeMessages() {
         let x = 0;
-        for (const iterator of log.messages) {
-            console.log(iterator.text);
-            this._messaging.drawText(1, x, iterator.text);
+        for (const message of this.messageLog.messages) {
+            console.log(message);
+            this._messaging.drawText(1, x, message);
             x += 1;
         }
+    }
+    writeStats() {
+        let hp = this._player.fighter.hp;
+        let max_hp = this._player.fighter.max_hp();
+        this._inventory.drawText(1, 1, "Stats: ");
+        this._inventory.drawText(1, 3, "%c{red}HP: %c{}" + hp + "/" + max_hp);
+        this._inventory.drawText(1, 5, "%c{blue}Atk: %c{}" + this._player.fighter.power());
+        this._inventory.drawText(1, 7, "%c{yellow}Def: %c{}" + this._player.fighter.defense());
     }
     switchScreen(screen) {
         // If we had a screen before, notify it that we exited
@@ -5498,6 +5527,12 @@ class Game {
     }
     refresh() {
         this._display.clear();
+        this._messaging.clear();
+        this._inventory.clear();
+        if (this._currentScreen == this.Screen.playScreen) {
+            this.writeMessages();
+            this.writeStats();
+        }
         this._currentScreen.render(this._display, this);
     }
     startCountDown() {
@@ -5846,12 +5881,6 @@ exports.Map = Map;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-class Message {
-    constructor(text) {
-        this.text = text;
-    }
-}
-exports.Message = Message;
 class Messagelog {
     constructor(x, width, height) {
         this.messages = [];
@@ -5950,11 +5979,12 @@ function playScreen() {
             // Sync map and game variables
             game._map._entities = [];
             game._map._entities.push(game._player); //player always [0]
+            game._player._map = game._map;
+            game._map._display = game._display;
+            game._map.messageLog = game.messageLog;
             let ai_component = new fungi_1.Fungi();
             let monster = new entity_1.Entity(201, 151, new glyph_1.Glyph('f', 'black', 'green'), 'fungi', 1, true, 5, 99, undefined, ai_component);
             game._map._entities.push(monster);
-            game._player._map = game._map;
-            game._map._display = game._display;
             game.timer = true;
             game.startCountDown();
             game._map.addEntityToMap();

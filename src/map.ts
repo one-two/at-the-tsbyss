@@ -5,9 +5,11 @@ import { from_dungeon_level, random_choice_from_dict } from "./helper/randFromLe
 import { randint } from "./helper/randint";
 import { CreateMonster } from "./helper/createMonters"
 import { Color, FOV, Display } from "../lib";
+import { Messagelog } from "./messages";
 
 export class Map {
-    _display: any;
+    _display: Display;
+    messageLog: Messagelog;
     _width: number;
     _height: number;
     dungeon_level: number;

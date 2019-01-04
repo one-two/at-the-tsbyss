@@ -6,20 +6,23 @@ import { KEYS } from "../lib/constants";
 import { Objeto } from "./interface/objeto";
 import { Glyph } from "./glyph";
 import { Fighter } from "./components/fighter";
-import { Messagelog, Message } from "./messages";
+import { Messagelog } from "./messages";
+import { Map } from "./map";
 
 
 export class Game {
 	_display : Display;
 	_inventory: Display;
 	_messaging: Display;
+	messageLog: Messagelog;
+	_messageBoxSize: number = 10;
 	_currentScreen : any;
 	_screenWidth: number = 90;
 	_screenHeight: number = 30;
 	_centerX: number;
 	_centerY: number;
 	Screen : any;
-	_map : any;
+	_map : Map;
 	_player: Entity;
 	_entities: Entity[] = [];
 	timer: boolean = true;
@@ -43,7 +46,8 @@ export class Game {
 		// Any necessary initialization will go here.
 		this._display = new Display({width: this._screenWidth, height: this._screenHeight});
 		this._inventory = new Display({width: 10, height: this._screenHeight});
-		this._messaging = new Display({width: this._screenWidth, height: 8});
+		this._messaging = new Display({width: this._screenWidth, height: this._messageBoxSize});
+		this.messageLog = new Messagelog(0, this._screenHeight, this._messageBoxSize);
 		this._inventory.drawText(0, 1, 'ola');
 		//let game = this; // So that we don't lose this
 		let event = "keydown";
@@ -70,11 +74,10 @@ export class Game {
 			this._currentScreen.render(this._display, this);
 		});
 
-		let log = new Messagelog(0, 100, 10);
-		log.addMessage(new Message("teste1"));
-		log.addMessage(new Message("teste%c{red}2%c{} !"));
-		log.addMessage(new Message("teste%c{#00cc00}3%c{} heh"));
-		this.writeMessages(log);
+		this.messageLog.addMessage("teste1");
+		this.messageLog.addMessage("teste%c{red}2%c{} !");
+		this.messageLog.addMessage("teste%c{#00cc00}3%c{} welcome");
+		this.writeMessages();
 	}
 
 	getDisplay() {
@@ -89,13 +92,22 @@ export class Game {
 		return this._messaging;
 	}
 
-	writeMessages(log: Messagelog) {
+	writeMessages() {
 		let x = 0;
-		for (const iterator of log.messages) {
-			console.log(iterator.text);
-			this._messaging.drawText(1, x, iterator.text);
+		for (const message of this.messageLog.messages) {
+			console.log(message);
+			this._messaging.drawText(1, x, message);
 			x += 1
 		}
+	}
+
+	writeStats() {
+		let hp = this._player.fighter.hp;
+		let max_hp = this._player.fighter.max_hp();
+		this._inventory.drawText(1, 1, "Stats: ")
+		this._inventory.drawText(1, 3, "%c{red}HP: %c{}" +hp + "/" +max_hp);
+		this._inventory.drawText(1, 5, "%c{blue}Atk: %c{}"+this._player.fighter.power());
+		this._inventory.drawText(1, 7, "%c{yellow}Def: %c{}"+this._player.fighter.defense());
 	}
 
 	switchScreen(screen : any) {
@@ -116,6 +128,12 @@ export class Game {
 
 	refresh() {
 		this._display.clear();
+		this._messaging.clear();
+		this._inventory.clear();
+		if (this._currentScreen == this.Screen.playScreen) {
+			this.writeMessages();
+			this.writeStats();
+		}
 		this._currentScreen.render(this._display, this);
 	}
 
@@ -130,7 +148,7 @@ export class Game {
                 // code here will run when the counter reaches zero.
 				if (!this.timer) clearInterval(interval);
 				else counter = 1;
-                this.refresh();
+				this.refresh();
             }	
         }, 100);
 	}

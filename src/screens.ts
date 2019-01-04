@@ -69,11 +69,12 @@ export function playScreen() {
             // Sync map and game variables
             game._map._entities = [];
             game._map._entities.push(game._player); //player always [0]
+            game._player._map = game._map;  
+            game._map._display = game._display;
+            game._map.messageLog = game.messageLog;
             let ai_component = new Fungi();
             let monster = new Entity(201, 151, new Glyph('f', 'black', 'green'), 'fungi', 1, true, 5, 99, undefined, ai_component);
             game._map._entities.push(monster);
-            game._player._map = game._map;  
-            game._map._display = game._display;
             game.timer = true;
             game.startCountDown();
             game._map.addEntityToMap();
