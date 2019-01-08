@@ -72,23 +72,25 @@ export class Entity {
                 this.y = ty;
                 this.y2 = ty2;
             } else {
-                console.log('cant move');
-                if (this.fighter != undefined && this.glyph.char == '@') {
-                    this._map.messageLog.addMessage("you kicked a %c{green}" + targets[0].name + "%c{}!");
-                    this.fighter.hp -=1;
-                } else {
-                    let player: any = undefined;
-                    targets.forEach(element => {
-                        if (element.glyph.char == '@') {
-                            player = element;
+                if (this.fighter != undefined) {
+                    if (this.glyph.char == '@') {
+                        this._map.messageLog.addMessage("you kicked a %c{green}" + targets[0].name + "%c{}!");
+                        this.fighter.hp -=1;
+                    } else {
+                        let player: any = undefined;
+                        targets.forEach(element => {
+                            if (element.glyph.char == '@') {
+                                player = element;
+                            }
+                        });
+                        console.log(player);
+                        if (player != undefined) { 
+                            this._map.messageLog.addMessage("you apanhou de um %c{green}" + targets[0].name + "%c{}!");
+                            console.log('apanhar');
                         }
-                    });
-                    console.log(player);
-                    if (this.fighter != undefined && player != undefined) { 
-                        this._map.messageLog.addMessage("you apanhou de um %c{green}" + targets[0].name + "%c{}!");
-                        console.log('apanhar');
                     }
                 }
+
             }
         } else {
             if (this.glyph.char == '@') this._map.messageLog.addMessage("this is a %c{goldenrod}wall%c{}!");
