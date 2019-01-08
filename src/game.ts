@@ -74,8 +74,6 @@ export class Game {
 		});
 		//add event listener to inv
 		menu.addEventListener("click", e => {
-			console.log(this._inventory.eventToPosition(e));
-			console.log('hey');
 			this._currentScreen.handleInput("click", e, this);
 			this._display.clear();
 			this._currentScreen.render(this._display, this);
@@ -102,7 +100,6 @@ export class Game {
 	writeMessages() {
 		let x = 0;
 		for (const message of this.messageLog.messages) {
-			console.log(message);
 			this._messaging.drawText(1, x, message);
 			x += 1
 		}
@@ -157,7 +154,7 @@ export class Game {
 				else counter = 1;
 				this.refresh();
             }	
-        }, 100);
+        }, 50);
 	}
 
 }
@@ -167,7 +164,7 @@ window.onload = function() {
 	let game = new Game();
 	// Initialize the game
 	let fighter = new Fighter(30, 1, 4, 0);
-	let player = new Entity(200, 150, new Glyph('@', 'black', 'deepskyblue'), 'Player', 0, undefined, 5, 1, fighter);
+	let player = new Entity(200, 150, new Glyph('@', 'black', 'deepskyblue'), 'Player', 1, undefined, 5, 1, fighter);
 	game._player = player
 	game._entities = [game._player];
 	game.init();
@@ -181,7 +178,7 @@ window.onload = function() {
 
 	//doc = game.getDisplay().getContainer();
 	//document.body.appendChild(game.getDisplay().getContainer());
-	console.log(document.body);
+	//console.log(document.body);
 	// Load the start screen
 	game.switchScreen(game.Screen.startScreen);
 }

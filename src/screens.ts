@@ -8,6 +8,7 @@ import { Glyph } from "./glyph";
 import { Entity } from "./entity";
 import { Fungi } from "./content/monsters/fungi";
 import { randint } from "./helper/randint";
+import { Fighter } from "./components/fighter";
 
 export function startScreen() {
     //Game.Screen.startScreen = {
@@ -20,7 +21,6 @@ export function startScreen() {
         },
         render : (display : any, game: Game) => {
             let y = 8;
-            console.log(game.logo);
             for (const line of game.logo) {
                 display.drawText(20,y, line);
                 y+=1;
@@ -80,12 +80,13 @@ export function playScreen() {
             game._map._display = game._display;
             game._map.messageLog = game.messageLog;
             let ai_component = new Fungi();
-            let monster = new Entity(201, 151, new Glyph('f', 'black', 'green'), 'fungi', 1, true, 5, 99, undefined, ai_component);
+            let fighter_component = new Fighter(20, 0, 4, 35);
+            let monster = new Entity(201, 151, new Glyph('f', 'black', 'green'), 'fungi', 1, true, 2, 99, fighter_component, ai_component);
+            monster._map = game._map;
             game._map._entities.push(monster);
             game.timer = true;
             game.startCountDown();
-            game._map.addEntityToMap();
-            console.log(game._map._entities);
+            //game._map.addEntityToMap();
             game._entities = game._map._entities;
         },
         exit : () => { console.log("Exited play screen."); 
@@ -125,8 +126,8 @@ export function playScreen() {
             game._map.setupFov(topLeftX, topLeftY);
             for (let i = 0; i < game._entities.length; i++) {
                 //console.log(game._entities[i]);
-                let cell = game._map.getTile(game._entities[0].x, game._entities[0].y) as Tile;
-                if (cell.tile != cell.visitedTile && cell.visited == true) {
+                let cell = game._map.getTile(game._entities[i].x, game._entities[i].y) as Tile;
+                if (cell.visibility > 0) {
                     let dx = Math.pow(game._entities[0].x - game._entities[i].x, 2);
                     let dy = Math.pow(game._entities[0].y - game._entities[i].y, 2);
                     let dist = Math.sqrt(dx+dy);
@@ -147,11 +148,11 @@ export function playScreen() {
             if (inputType === 'keydown') {
                 switch (inputData.keyCode) {
                     case KEYS.VK_RETURN:
-                        game.switchScreen(game.Screen.winScreen);
+                        //game.switchScreen(game.Screen.winScreen);
                         game.timer = false;
                         break;
                     case KEYS.VK_ESCAPE:
-                        game.switchScreen(game.Screen.loseScreen);
+                        //game.switchScreen(game.Screen.loseScreen);
                         game.timer = false;
                         break;
                     case KEYS.VK_SPACE:

@@ -5,6 +5,7 @@ export class Tile {
     tile: Glyph;
     baseTile: Glyph;
     visitedTile: Glyph;
+    visibility: number = 0;
     visited: boolean = false;
     _isWalkable: boolean = false;
     _isDiggable: boolean = false;

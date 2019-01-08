@@ -3,7 +3,7 @@ import { randint } from "../../helper/randint";
 import { Enemy } from "../../helper/enemy";
 
 export class Fungi implements Enemy {
-    entity: Entity;
+    owner: Entity;
 
     startCountDown(seconds: number){
         var counter = seconds;
@@ -15,7 +15,8 @@ export class Fungi implements Enemy {
                 // code here will run when the counter reaches zero.
                 
                 //clearInterval(interval);
-                counter = this.entity.maxStamina;
+                counter = this.owner.maxStamina;
+                console.log(counter);
                 this.act();
             }	
         }, 1000);
@@ -24,7 +25,6 @@ export class Fungi implements Enemy {
     act() {
         let dy = randint(-1,1);
         let dx = randint(-1,1);
-        console.log('fungi move: ' + dx + ' ' + dy)
-        this.entity.move(dx, dy, this.entity._map);
+        this.owner.move(dx, dy, this.owner._map);
     }
 }

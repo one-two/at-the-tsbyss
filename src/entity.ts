@@ -33,8 +33,8 @@ export class Entity {
         equipment: any = undefined, equippable: any = undefined, _map: Map = undefined, _entities: Entity[] = undefined) {
             this.x = x;
             this.y = y;
-            this.x2 = x+size;
-            this.y2 = y+size;
+            this.x2 = x+size-1;
+            this.y2 = y+size-1;
             this.glyph = glyph;
             this.name = name;
             this.blocks = blocks;
@@ -47,8 +47,9 @@ export class Entity {
             this.equipment = equipment;
 
             if (this.ai != undefined) {
-                this.ai.entity = this;
+                this.ai.owner = this;
                 this.ai.startCountDown(this.maxStamina);
+                this.sight = 5;
             } else this.sight = 15;
 
             if (this.fighter != undefined) {
@@ -71,6 +72,7 @@ export class Entity {
                 this.y = ty;
                 this.y2 = ty2;
             } else {
+                console.log('cant move');
                 if (this.fighter != undefined && this.glyph.char == '@') {
                     this._map.messageLog.addMessage("you kicked a %c{green}" + targets[0].name + "%c{}!");
                     this.fighter.hp -=1;
@@ -81,14 +83,16 @@ export class Entity {
                             player = element;
                         }
                     });
+                    console.log(player);
                     if (this.fighter != undefined && player != undefined) { 
+                        this._map.messageLog.addMessage("you apanhou de um %c{green}" + targets[0].name + "%c{}!");
                         console.log('apanhar');
                     }
                 }
-
             }
         } else {
             if (this.glyph.char == '@') this._map.messageLog.addMessage("this is a %c{goldenrod}wall%c{}!");
+            else this._map.messageLog.addMessage("hey fungi, this is a %c{goldenrod}wall%c{}!");
         }
     }
 

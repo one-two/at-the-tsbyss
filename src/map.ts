@@ -108,7 +108,6 @@ export class Map {
     }
 
     lightPasses(x: number,y: number) {
-        console.log(this._tiles[x][y]);
         return this._tiles[x][y]._blocksLight;
     }
 
@@ -129,22 +128,28 @@ export class Map {
             let dx = Math.pow(this._entities[0].x - x, 2);
             let dy = Math.pow(this._entities[0].y - y, 2);
             let dist = Math.sqrt(dx+dy);
-
             if (x < 0 || x >= this._width || y < 0 || y >= this._height) {
                 return;
             }
-            let fogRGB = Color.fromString(this._tiles[x][y].baseTile.foreground);
-            if (dist <= this._entities[0].sight-2) {
-                if (dist <= this._entities[0].sight/2) this._tiles[x][y].visited = true;
-                let perc = 1-((dist)/this._entities[0].sight)+0.2;
-                this._tiles[x][y].tile.foreground = Color.toRGB([Math.floor(fogRGB[0]*perc), Math.floor(fogRGB[1]*perc), Math.floor(fogRGB[2]*perc)]);
+            if (visibility == 0 ) {
+                this._tiles[x][y].visibility = visibility;
+            } else {
+                let fogRGB = Color.fromString(this._tiles[x][y].baseTile.foreground);
+                let perc = visibility + 0.1
+                this._tiles[x][y].visibility = visibility;
+                if (dist <= this._entities[0].sight-2) {
+                    if (dist <= this._entities[0].sight/2) this._tiles[x][y].visited = true;
+                    perc = 1-((dist)/this._entities[0].sight)+0.2;
+                    
+                    this._tiles[x][y].tile.foreground = Color.toRGB([Math.floor(fogRGB[0]*perc), Math.floor(fogRGB[1]*perc), Math.floor(fogRGB[2]*perc)]);
+                }
+                else {
+                    this._tiles[x][y].tile.foreground = Color.toRGB([Math.floor(fogRGB[0]*0.2), Math.floor(fogRGB[1]*0.2), Math.floor(fogRGB[2]*0.2)]);
+                }
+                
+                this._display.draw(x - topleftX, y - topleftY, this._tiles[x][y].tile.char, this._tiles[x][y].tile.foreground, 'black');
             }
-            else {
-                this._tiles[x][y].tile.foreground = Color.toRGB([Math.floor(fogRGB[0]*0.2), Math.floor(fogRGB[1]*0.2), Math.floor(fogRGB[2]*0.2)]);
-            }
-            
-            //console.log('draw at: ' + x + ', ' + y);
-            this._display.draw(x - topleftX, y - topleftY, this._tiles[x][y].tile.char, this._tiles[x][y].tile.foreground, 'black');
+
         })
         //this._fov.push(new FOV.DiscreteShadowcasting(this.lightPasses(x,y)) ) 
     }
