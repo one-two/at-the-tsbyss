@@ -5215,6 +5215,7 @@ process.umask = function() { return 0; };
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const deathFunction_1 = __webpack_require__(/*! ../helper/deathFunction */ "./src/helper/deathFunction.ts");
 class Fighter {
     constructor(hp, def, atk, xp) {
         this.hp = hp;
@@ -5222,6 +5223,7 @@ class Fighter {
         this.base_defense = def;
         this.base_power = atk;
         this.xp = xp;
+        this.status = 'normal';
     }
     power() {
         let bonus = 0;
@@ -5245,13 +5247,12 @@ class Fighter {
         return this.base_max_hp + bonus;
     }
     takeDamage(amount) {
-        let results = [];
         this.hp -= amount;
         if (this.hp <= 0) {
             this.hp = 0;
-            results.append({ 'dead': this.owner, 'xp': this.xp });
+            this.owner._map.messageLog.addMessage("%c{" + this.owner.glyph.foreground + "}" + this.owner.name + "%c{} morreu");
+            deathFunction_1.deathFunction(this.owner);
         }
-        return results;
     }
     heal(amount) {
         this.hp += amount;
@@ -5260,19 +5261,19 @@ class Fighter {
         }
     }
     attack(target) {
-        let results = [];
+        let result;
         let damage = this.power() - target.fighter.defense();
         if (damage > 0) {
             // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
+            target.fighter.takeDamage(damage);
+            result = this.owner.name + " bateu em um %c{" + target.glyph.foreground + "}" + target.name + "%c{} com " + damage + " de dano! (" + target.fighter.hp + ")";
         }
         else {
-            // results.append({'message': Message('{0} ataca {1}, mas defendeu. 1 de dano.'.format(
-            //     this.owner.name.capitalize(), target.name), libtcod.white)})
-            // results.extend(target.fighter.take_damage(1))
+            result = this.owner.name + " bateu em um %c{" + target.glyph.foreground + "}" + target.name + "%c{} mas não causou dano!";
         }
-        return results;
+        return result;
     }
 }
 exports.Fighter = Fighter;
@@ -5299,7 +5300,9 @@ class Fungi {
             counter--;
             if (counter < 0) {
                 // code here will run when the counter reaches zero.
-                //clearInterval(interval);
+                if (this.owner.fighter.hp == 0) {
+                    clearInterval(interval);
+                }
                 counter = this.owner.maxStamina;
                 console.log(counter);
                 this.act();
@@ -5409,22 +5412,23 @@ class Entity {
                 this.y2 = ty2;
             }
             else {
-                console.log('cant move');
-                if (this.fighter != undefined && this.glyph.char == '@') {
-                    this._map.messageLog.addMessage("you kicked a %c{green}" + targets[0].name + "%c{}!");
-                    this.fighter.hp -= 1;
-                }
-                else {
-                    let player = undefined;
-                    targets.forEach(element => {
-                        if (element.glyph.char == '@') {
-                            player = element;
+                if (this.fighter != undefined) {
+                    if (this.glyph.char == '@') {
+                        let result = this.fighter.attack(targets[0]);
+                        this._map.messageLog.addMessage(result);
+                    }
+                    else {
+                        let player = undefined;
+                        targets.forEach(element => {
+                            if (element.glyph.char == '@') {
+                                player = element;
+                            }
+                        });
+                        console.log(player);
+                        if (player != undefined) {
+                            let result = this.fighter.attack(player);
+                            this._map.messageLog.addMessage(result);
                         }
-                    });
-                    console.log(player);
-                    if (this.fighter != undefined && player != undefined) {
-                        this._map.messageLog.addMessage("you apanhou de um %c{green}" + targets[0].name + "%c{}!");
-                        console.log('apanhar');
                     }
                 }
             }
@@ -5700,6 +5704,29 @@ exports.CreateMonster = CreateMonster;
 
 /***/ }),
 
+/***/ "./src/helper/deathFunction.ts":
+/*!*************************************!*\
+  !*** ./src/helper/deathFunction.ts ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const glyph_1 = __webpack_require__(/*! ../glyph */ "./src/glyph.ts");
+function deathFunction(entity) {
+    let deadG = new glyph_1.Glyph('%', 'black', 'darkred');
+    entity.glyph = deadG;
+    entity.blocks = false;
+    entity.render_order = 99;
+    entity.fighter.status = 'dead';
+}
+exports.deathFunction = deathFunction;
+
+
+/***/ }),
+
 /***/ "./src/helper/randFromLevel.ts":
 /*!*************************************!*\
   !*** ./src/helper/randFromLevel.ts ***!
@@ -5814,7 +5841,7 @@ class Map {
         for (let index = 0; index < this._entities.length; index++) {
             for (let i = x; i <= x2; i++) {
                 for (let j = y; j <= y2; j++) {
-                    if (this._entities[index].x == i && this._entities[index].y == j) {
+                    if (this._entities[index].x == i && this._entities[index].y == j && this._entities[index].blocks == true) {
                         targets.push(this._entities[index]);
                     }
                 }
@@ -5982,7 +6009,7 @@ function startScreen() {
                 y += 1;
             }
             // Render our prompt to the screen
-            display.drawText((game._screenWidth / 2) + 6, game._screenHeight - 5, "%c{yellow}tfw no rl");
+            display.drawText((game._screenWidth / 2) + 6, game._screenHeight - 5, "%c{yellow}tfw no rl7");
             display.drawText((game._screenWidth / 2), game._screenHeight - 3, "Press [Enter] to start");
         },
         handleInput: (inputType, inputData, game) => {
@@ -6035,13 +6062,13 @@ function playScreen() {
             game._map._display = game._display;
             game._map.messageLog = game.messageLog;
             let ai_component = new fungi_1.Fungi();
-            let fighter_component = new fighter_1.Fighter(20, 0, 4, 35);
-            let monster = new entity_1.Entity(201, 151, new glyph_1.Glyph('f', 'black', 'green'), 'fungi', 1, true, 2, 99, fighter_component, ai_component);
+            let fighter_component = new fighter_1.Fighter(20, 0, 1, 35);
+            let monster = new entity_1.Entity(201, 151, new glyph_1.Glyph('f', 'black', '#0000aa'), 'fungi', 1, true, 2, 2, fighter_component, ai_component);
             monster._map = game._map;
             game._map._entities.push(monster);
             game.timer = true;
             game.startCountDown();
-            //game._map.addEntityToMap();
+            game._map.addEntityToMap();
             game._entities = game._map._entities;
         },
         exit: () => {
@@ -6069,7 +6096,8 @@ function playScreen() {
                 }
             }
             game._map.setupFov(topLeftX, topLeftY);
-            for (let i = 0; i < game._entities.length; i++) {
+            game._entities = entityRenderSort(game);
+            for (let i = game._entities.length - 1; i >= 0; i--) {
                 //console.log(game._entities[i]);
                 let cell = game._map.getTile(game._entities[i].x, game._entities[i].y);
                 if (cell.visibility > 0) {
@@ -6164,6 +6192,22 @@ function loseScreen() {
     };
 }
 exports.loseScreen = loseScreen;
+function entityRenderSort(game) {
+    return game._entities.sort(function (a, b) {
+        if (a.render_order == b.render_order)
+            return 0;
+        if (a.render_order == 1)
+            return -1;
+        if (b.render_order == 1)
+            return 1;
+        if (a.render_order < b.render_order)
+            return -1;
+        if (a.render_order > b.render_order)
+            return 1;
+        return 0;
+    });
+}
+exports.entityRenderSort = entityRenderSort;
 
 
 /***/ }),

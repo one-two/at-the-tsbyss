@@ -1,0 +1,27 @@
+Todo list to fill the void of our souls (but i really want to make it web)
+
+- [X] Walls
+- [X] Rooms
+- [X] Random Rooms
+- [X] Random Paths
+- [X] FOV
+- [X] raycasting
+- [X] NPC
+- [X] Collision with NPC
+- [ ] Basic monster ai (chase and 'hit')
+- [ ] Lateral movement when within range
+- [ ] trade damages (push targets)
+- [X] basic UI
+- [X] Message logging
+- [ ] Use itens (basic potions)
+- [ ] Press space for AoE
+- [ ] Better put some save/load system early, like, now
+- [ ] Refactor code for constants and save/load artifacts
+- [ ] Leveling/xp system
+- [ ] Equipments/spell/stuff for progress (change parameters with pickups)
+- [X] decide on how player will attack
+- [X] State machines? sorta
+- [ ] Monster attack patterns
+- [ ] Attack stamina != moving stamina
+- [ ] Exits
+- [ ] Larger mobs?

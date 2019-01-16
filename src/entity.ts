@@ -74,8 +74,8 @@ export class Entity {
             } else {
                 if (this.fighter != undefined) {
                     if (this.glyph.char == '@') {
-                        this._map.messageLog.addMessage("you kicked a %c{green}" + targets[0].name + "%c{}!");
-                        this.fighter.hp -=1;
+                        let result = this.fighter.attack(targets[0])
+                        this._map.messageLog.addMessage(result);
                     } else {
                         let player: any = undefined;
                         targets.forEach(element => {
@@ -85,8 +85,8 @@ export class Entity {
                         });
                         console.log(player);
                         if (player != undefined) { 
-                            this._map.messageLog.addMessage("you apanhou de um %c{green}" + targets[0].name + "%c{}!");
-                            console.log('apanhar');
+                            let result = this.fighter.attack(player)
+                            this._map.messageLog.addMessage(result);
                         }
                     }
                 }

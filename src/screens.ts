@@ -27,7 +27,7 @@ export function startScreen() {
             }
 
              // Render our prompt to the screen
-            display.drawText((game._screenWidth/2)+6,game._screenHeight-5, "%c{yellow}tfw no rl");
+            display.drawText((game._screenWidth/2)+6,game._screenHeight-5, "%c{yellow}tfw no rl7");
             display.drawText((game._screenWidth/2),game._screenHeight-3, "Press [Enter] to start");
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {
@@ -80,14 +80,16 @@ export function playScreen() {
             game._map._display = game._display;
             game._map.messageLog = game.messageLog;
             let ai_component = new Fungi();
-            let fighter_component = new Fighter(20, 0, 4, 35);
-            let monster = new Entity(201, 151, new Glyph('f', 'black', 'green'), 'fungi', 1, true, 2, 99, fighter_component, ai_component);
+            let fighter_component = new Fighter(20, 0, 1, 35);
+            let monster = new Entity(201, 151, new Glyph('f', 'black', '#0000aa'), 'fungi', 1, true, 2, 2, fighter_component, ai_component);
             monster._map = game._map;
             game._map._entities.push(monster);
             game.timer = true;
             game.startCountDown();
-            //game._map.addEntityToMap();
+            game._map.addEntityToMap();
+            
             game._entities = game._map._entities;
+
         },
         exit : () => { console.log("Exited play screen."); 
         },
@@ -124,7 +126,9 @@ export function playScreen() {
                 }
             }
             game._map.setupFov(topLeftX, topLeftY);
-            for (let i = 0; i < game._entities.length; i++) {
+            game._map._entities = entityRenderSort(game);
+            game._entities = game._map._entities;
+            for (let i = game._entities.length-1; i >= 0; i--) {
                 //console.log(game._entities[i]);
                 let cell = game._map.getTile(game._entities[i].x, game._entities[i].y) as Tile;
                 if (cell.visibility > 0) {
@@ -140,7 +144,6 @@ export function playScreen() {
                             game._entities[i].glyph.background);
                     }
                 }
-
             }
 
         },
@@ -224,4 +227,18 @@ export function loseScreen() {
             // Nothing to do here      
         }
     }
+}
+
+export function entityRenderSort(game: Game ) {
+    return game._entities.sort(function (a: Entity, b: Entity) {
+        if(a.render_order == b.render_order) return 0;
+        if (a.render_order == 1) return -1;
+        if (b.render_order == 1) return 1;
+      
+        if (a.render_order < b.render_order)
+            return -1;
+        if (a.render_order > b.render_order)
+            return 1;
+        return 0;
+      });
 }

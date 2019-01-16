@@ -51,7 +51,7 @@ export class Map {
         for (let index = 0; index < this._entities.length; index++) {
             for (let i = x; i <= x2; i++) {
                 for (let j = y; j <= y2; j++) {
-                    if (this._entities[index].x == i && this._entities[index].y == j) {
+                    if (this._entities[index].x == i && this._entities[index].y == j && this._entities[index].blocks == true) {
                         targets.push(this._entities[index]);
                     }
                 }
@@ -95,6 +95,11 @@ export class Map {
                     console.log('what');
                     emptyspace = false;
                 }
+
+            }
+
+            if (this.getTile(x, y)._isWalkable == false) {
+                emptyspace = false;
             }
 
             if (emptyspace == true) {
@@ -102,6 +107,8 @@ export class Map {
                 let q = CreateMonster(monster_choice, x, y);
                 q._map = this;
                 this._entities.push(q);
+            } else {
+                index -= 1;
             }
         }
         return null;

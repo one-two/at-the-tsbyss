@@ -1,6 +1,7 @@
 import { Entity } from "../../entity";
 import { randint } from "../../helper/randint";
 import { Enemy } from "../../helper/enemy";
+import { deathFunction } from "../../helper/deathFunction";
 
 export class Fungi implements Enemy {
     owner: Entity;
@@ -13,8 +14,9 @@ export class Fungi implements Enemy {
             if (counter < 0 ) {
                 
                 // code here will run when the counter reaches zero.
-                
-                //clearInterval(interval);
+                if (this.owner.fighter.hp == 0) {
+                    clearInterval(interval);
+                }
                 counter = this.owner.maxStamina;
                 console.log(counter);
                 this.act();

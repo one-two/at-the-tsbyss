@@ -1,4 +1,5 @@
 import { Entity } from "../entity";
+import { deathFunction } from "../helper/deathFunction";
 
 export class Fighter {
     owner: Entity;
@@ -8,6 +9,7 @@ export class Fighter {
     base_defense: number;
     base_power: number
     xp: number;
+    status: string;
 
     constructor(hp: number, def: number, atk: number, xp: number) {
         this.hp = hp;
@@ -15,6 +17,7 @@ export class Fighter {
         this.base_defense = def;
         this.base_power = atk;
         this.xp = xp;
+        this.status = 'normal'
     }
 
     power() {
@@ -42,13 +45,12 @@ export class Fighter {
     }
 
     takeDamage(amount: number){
-        let results:any = [];
         this.hp -= amount
         if (this.hp <= 0) {
             this.hp = 0
-            results.append({'dead' : this.owner, 'xp': this.xp})
+            this.owner._map.messageLog.addMessage("%c{"+ this.owner.glyph.foreground +"}" + this.owner.name + "%c{} morreu")
+            deathFunction(this.owner)
         }
-        return results
     }
 
     heal(amount: number) {
@@ -59,18 +61,18 @@ export class Fighter {
     }
 
     attack(target: Entity) {
-        let results:any = [];
+        let result: string;
         let damage = this.power() - target.fighter.defense();
 
         if (damage > 0) {
             // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
+            target.fighter.takeDamage(damage)
+            result = this.owner.name + " bateu em um %c{" + target.glyph.foreground +"}" + target.name + "%c{} com "+ damage + " de dano! (" +target.fighter.hp +")";
         } else {
-            // results.append({'message': Message('{0} ataca {1}, mas defendeu. 1 de dano.'.format(
-            //     this.owner.name.capitalize(), target.name), libtcod.white)})
-            // results.extend(target.fighter.take_damage(1))
+            result = this.owner.name + " bateu em um %c{" + target.glyph.foreground +"}" + target.name + "%c{} mas não causou dano!";
         }
-        return results
+        return result
     }
 }

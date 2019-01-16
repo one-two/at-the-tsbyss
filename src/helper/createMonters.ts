@@ -6,14 +6,15 @@ import { Fighter } from "../components/fighter";
 
 export function CreateMonster(monster_choice: string, x: number, y: number): Entity{
     if (monster_choice == 'fungi') {
+        let fighter_component = new Fighter(20, 0, 4, 35)
         let ai_component = new Fungi();
-        let monster = new Entity(x, y, new Glyph('f', 'black', 'green'), 'fungi', 1, true, 5, 99, undefined, ai_component);
+        let monster = new Entity(x, y, new Glyph('f', 'black', 'green'), 'fungi', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'orc') {
         let fighter_component = new Fighter(20, 0, 4, 35)
         let ai_component = new Orc();
-        let monster = new Entity(x, y, new Glyph('o', 'black', 'green'), 'orc', 1, true, 5, 99, fighter_component, ai_component);
+        let monster = new Entity(x, y, new Glyph('o', 'black', 'green'), 'orc', 1, true, 5, 2, fighter_component, ai_component);
         return monster
     }
     else if (monster_choice == 'troll') {
