@@ -60,6 +60,14 @@ export class Map {
         return targets;
     }
 
+    getPlayer(): Entity {
+        let player: Entity;
+        for (let index = 0; index < this._entities.length; index++) {
+            if (this._entities[index].glyph.char == '@') player = this._entities[index];
+        }
+        return player;
+    }
+
     addEntityToMap(): void {
         let max_monsters_per_room = from_dungeon_level([[20, 1], [3, 4], [5, 6]], this.dungeon_level)
         let max_items_per_room = from_dungeon_level([[1, 1], [2, 4]], this.dungeon_level)

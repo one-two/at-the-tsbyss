@@ -5303,16 +5303,28 @@ class Fungi {
                 if (this.owner.fighter.hp == 0) {
                     clearInterval(interval);
                 }
-                counter = this.owner.maxStamina;
-                console.log(counter);
-                this.act();
+                else {
+                    counter = this.owner.maxStamina;
+                    this.act();
+                }
             }
         }, 1000);
     }
     act() {
-        let dy = randint_1.randint(-1, 1);
-        let dx = randint_1.randint(-1, 1);
-        this.owner.move(dx, dy, this.owner._map);
+        let player = this.owner._map.getPlayer();
+        let dist = Math.sqrt(Math.pow((player.x - this.owner.x), 2) + Math.pow((player.y - this.owner.y), 2));
+        console.log('px: ' + player.x + ' py: ' + player.y);
+        console.log('x: ' + this.owner.x + ' y: ' + this.owner.y);
+        console.log('dist: ' + dist);
+        if (dist < this.owner.sight) {
+            console.log('dist: ' + dist);
+            this.owner.hunt(player);
+        }
+        else {
+            let dy = randint_1.randint(-1, 1);
+            let dx = randint_1.randint(-1, 1);
+            this.owner.move(dx, dy, this.owner._map);
+        }
     }
 }
 exports.Fungi = Fungi;
@@ -5367,6 +5379,7 @@ exports.Orc = Orc;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const lib_1 = __webpack_require__(/*! ../lib */ "./lib/index.js");
 class Entity {
     // equippable
     constructor(x, y, glyph, name, size = 0, blocks = false, maxStamina = 0, render_order = 99, fighter = undefined, ai = undefined, item = undefined, inventory = undefined, damage = undefined, stairs = undefined, level = undefined, equipment = undefined, equippable = undefined, _map = undefined, _entities = undefined) {
@@ -5387,10 +5400,10 @@ class Entity {
         if (this.ai != undefined) {
             this.ai.owner = this;
             this.ai.startCountDown(this.maxStamina);
-            this.sight = 5;
+            this.sight = 10;
         }
         else
-            this.sight = 15;
+            this.sight = 12;
         if (this.fighter != undefined) {
             this.fighter.owner = this;
         }
@@ -5412,25 +5425,6 @@ class Entity {
                 this.y2 = ty2;
             }
             else {
-                if (this.fighter != undefined) {
-                    if (this.glyph.char == '@') {
-                        let result = this.fighter.attack(targets[0]);
-                        this._map.messageLog.addMessage(result);
-                    }
-                    else {
-                        let player = undefined;
-                        targets.forEach(element => {
-                            if (element.glyph.char == '@') {
-                                player = element;
-                            }
-                        });
-                        console.log(player);
-                        if (player != undefined) {
-                            let result = this.fighter.attack(player);
-                            this._map.messageLog.addMessage(result);
-                        }
-                    }
-                }
             }
         }
         else {
@@ -5439,6 +5433,51 @@ class Entity {
             else
                 this._map.messageLog.addMessage("hey fungi, this is a %c{goldenrod}wall%c{}!");
         }
+    }
+    attack(targets) {
+        if (this.fighter != undefined) {
+            if (this.glyph.char == '@') {
+                let result = this.fighter.attack(targets[0]);
+                this._map.messageLog.addMessage(result);
+            }
+            else {
+                let player = undefined;
+                targets.forEach(element => {
+                    if (element.glyph.char == '@') {
+                        player = element;
+                    }
+                });
+                if (player != undefined) {
+                    let result = this.fighter.attack(player);
+                    this._map.messageLog.addMessage(result);
+                }
+            }
+        }
+    }
+    hunt(player) {
+        let source = this;
+        var path = new lib_1.Path.AStar(player.x, player.y, function (x, y) {
+            // If an entity is present at the tile, can't move there.
+            let entity = source._map.getEntitiesAt(this.x1, this.x2, this.y1, this.y2);
+            if (entity.length > 0) {
+                return false;
+            }
+            return source._map.getTile(x, y)._isWalkable;
+        }, { topology: 8 });
+        var count = 0;
+        path.compute(source.x, source.y, function (x, y) {
+            if (count == 1) {
+                let dx = x - source.x;
+                let dy = y - source.y;
+                console.log("dx:" + dx + " dy: " + dy);
+                source.move(dx, dy, source._map);
+                console.log('hunt');
+                return;
+            }
+            count++;
+        });
+    }
+    wander() {
     }
     // startCountDown(seconds: number){
     //     var counter = seconds;
@@ -5512,7 +5551,7 @@ class Game {
         window.addEventListener(event, e => {
             // When an event is received, send it to the
             // screen if there is one
-            console.log(this._player);
+            //console.log(this._player);
             if (this._currentScreen !== null) {
                 // Send the event type and data to the screen
                 this._currentScreen.handleInput(event, e, this);
@@ -5664,14 +5703,15 @@ const glyph_1 = __webpack_require__(/*! ../glyph */ "./src/glyph.ts");
 const fighter_1 = __webpack_require__(/*! ../components/fighter */ "./src/components/fighter.ts");
 function CreateMonster(monster_choice, x, y) {
     if (monster_choice == 'fungi') {
+        let fighter_component = new fighter_1.Fighter(20, 0, 4, 35);
         let ai_component = new fungi_1.Fungi();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('f', 'black', 'green'), 'fungi', 1, true, 5, 99, undefined, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('f', 'black', 'green'), 'fungi', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'orc') {
         let fighter_component = new fighter_1.Fighter(20, 0, 4, 35);
         let ai_component = new orc_1.Orc();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', 'black', 'green'), 'orc', 1, true, 5, 99, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', 'black', 'green'), 'orc', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'troll') {
@@ -5849,6 +5889,14 @@ class Map {
         }
         return targets;
     }
+    getPlayer() {
+        let player;
+        for (let index = 0; index < this._entities.length; index++) {
+            if (this._entities[index].glyph.char == '@')
+                player = this._entities[index];
+        }
+        return player;
+    }
     addEntityToMap() {
         let max_monsters_per_room = randFromLevel_1.from_dungeon_level([[20, 1], [3, 4], [5, 6]], this.dungeon_level);
         let max_items_per_room = randFromLevel_1.from_dungeon_level([[1, 1], [2, 4]], this.dungeon_level);
@@ -5881,11 +5929,17 @@ class Map {
                     emptyspace = false;
                 }
             }
+            if (this.getTile(x, y)._isWalkable == false) {
+                emptyspace = false;
+            }
             if (emptyspace == true) {
                 let monster_choice = randFromLevel_1.random_choice_from_dict(monster_chances);
                 let q = createMonters_1.CreateMonster(monster_choice, x, y);
                 q._map = this;
                 this._entities.push(q);
+            }
+            else {
+                index -= 1;
             }
         }
         return null;
@@ -6009,7 +6063,7 @@ function startScreen() {
                 y += 1;
             }
             // Render our prompt to the screen
-            display.drawText((game._screenWidth / 2) + 6, game._screenHeight - 5, "%c{yellow}tfw no rl7");
+            display.drawText((game._screenWidth / 2) + 6, game._screenHeight - 5, "%c{yellow}tfw no rl4");
             display.drawText((game._screenWidth / 2), game._screenHeight - 3, "Press [Enter] to start");
         },
         handleInput: (inputType, inputData, game) => {
@@ -6068,7 +6122,7 @@ function playScreen() {
             game._map._entities.push(monster);
             game.timer = true;
             game.startCountDown();
-            game._map.addEntityToMap();
+            //game._map.addEntityToMap();
             game._entities = game._map._entities;
         },
         exit: () => {
@@ -6096,7 +6150,8 @@ function playScreen() {
                 }
             }
             game._map.setupFov(topLeftX, topLeftY);
-            game._entities = entityRenderSort(game);
+            game._map._entities = entityRenderSort(game);
+            game._entities = game._map._entities;
             for (let i = game._entities.length - 1; i >= 0; i--) {
                 //console.log(game._entities[i]);
                 let cell = game._map.getTile(game._entities[i].x, game._entities[i].y);
