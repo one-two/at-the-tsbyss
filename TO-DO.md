@@ -8,9 +8,9 @@ Todo list to fill the void of our souls (but i really want to make it web)
 - [X] raycasting
 - [X] NPC
 - [X] Collision with NPC
-- [ ] Basic monster ai (chase and 'hit')
+- [X] Basic monster ai (chase and 'hit')
 - [ ] Lateral movement when within range
-- [ ] trade damages (push targets)
+- [X] trade damages (push targets)
 - [X] basic UI
 - [X] Message logging
 - [ ] Use itens (basic potions)
@@ -24,4 +24,4 @@ Todo list to fill the void of our souls (but i really want to make it web)
 - [ ] Monster attack patterns
 - [ ] Attack stamina != moving stamina
 - [ ] Exits
-- [ ] Larger mobs?
+- [X] Larger mobs?
