@@ -28,16 +28,11 @@ export class Fungi implements Enemy {
     act() {
         let player = this.owner._map.getPlayer();
         let dist = Math.sqrt( (player.x - this.owner.x)**2+(player.y - this.owner.y)**2 );
-        console.log('px: ' + player.x + ' py: ' + player.y);
-        console.log('x: ' + this.owner.x + ' y: ' + this.owner.y);
-        console.log('dist: ' + dist)
         if (dist < this.owner.sight) {
             console.log('dist: ' + dist)
             this.owner.hunt(player);
         } else {
-            let dy = randint(-1,1);
-            let dx = randint(-1,1);
-            this.owner.move(dx, dy, this.owner._map);
+            this.owner.wander();
         }
     }
 }

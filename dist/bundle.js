@@ -5291,7 +5291,6 @@ exports.Fighter = Fighter;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const randint_1 = __webpack_require__(/*! ../../helper/randint */ "./src/helper/randint.ts");
 class Fungi {
     startCountDown(seconds) {
         var counter = seconds;
@@ -5313,17 +5312,12 @@ class Fungi {
     act() {
         let player = this.owner._map.getPlayer();
         let dist = Math.sqrt(Math.pow((player.x - this.owner.x), 2) + Math.pow((player.y - this.owner.y), 2));
-        console.log('px: ' + player.x + ' py: ' + player.y);
-        console.log('x: ' + this.owner.x + ' y: ' + this.owner.y);
-        console.log('dist: ' + dist);
         if (dist < this.owner.sight) {
             console.log('dist: ' + dist);
             this.owner.hunt(player);
         }
         else {
-            let dy = randint_1.randint(-1, 1);
-            let dx = randint_1.randint(-1, 1);
-            this.owner.move(dx, dy, this.owner._map);
+            this.owner.wander();
         }
     }
 }
@@ -5380,6 +5374,7 @@ exports.Orc = Orc;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const lib_1 = __webpack_require__(/*! ../lib */ "./lib/index.js");
+const randint_1 = __webpack_require__(/*! ./helper/randint */ "./src/helper/randint.ts");
 class Entity {
     // equippable
     constructor(x, y, glyph, name, size = 0, blocks = false, maxStamina = 0, render_order = 99, fighter = undefined, ai = undefined, item = undefined, inventory = undefined, damage = undefined, stairs = undefined, level = undefined, equipment = undefined, equippable = undefined, _map = undefined, _entities = undefined) {
@@ -5425,6 +5420,7 @@ class Entity {
                 this.y2 = ty2;
             }
             else {
+                this.attack(targets);
             }
         }
         else {
@@ -5469,15 +5465,22 @@ class Entity {
             if (count == 1) {
                 let dx = x - source.x;
                 let dy = y - source.y;
-                console.log("dx:" + dx + " dy: " + dy);
                 source.move(dx, dy, source._map);
-                console.log('hunt');
+            }
+            if (count > 1) {
                 return;
             }
             count++;
         });
     }
     wander() {
+        let dy = 0;
+        let dx = 0;
+        while (dy == 0 && dx == 0) {
+            dy = randint_1.randint(-1, 1);
+            dx = randint_1.randint(-1, 1);
+        }
+        this.move(dx, dy, this._map);
     }
     // startCountDown(seconds: number){
     //     var counter = seconds;
@@ -5640,7 +5643,7 @@ window.onload = function () {
     let game = new Game();
     // Initialize the game
     let fighter = new fighter_1.Fighter(30, 1, 4, 0);
-    let player = new entity_1.Entity(200, 150, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 1, undefined, 5, 1, fighter);
+    let player = new entity_1.Entity(200, 150, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 1, true, 5, 1, fighter);
     game._player = player;
     game._entities = [game._player];
     game.init();
@@ -5651,9 +5654,6 @@ window.onload = function () {
     inv.appendChild(game.getInventory().getContainer());
     let msg = document.getElementById("info");
     msg.appendChild(game.getMessaging().getContainer());
-    //doc = game.getDisplay().getContainer();
-    //document.body.appendChild(game.getDisplay().getContainer());
-    //console.log(document.body);
     // Load the start screen
     game.switchScreen(game.Screen.startScreen);
 };
@@ -5925,7 +5925,6 @@ class Map {
             let emptyspace = true;
             for (let index = 0; index < this._entities.length; index++) {
                 if (this._entities[index].x == x && this._entities[index].y == y) {
-                    console.log('what');
                     emptyspace = false;
                 }
             }
@@ -6063,7 +6062,7 @@ function startScreen() {
                 y += 1;
             }
             // Render our prompt to the screen
-            display.drawText((game._screenWidth / 2) + 6, game._screenHeight - 5, "%c{yellow}tfw no rl4");
+            display.drawText((game._screenWidth / 2) + 6, game._screenHeight - 5, "%c{yellow}tfw no rl5");
             display.drawText((game._screenWidth / 2), game._screenHeight - 3, "Press [Enter] to start");
         },
         handleInput: (inputType, inputData, game) => {
@@ -6116,7 +6115,7 @@ function playScreen() {
             game._map._display = game._display;
             game._map.messageLog = game.messageLog;
             let ai_component = new fungi_1.Fungi();
-            let fighter_component = new fighter_1.Fighter(20, 0, 1, 35);
+            let fighter_component = new fighter_1.Fighter(20, 0, 3, 35);
             let monster = new entity_1.Entity(201, 151, new glyph_1.Glyph('f', 'black', '#0000aa'), 'fungi', 1, true, 2, 2, fighter_component, ai_component);
             monster._map = game._map;
             game._map._entities.push(monster);

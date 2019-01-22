@@ -100,7 +100,6 @@ export class Map {
             let emptyspace = true;
             for (let index = 0; index < this._entities.length; index++) {
                 if (this._entities[index].x == x && this._entities[index].y == y) {
-                    console.log('what');
                     emptyspace = false;
                 }
 

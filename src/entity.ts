@@ -2,6 +2,7 @@ import { Glyph } from "./glyph";
 import { Map } from "./map";
 import { Fighter } from "./components/fighter";
 import { Path } from "../lib";
+import { randint } from "./helper/randint";
 
 export class Entity {
     x: number;
@@ -73,7 +74,7 @@ export class Entity {
                 this.y = ty;
                 this.y2 = ty2;
             } else {
-                
+                this.attack(targets);
             }
         } else {
             if (this.glyph.char == '@') this._map.messageLog.addMessage("this is a %c{goldenrod}wall%c{}!");
@@ -116,16 +117,23 @@ export class Entity {
             if (count == 1) {
                 let dx = x - source.x;
                 let dy = y - source.y;
-                console.log("dx:" + dx + " dy: "+ dy);
                 source.move(dx, dy, source._map);
-                console.log('hunt');
+            }
+            if (count > 1) {
+                return;
             }
             count++;
         });
     }
 
     wander() {
-
+        let dy = 0;
+        let dx = 0
+        while ( dy ==0 && dx == 0) {
+            dy = randint(-1,1);
+            dx = randint(-1,1);
+        }
+        this.move(dx, dy, this._map);
     }
 
     // startCountDown(seconds: number){

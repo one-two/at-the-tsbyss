@@ -27,7 +27,7 @@ export function startScreen() {
             }
 
              // Render our prompt to the screen
-            display.drawText((game._screenWidth/2)+6,game._screenHeight-5, "%c{yellow}tfw no rl4");
+            display.drawText((game._screenWidth/2)+6,game._screenHeight-5, "%c{yellow}tfw no rl5");
             display.drawText((game._screenWidth/2),game._screenHeight-3, "Press [Enter] to start");
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {
@@ -44,8 +44,8 @@ export function startScreen() {
 export function playScreen() {
     return {
         enter : (game : Game) => {
-            let mapWidth = 300;
-            let mapHeight = 300;
+            let mapWidth = 120;
+            let mapHeight = 90;
             game._map = new Map(mapWidth, mapHeight);
             let emptyTile = new Tile('Empty', ' ', 'black', 'white', true, false, false);
             console.log("Entered play screen.");
@@ -80,7 +80,7 @@ export function playScreen() {
             game._map._display = game._display;
             game._map.messageLog = game.messageLog;
             let ai_component = new Fungi();
-            let fighter_component = new Fighter(20, 0, 1, 35);
+            let fighter_component = new Fighter(20, 0, 3, 35);
             let monster = new Entity(201, 151, new Glyph('f', 'black', '#0000aa'), 'fungi', 1, true, 2, 2, fighter_component, ai_component);
             monster._map = game._map;
             game._map._entities.push(monster);
