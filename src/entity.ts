@@ -97,6 +97,8 @@ export class Entity {
                 if (player != undefined) { 
                     let result = this.fighter.attack(player)
                     this._map.messageLog.addMessage(result);
+                } else {
+                    
                 }
             }
         }
