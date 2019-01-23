@@ -16,20 +16,20 @@ export class Fungi implements Enemy {
                 // code here will run when the counter reaches zero.
                 if (this.owner.fighter.hp == 0) {
                     clearInterval(interval);
+                    deathFunction(this.owner);
                 }
                 else {
                     counter = this.owner.maxStamina;
                     this.act();
                 }
             }	
-        }, 1000);
+        }, 100);
     }
 
     act() {
         let player = this.owner._map.getPlayer();
         let dist = Math.sqrt( (player.x - this.owner.x)**2+(player.y - this.owner.y)**2 );
         if (dist < this.owner.sight) {
-            console.log('dist: ' + dist)
             this.owner.hunt(player);
         } else {
             this.owner.wander();

@@ -164,7 +164,7 @@ window.onload = function() {
 	let game = new Game();
 	// Initialize the game
 	let fighter = new Fighter(30, 1, 4, 0);
-	let player = new Entity(200, 150, new Glyph('@', 'black', 'deepskyblue'), 'Player', 1, true, 5, 1, fighter);
+	let player = new Entity(60, 45, new Glyph('@', 'black', 'deepskyblue'), 'Player', 1, true, 5, 1, fighter);
 	game._player = player
 	game._entities = [game._player];
 	game.init();

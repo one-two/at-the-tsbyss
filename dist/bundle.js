@@ -5291,6 +5291,7 @@ exports.Fighter = Fighter;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const deathFunction_1 = __webpack_require__(/*! ../../helper/deathFunction */ "./src/helper/deathFunction.ts");
 class Fungi {
     startCountDown(seconds) {
         var counter = seconds;
@@ -5301,19 +5302,19 @@ class Fungi {
                 // code here will run when the counter reaches zero.
                 if (this.owner.fighter.hp == 0) {
                     clearInterval(interval);
+                    deathFunction_1.deathFunction(this.owner);
                 }
                 else {
                     counter = this.owner.maxStamina;
                     this.act();
                 }
             }
-        }, 1000);
+        }, 100);
     }
     act() {
         let player = this.owner._map.getPlayer();
         let dist = Math.sqrt(Math.pow((player.x - this.owner.x), 2) + Math.pow((player.y - this.owner.y), 2));
         if (dist < this.owner.sight) {
-            console.log('dist: ' + dist);
             this.owner.hunt(player);
         }
         else {
@@ -5336,7 +5337,7 @@ exports.Fungi = Fungi;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const randint_1 = __webpack_require__(/*! ../../helper/randint */ "./src/helper/randint.ts");
+const deathFunction_1 = __webpack_require__(/*! ../../helper/deathFunction */ "./src/helper/deathFunction.ts");
 class Orc {
     startCountDown(seconds) {
         var counter = seconds;
@@ -5345,17 +5346,26 @@ class Orc {
             counter--;
             if (counter < 0) {
                 // code here will run when the counter reaches zero.
-                //clearInterval(interval);
-                counter = this.owner.maxStamina;
-                this.act();
+                if (this.owner.fighter.hp == 0) {
+                    clearInterval(interval);
+                    deathFunction_1.deathFunction(this.owner);
+                }
+                else {
+                    counter = this.owner.maxStamina;
+                    this.act();
+                }
             }
-        }, 1000);
+        }, 100);
     }
     act() {
-        let dy = randint_1.randint(-1, 1);
-        let dx = randint_1.randint(-1, 1);
-        //console.log('orc move: ' + dx + ' ' + dy)
-        this.owner.move(dx, dy, this.owner._map);
+        let player = this.owner._map.getPlayer();
+        let dist = Math.sqrt(Math.pow((player.x - this.owner.x), 2) + Math.pow((player.y - this.owner.y), 2));
+        if (dist < this.owner.sight) {
+            this.owner.hunt(player);
+        }
+        else {
+            this.owner.wander();
+        }
     }
 }
 exports.Orc = Orc;
@@ -5643,7 +5653,7 @@ window.onload = function () {
     let game = new Game();
     // Initialize the game
     let fighter = new fighter_1.Fighter(30, 1, 4, 0);
-    let player = new entity_1.Entity(200, 150, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 1, true, 5, 1, fighter);
+    let player = new entity_1.Entity(60, 45, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 1, true, 5, 1, fighter);
     game._player = player;
     game._entities = [game._player];
     game.init();
@@ -6062,7 +6072,7 @@ function startScreen() {
                 y += 1;
             }
             // Render our prompt to the screen
-            display.drawText((game._screenWidth / 2) + 6, game._screenHeight - 5, "%c{yellow}tfw no rl5");
+            display.drawText((game._screenWidth / 2) + 6, game._screenHeight - 5, "%c{yellow}tfw no rl6");
             display.drawText((game._screenWidth / 2), game._screenHeight - 3, "Press [Enter] to start");
         },
         handleInput: (inputType, inputData, game) => {
@@ -6079,8 +6089,8 @@ exports.startScreen = startScreen;
 function playScreen() {
     return {
         enter: (game) => {
-            let mapWidth = 300;
-            let mapHeight = 300;
+            let mapWidth = 120;
+            let mapHeight = 90;
             game._map = new map_1.Map(mapWidth, mapHeight);
             let emptyTile = new tiles_1.Tile('Empty', ' ', 'black', 'white', true, false, false);
             console.log("Entered play screen.");
@@ -6093,7 +6103,7 @@ function playScreen() {
                 }
             }
             let generator = new maps.default.Cellular(mapWidth, mapHeight);
-            generator.randomize(0.6);
+            generator.randomize(0.66);
             let totalIterations = 3;
             // Iteratively smoothen the map
             for (let i = 0; i < totalIterations - 1; i++) {
@@ -6116,12 +6126,12 @@ function playScreen() {
             game._map.messageLog = game.messageLog;
             let ai_component = new fungi_1.Fungi();
             let fighter_component = new fighter_1.Fighter(20, 0, 3, 35);
-            let monster = new entity_1.Entity(201, 151, new glyph_1.Glyph('f', 'black', '#0000aa'), 'fungi', 1, true, 2, 2, fighter_component, ai_component);
+            let monster = new entity_1.Entity(60, 47, new glyph_1.Glyph('f', 'black', '#0000aa'), 'fungi', 1, true, 2, 2, fighter_component, ai_component);
             monster._map = game._map;
             game._map._entities.push(monster);
             game.timer = true;
             game.startCountDown();
-            //game._map.addEntityToMap();
+            game._map.addEntityToMap();
             game._entities = game._map._entities;
         },
         exit: () => {

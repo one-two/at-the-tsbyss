@@ -1,6 +1,7 @@
 import { Entity } from "../../entity";
 import { randint } from "../../helper/randint";
 import { Enemy } from "../../helper/enemy";
+import { deathFunction } from "../../helper/deathFunction";
 
 export class Orc implements Enemy {
     owner: Entity;
@@ -13,18 +14,25 @@ export class Orc implements Enemy {
             if (counter < 0 ) {
                 
                 // code here will run when the counter reaches zero.
-                
-                //clearInterval(interval);
-                counter = this.owner.maxStamina;
-                this.act();
+                if (this.owner.fighter.hp == 0) {
+                    clearInterval(interval);
+                    deathFunction(this.owner);
+                }
+                else {
+                    counter = this.owner.maxStamina;
+                    this.act();
+                }
             }	
-        }, 1000);
+        }, 100);
     }
 
     act() {
-        let dy = randint(-1,1);
-        let dx = randint(-1,1);
-        //console.log('orc move: ' + dx + ' ' + dy)
-        this.owner.move(dx, dy, this.owner._map);
+        let player = this.owner._map.getPlayer();
+        let dist = Math.sqrt( (player.x - this.owner.x)**2+(player.y - this.owner.y)**2 );
+        if (dist < this.owner.sight) {
+            this.owner.hunt(player);
+        } else {
+            this.owner.wander();
+        }
     }
 }

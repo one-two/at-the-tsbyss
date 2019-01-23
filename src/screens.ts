@@ -27,7 +27,7 @@ export function startScreen() {
             }
 
              // Render our prompt to the screen
-            display.drawText((game._screenWidth/2)+6,game._screenHeight-5, "%c{yellow}tfw no rl5");
+            display.drawText((game._screenWidth/2)+6,game._screenHeight-5, "%c{yellow}tfw no rl6");
             display.drawText((game._screenWidth/2),game._screenHeight-3, "Press [Enter] to start");
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {
@@ -59,7 +59,7 @@ export function playScreen() {
             }
 
             let generator = new maps.default.Cellular(mapWidth, mapHeight);
-            generator.randomize(0.6);
+            generator.randomize(0.66);
             let totalIterations = 3;
             // Iteratively smoothen the map
             for (let i = 0; i < totalIterations - 1; i++) {
@@ -81,12 +81,12 @@ export function playScreen() {
             game._map.messageLog = game.messageLog;
             let ai_component = new Fungi();
             let fighter_component = new Fighter(20, 0, 3, 35);
-            let monster = new Entity(201, 151, new Glyph('f', 'black', '#0000aa'), 'fungi', 1, true, 2, 2, fighter_component, ai_component);
+            let monster = new Entity(60, 47, new Glyph('f', 'black', '#0000aa'), 'fungi', 1, true, 2, 2, fighter_component, ai_component);
             monster._map = game._map;
             game._map._entities.push(monster);
             game.timer = true;
             game.startCountDown();
-            //game._map.addEntityToMap();
+            game._map.addEntityToMap();
             
             game._entities = game._map._entities;
 
