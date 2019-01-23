@@ -102,9 +102,9 @@ export class Entity {
         }
     }
 
-    hunt(player: Entity){
+    hunt(target: Entity){
         let source = this;
-        var path = new Path.AStar(player.x, player.y, function(x: number, y: number) {
+        var path = new Path.AStar(target.x, target.y, function(x: number, y: number) {
             // If an entity is present at the tile, can't move there.
             let entity = source._map.getEntitiesAt(this.x1, this.x2, this.y1, this.y2);
             if (entity.length > 0) {
