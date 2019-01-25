@@ -28,6 +28,7 @@ export class Fungi implements Enemy {
 
     act() {
         let player = this.owner._map.getPlayer();
+        if (player == undefined) return;
         let dist = Math.sqrt( (player.x - this.owner.x)**2+(player.y - this.owner.y)**2 );
         if (dist < this.owner.sight) {
             this.owner.hunt(player);

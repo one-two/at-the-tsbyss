@@ -9,6 +9,7 @@ import { Entity } from "./entity";
 import { Fungi } from "./content/monsters/fungi";
 import { randint } from "./helper/randint";
 import { Fighter } from "./components/fighter";
+import { Knife } from "./content/itens/knife";
 
 export function startScreen() {
     //Game.Screen.startScreen = {
@@ -27,7 +28,7 @@ export function startScreen() {
             }
 
              // Render our prompt to the screen
-            display.drawText((game._screenWidth/2)+6,game._screenHeight-5, "%c{yellow}tfw no rl6");
+            display.drawText((game._screenWidth/2)+6,game._screenHeight-5, "%c{yellow}tfw no rl3");
             display.drawText((game._screenWidth/2),game._screenHeight-3, "Press [Enter] to start");
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {
@@ -75,6 +76,11 @@ export function playScreen() {
             });
             // Sync map and game variables
             game._map._entities = [];
+
+            // debug stuff
+            let knife = new Knife();
+            knife.owner = game._player;
+            game._player.equipment = knife;
             game._map._entities.push(game._player); //player always [0]
             game._player._map = game._map;  
             game._map._display = game._display;
@@ -84,6 +90,9 @@ export function playScreen() {
             let monster = new Entity(60, 47, new Glyph('f', 'black', '#0000aa'), 'fungi', 1, true, 2, 2, fighter_component, ai_component);
             monster._map = game._map;
             game._map._entities.push(monster);
+
+            //let knifeItem = new Entity()
+
             game.timer = true;
             game.startCountDown();
             game._map.addEntityToMap();
@@ -126,10 +135,11 @@ export function playScreen() {
                 }
             }
             game._map.setupFov(topLeftX, topLeftY);
+            removeExpiredDamage(game._entities)
             game._map._entities = entityRenderSort(game);
             game._entities = game._map._entities;
             for (let i = game._entities.length-1; i >= 0; i--) {
-                //console.log(game._entities[i]);
+                //console.log(game._entities[i]); 
                 let cell = game._map.getTile(game._entities[i].x, game._entities[i].y) as Tile;
                 if (cell.visibility > 0) {
                     let dx = Math.pow(game._entities[0].x - game._entities[i].x, 2);
@@ -145,7 +155,6 @@ export function playScreen() {
                     }
                 }
             }
-
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {
             if (inputType === 'keydown') {
@@ -159,8 +168,9 @@ export function playScreen() {
                         game.timer = false;
                         break;
                     case KEYS.VK_SPACE:
-                        game.switchScreen(game.Screen.playScreen);
-                        game.messageLog.messages = [];
+                        if (game._entities[0].equipment != undefined) {
+                            game._entities[0].equipment.strike();
+                        }
                         break;
                     case KEYS.VK_LEFT:
                         game._entities[0].move(-1, 0, game._map);
@@ -241,4 +251,15 @@ export function entityRenderSort(game: Game ) {
             return 1;
         return 0;
       });
+}
+
+export function removeExpiredDamage(entities: Entity[]) {
+    for (let i = 0; i < entities.length; i++) {
+        if (entities[i].damage != undefined) {
+            if (entities[i].damage.expire) {
+                entities.splice(i, 1);
+                i--;
+            }
+        }
+    }
 }

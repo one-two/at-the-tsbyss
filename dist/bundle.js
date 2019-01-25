@@ -5205,6 +5205,64 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ "./src/components/damageBlock.ts":
+/*!***************************************!*\
+  !*** ./src/components/damageBlock.ts ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const deathFunction_1 = __webpack_require__(/*! ../helper/deathFunction */ "./src/helper/deathFunction.ts");
+class DamageBlock {
+    constructor() {
+        this.expire = false;
+    }
+    startCountDown(seconds) {
+        var counter = seconds;
+        var interval = setInterval(() => {
+            //console.log(counter);
+            counter--;
+            if (counter == 10) {
+                this.owner.glyph.foreground = 'palevioletred';
+            }
+            if (counter < 0) {
+                clearInterval(interval);
+                deathFunction_1.deathFunction(this.owner);
+            }
+        }, 100);
+    }
+}
+exports.DamageBlock = DamageBlock;
+
+
+/***/ }),
+
+/***/ "./src/components/equipment.ts":
+/*!*************************************!*\
+  !*** ./src/components/equipment.ts ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Equipment {
+    constructor() {
+    }
+    strike() {
+    }
+    what() {
+    }
+}
+exports.Equipment = Equipment;
+
+
+/***/ }),
+
 /***/ "./src/components/fighter.ts":
 /*!***********************************!*\
   !*** ./src/components/fighter.ts ***!
@@ -5281,6 +5339,41 @@ exports.Fighter = Fighter;
 
 /***/ }),
 
+/***/ "./src/content/itens/knife.ts":
+/*!************************************!*\
+  !*** ./src/content/itens/knife.ts ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const equipment_1 = __webpack_require__(/*! ../../components/equipment */ "./src/components/equipment.ts");
+const entity_1 = __webpack_require__(/*! ../../entity */ "./src/entity.ts");
+const damageBlock_1 = __webpack_require__(/*! ../../components/damageBlock */ "./src/components/damageBlock.ts");
+const glyph_1 = __webpack_require__(/*! ../../glyph */ "./src/glyph.ts");
+class Knife extends equipment_1.Equipment {
+    constructor() {
+        super();
+        this.power_bonus = 2;
+        this.defense_bonus = 0;
+        this.hp_bonus = 0;
+    }
+    strike() {
+        let dir = this.owner.face;
+        let dmg = new damageBlock_1.DamageBlock();
+        dmg.owner = this.owner;
+        let attack = new entity_1.Entity(this.owner.x, this.owner.y + 2, new glyph_1.Glyph('x', 'black', 'red'), 'strike', 1, false, 0, 5, undefined, undefined, undefined, undefined, dmg);
+        attack.damage.startCountDown(20);
+        this.owner._map._entities.push(attack);
+    }
+}
+exports.Knife = Knife;
+
+
+/***/ }),
+
 /***/ "./src/content/monsters/fungi.ts":
 /*!***************************************!*\
   !*** ./src/content/monsters/fungi.ts ***!
@@ -5313,6 +5406,8 @@ class Fungi {
     }
     act() {
         let player = this.owner._map.getPlayer();
+        if (player == undefined)
+            return;
         let dist = Math.sqrt(Math.pow((player.x - this.owner.x), 2) + Math.pow((player.y - this.owner.y), 2));
         if (dist < this.owner.sight) {
             this.owner.hunt(player);
@@ -5359,6 +5454,8 @@ class Orc {
     }
     act() {
         let player = this.owner._map.getPlayer();
+        if (player == undefined)
+            return;
         let dist = Math.sqrt(Math.pow((player.x - this.owner.x), 2) + Math.pow((player.y - this.owner.y), 2));
         if (dist < this.owner.sight) {
             this.owner.hunt(player);
@@ -5402,6 +5499,9 @@ class Entity {
         this.ai = ai;
         this.fighter = fighter;
         this.equipment = equipment;
+        this.cooldown = 0;
+        this.face = 'n';
+        this.damage = damage;
         if (this.ai != undefined) {
             this.ai.owner = this;
             this.ai.startCountDown(this.maxStamina);
@@ -5412,8 +5512,22 @@ class Entity {
         if (this.fighter != undefined) {
             this.fighter.owner = this;
         }
+        if (this.equipment != undefined) {
+            this.equipment.owner = this;
+        }
+        if (this.damage != undefined) {
+            this.damage.owner = this;
+        }
     }
     move(dx, dy, map) {
+        if (dx == -1)
+            this.face = 'w';
+        if (dx == 1)
+            this.face = 'e';
+        if (dy == -1)
+            this.face = 'n';
+        if (dy == 1)
+            this.face = 's';
         let tx = this.x + dx;
         let tx2 = this.x2 + dx;
         let ty = this.y + dy;
@@ -5434,10 +5548,16 @@ class Entity {
             }
         }
         else {
-            if (this.glyph.char == '@')
-                this._map.messageLog.addMessage("this is a %c{goldenrod}wall%c{}!");
-            else
-                this._map.messageLog.addMessage("hey fungi, this is a %c{goldenrod}wall%c{}!");
+            // if (this.glyph.char == '@') this._map.messageLog.addMessage("this is a %c{goldenrod}wall%c{}!");
+            // else this._map.messageLog.addMessage("hey fungi, this is a %c{goldenrod}wall%c{}!");
+        }
+    }
+    equip(item) {
+        if (this.equipment == undefined) {
+            this.equipment = item.equipment;
+        }
+        else {
+            // colocar na backpack
         }
     }
     attack(targets) {
@@ -5457,12 +5577,14 @@ class Entity {
                     let result = this.fighter.attack(player);
                     this._map.messageLog.addMessage(result);
                 }
+                else {
+                }
             }
         }
     }
-    hunt(player) {
+    hunt(target) {
         let source = this;
-        var path = new lib_1.Path.AStar(player.x, player.y, function (x, y) {
+        var path = new lib_1.Path.AStar(target.x, target.y, function (x, y) {
             // If an entity is present at the tile, can't move there.
             let entity = source._map.getEntitiesAt(this.x1, this.x2, this.y1, this.y2);
             if (entity.length > 0) {
@@ -5766,11 +5888,16 @@ exports.CreateMonster = CreateMonster;
 Object.defineProperty(exports, "__esModule", { value: true });
 const glyph_1 = __webpack_require__(/*! ../glyph */ "./src/glyph.ts");
 function deathFunction(entity) {
-    let deadG = new glyph_1.Glyph('%', 'black', 'darkred');
-    entity.glyph = deadG;
-    entity.blocks = false;
-    entity.render_order = 99;
-    entity.fighter.status = 'dead';
+    if (entity.fighter != undefined) {
+        let deadG = new glyph_1.Glyph('%', 'black', 'darkred');
+        entity.glyph = deadG;
+        entity.blocks = false;
+        entity.render_order = 99;
+        entity.fighter.status = 'dead';
+    }
+    if (entity.damage != undefined) {
+        entity.damage.expire = true;
+    }
 }
 exports.deathFunction = deathFunction;
 
@@ -6056,6 +6183,7 @@ const entity_1 = __webpack_require__(/*! ./entity */ "./src/entity.ts");
 const fungi_1 = __webpack_require__(/*! ./content/monsters/fungi */ "./src/content/monsters/fungi.ts");
 const randint_1 = __webpack_require__(/*! ./helper/randint */ "./src/helper/randint.ts");
 const fighter_1 = __webpack_require__(/*! ./components/fighter */ "./src/components/fighter.ts");
+const knife_1 = __webpack_require__(/*! ./content/itens/knife */ "./src/content/itens/knife.ts");
 function startScreen() {
     //Game.Screen.startScreen = {
     return {
@@ -6072,7 +6200,7 @@ function startScreen() {
                 y += 1;
             }
             // Render our prompt to the screen
-            display.drawText((game._screenWidth / 2) + 6, game._screenHeight - 5, "%c{yellow}tfw no rl6");
+            display.drawText((game._screenWidth / 2) + 6, game._screenHeight - 5, "%c{yellow}tfw no rl3");
             display.drawText((game._screenWidth / 2), game._screenHeight - 3, "Press [Enter] to start");
         },
         handleInput: (inputType, inputData, game) => {
@@ -6120,6 +6248,9 @@ function playScreen() {
             });
             // Sync map and game variables
             game._map._entities = [];
+            let knife = new knife_1.Knife();
+            knife.owner = game._player;
+            game._player.equipment = knife;
             game._map._entities.push(game._player); //player always [0]
             game._player._map = game._map;
             game._map._display = game._display;
@@ -6129,6 +6260,7 @@ function playScreen() {
             let monster = new entity_1.Entity(60, 47, new glyph_1.Glyph('f', 'black', '#0000aa'), 'fungi', 1, true, 2, 2, fighter_component, ai_component);
             monster._map = game._map;
             game._map._entities.push(monster);
+            //let knifeItem = new Entity()
             game.timer = true;
             game.startCountDown();
             game._map.addEntityToMap();
@@ -6159,10 +6291,11 @@ function playScreen() {
                 }
             }
             game._map.setupFov(topLeftX, topLeftY);
+            removeExpiredDamage(game._entities);
             game._map._entities = entityRenderSort(game);
             game._entities = game._map._entities;
             for (let i = game._entities.length - 1; i >= 0; i--) {
-                //console.log(game._entities[i]);
+                //console.log(game._entities[i]); 
                 let cell = game._map.getTile(game._entities[i].x, game._entities[i].y);
                 if (cell.visibility > 0) {
                     let dx = Math.pow(game._entities[0].x - game._entities[i].x, 2);
@@ -6186,8 +6319,9 @@ function playScreen() {
                         game.timer = false;
                         break;
                     case constants_1.KEYS.VK_SPACE:
-                        game.switchScreen(game.Screen.playScreen);
-                        game.messageLog.messages = [];
+                        if (game._entities[0].equipment != undefined) {
+                            game._entities[0].equipment.strike();
+                        }
                         break;
                     case constants_1.KEYS.VK_LEFT:
                         game._entities[0].move(-1, 0, game._map);
@@ -6272,6 +6406,17 @@ function entityRenderSort(game) {
     });
 }
 exports.entityRenderSort = entityRenderSort;
+function removeExpiredDamage(entities) {
+    for (let i = 0; i < entities.length; i++) {
+        if (entities[i].damage != undefined) {
+            if (entities[i].damage.expire) {
+                entities.splice(i, 1);
+                i--;
+            }
+        }
+    }
+}
+exports.removeExpiredDamage = removeExpiredDamage;
 
 
 /***/ }),
