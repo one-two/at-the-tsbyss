@@ -28,7 +28,7 @@ export function startScreen() {
             }
 
              // Render our prompt to the screen
-            display.drawText((game._screenWidth/2)+6,game._screenHeight-5, "%c{yellow}tfw no rl3");
+            display.drawText((game._screenWidth/2)+6,game._screenHeight-5, "%c{yellow}tfw no rl4");
             display.drawText((game._screenWidth/2),game._screenHeight-3, "Press [Enter] to start");
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {
@@ -68,7 +68,7 @@ export function playScreen() {
             }
             // Smoothen it one last time and then update our map
             generator.create((x,y,v) => {
-                if (v === 1 || x == 0 || y == 0 || x == mapWidth || x == mapHeight) {
+                if (v === 1 || x == 0 || y == 0 || x == mapWidth-1 || x == mapHeight-1) {
                     game._map._tiles[x][y] = new Tile('Floor', '.', Color.toRGB([0,0,0]) , Color.toRGB([84, 54, 11]), true, false); //floor
                 } else {
                     game._map._tiles[x][y] = new Tile('Wall', '#', 'black', 'goldenrod', false, true, true);

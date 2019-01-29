@@ -32,6 +32,7 @@ export class Entity {
     // level
     equipment: Equipment;
     // equippable
+    owner: Entity;
 
     constructor(x:number, y:number, glyph: Glyph, name: string, size:number = 0, blocks: boolean = false, maxStamina:number=0,
                 render_order:number = 99, fighter: Fighter = undefined, ai: any = undefined,
@@ -132,6 +133,13 @@ export class Entity {
         }
     }
 
+    skill(targets: Entity[]) {
+        targets.forEach((entity, i) => {
+            if (entity != this.owner) {
+                if (entity.fighter != undefined) entity.fighter.takeDamage(99);//this.owner.fighter.power());
+            }
+        })
+    }
 
 
     hunt(target: Entity){

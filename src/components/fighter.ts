@@ -28,6 +28,12 @@ export class Fighter {
         return this.base_power + bonus
     }
 
+    skill_power() {
+        if (this.owner.equipment != undefined) {
+            return this.power() * this.owner.equipment.skill_bonus;
+        }
+    }
+
     defense() {
         let bonus = 0;
         if (this.owner != undefined && this.owner.equipment != undefined) {

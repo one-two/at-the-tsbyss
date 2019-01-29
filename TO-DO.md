@@ -14,6 +14,7 @@ Todo list to fill the void of our souls (but i really want to make it web)
 - [X] basic UI
 - [X] Message logging
 - [ ] Use itens (basic potions)
+- [ ] Backpack
 - [ ] Press space for AoE
 - [ ] Better put some save/load system early, like, now
 - [ ] Refactor code for constants and save/load artifacts

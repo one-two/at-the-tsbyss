@@ -5225,11 +5225,16 @@ class DamageBlock {
         var interval = setInterval(() => {
             //console.log(counter);
             counter--;
-            if (counter == 10) {
+            if (counter == 5) {
                 this.owner.glyph.foreground = 'palevioletred';
             }
-            if (counter < 0) {
+            if (counter == 0) {
                 clearInterval(interval);
+                let targets = this.owner._map.getEntitiesAt(this.owner.x, this.owner.x2, this.owner.y, this.owner.y2);
+                if (targets.length > 0) {
+                    this.owner.skill(targets);
+                    console.log(targets);
+                }
                 deathFunction_1.deathFunction(this.owner);
             }
         }, 100);
@@ -5289,6 +5294,11 @@ class Fighter {
             bonus = this.owner.equipment.power_bonus;
         }
         return this.base_power + bonus;
+    }
+    skill_power() {
+        if (this.owner.equipment != undefined) {
+            return this.power() * this.owner.equipment.skill_bonus;
+        }
     }
     defense() {
         let bonus = 0;
@@ -5357,15 +5367,30 @@ class Knife extends equipment_1.Equipment {
     constructor() {
         super();
         this.power_bonus = 2;
+        this.skill_bonus = 1.5;
         this.defense_bonus = 0;
         this.hp_bonus = 0;
     }
     strike() {
         let dir = this.owner.face;
         let dmg = new damageBlock_1.DamageBlock();
+        let attack = null;
         dmg.owner = this.owner;
-        let attack = new entity_1.Entity(this.owner.x, this.owner.y + 2, new glyph_1.Glyph('x', 'black', 'red'), 'strike', 1, false, 0, 5, undefined, undefined, undefined, undefined, dmg);
+        if (this.owner.face == 's') {
+            attack = new entity_1.Entity(this.owner.x, this.owner.y + 1, new glyph_1.Glyph('x', 'black', 'red'), 'strike', 1, false, 0, 5, undefined, undefined, undefined, undefined, dmg);
+        }
+        else if (this.owner.face == 'n') {
+            attack = new entity_1.Entity(this.owner.x, this.owner.y - 1, new glyph_1.Glyph('x', 'black', 'red'), 'strike', 1, false, 0, 5, undefined, undefined, undefined, undefined, dmg);
+        }
+        else if (this.owner.face == 'w') {
+            attack = new entity_1.Entity(this.owner.x - 1, this.owner.y, new glyph_1.Glyph('x', 'black', 'red'), 'strike', 1, false, 0, 5, undefined, undefined, undefined, undefined, dmg);
+        }
+        else if (this.owner.face == 'e') {
+            attack = new entity_1.Entity(this.owner.x + 1, this.owner.y + 1, new glyph_1.Glyph('x', 'black', 'red'), 'strike', 1, false, 0, 5, undefined, undefined, undefined, undefined, dmg);
+        }
+        attack._map = this.owner._map;
         attack.damage.startCountDown(20);
+        attack.owner = this.owner;
         this.owner._map._entities.push(attack);
     }
 }
@@ -5483,7 +5508,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const lib_1 = __webpack_require__(/*! ../lib */ "./lib/index.js");
 const randint_1 = __webpack_require__(/*! ./helper/randint */ "./src/helper/randint.ts");
 class Entity {
-    // equippable
     constructor(x, y, glyph, name, size = 0, blocks = false, maxStamina = 0, render_order = 99, fighter = undefined, ai = undefined, item = undefined, inventory = undefined, damage = undefined, stairs = undefined, level = undefined, equipment = undefined, equippable = undefined, _map = undefined, _entities = undefined) {
         this.x = x;
         this.y = y;
@@ -5581,6 +5605,14 @@ class Entity {
                 }
             }
         }
+    }
+    skill(targets) {
+        targets.forEach((entity, i) => {
+            if (entity != this.owner) {
+                if (entity.fighter != undefined)
+                    entity.fighter.takeDamage(99); //this.owner.fighter.power());
+            }
+        });
     }
     hunt(target) {
         let source = this;
@@ -6200,7 +6232,7 @@ function startScreen() {
                 y += 1;
             }
             // Render our prompt to the screen
-            display.drawText((game._screenWidth / 2) + 6, game._screenHeight - 5, "%c{yellow}tfw no rl3");
+            display.drawText((game._screenWidth / 2) + 6, game._screenHeight - 5, "%c{yellow}tfw no rl4");
             display.drawText((game._screenWidth / 2), game._screenHeight - 3, "Press [Enter] to start");
         },
         handleInput: (inputType, inputData, game) => {
@@ -6239,7 +6271,7 @@ function playScreen() {
             }
             // Smoothen it one last time and then update our map
             generator.create((x, y, v) => {
-                if (v === 1 || x == 0 || y == 0 || x == mapWidth || x == mapHeight) {
+                if (v === 1 || x == 0 || y == 0 || x == mapWidth - 1 || x == mapHeight - 1) {
                     game._map._tiles[x][y] = new tiles_1.Tile('Floor', '.', Color.toRGB([0, 0, 0]), Color.toRGB([84, 54, 11]), true, false); //floor
                 }
                 else {
@@ -6248,6 +6280,7 @@ function playScreen() {
             });
             // Sync map and game variables
             game._map._entities = [];
+            // debug stuff
             let knife = new knife_1.Knife();
             knife.owner = game._player;
             game._player.equipment = knife;
