@@ -6,6 +6,7 @@ export abstract class Equipment {
     skill_bonus: number;
     defense_bonus: number;
     hp_bonus: number;
+    name: string;
 
     constructor() {
     }

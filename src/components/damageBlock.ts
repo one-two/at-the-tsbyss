@@ -6,18 +6,19 @@ export class DamageBlock {
     name: string;
     expire: boolean = false;
 
-    startCountDown(seconds: number){
-        var counter = seconds;
+    startCountDown(){
+        var counter = 8;
         var interval = setInterval(() => {
             //console.log(counter);
             counter--;
-            if (counter == 5) {
+            if (counter == 3) {
                 this.owner.glyph.foreground = 'palevioletred'
             }
             if (counter == 0 ) {
                 clearInterval(interval);
                 let targets = this.owner._map.getEntitiesAt(this.owner.x, this.owner.x2, this.owner.y, this.owner.y2);
                 if (targets.length > 0) {
+                    console.log(this);
                     this.owner.skill(targets);
                     console.log(targets);
                 }

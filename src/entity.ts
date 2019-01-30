@@ -136,7 +136,7 @@ export class Entity {
     skill(targets: Entity[]) {
         targets.forEach((entity, i) => {
             if (entity != this.owner) {
-                if (entity.fighter != undefined) entity.fighter.takeDamage(99);//this.owner.fighter.power());
+                if (entity.fighter != undefined) this._map.messageLog.addMessage(this.owner.fighter.equipment_skill(entity));
             }
         })
     }
