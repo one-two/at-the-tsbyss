@@ -34,7 +34,8 @@ export class Fungi implements Enemy {
         if (player == undefined) return;
         let dist = Math.sqrt( (player.x - this.owner.x)**2+(player.y - this.owner.y)**2 );
         if (dist < this.owner.sight*2) {
-            this.owner.hunt(player);
+            //this.owner.hunt(player);
+            this.poison_cloud(player);
         } else {
             this.owner.wander();
         }

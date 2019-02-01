@@ -83,7 +83,7 @@ export class Fighter {
         return result
     }
 
-    equipment_skill(target: Entity) {
+    equipment_skill(target: Entity, dmgBlock: Entity) {
         let result: string;
         let damage = this.skill_power() - target.fighter.defense();
 
@@ -91,8 +91,9 @@ export class Fighter {
             // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
+            console.log(dmgBlock)
             target.fighter.takeDamage(damage)
-            result = this.owner.name + " usou uma " + this.owner.equipment.name + " em um %c{" + target.glyph.foreground +"}" + target.name + "%c{} com "+ damage + " de dano! (" +target.fighter.hp +")";
+            result = this.owner.name + " usou uma " + dmgBlock.name + " em um %c{" + target.glyph.foreground +"}" + target.name + "%c{} com "+ damage + " de dano! (" +target.fighter.hp +")";
         } else {
             result = this.owner.name + " bateu em um %c{" + target.glyph.foreground +"}" + target.name + "%c{} mas não causou dano!";
         }

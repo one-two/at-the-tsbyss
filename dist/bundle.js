@@ -5221,11 +5221,11 @@ class DamageBlock {
         this.expire = false;
     }
     startCountDown() {
-        var counter = 10;
+        var counter = 8;
         var interval = setInterval(() => {
             //console.log(counter);
             counter--;
-            if (counter == 2) {
+            if (counter == 3) {
                 this.owner.glyph.foreground = 'palevioletred';
             }
             if (counter == 0) {
@@ -5233,7 +5233,7 @@ class DamageBlock {
                 let targets = this.owner._map.getEntitiesAt(this.owner.x, this.owner.x2, this.owner.y, this.owner.y2);
                 if (targets.length > 0) {
                     console.log(this);
-                    this.owner.equipment_skill(targets);
+                    this.owner.skill(targets);
                     console.log(targets);
                 }
                 deathFunction_1.deathFunction(this.owner);
@@ -5297,6 +5297,8 @@ class Fighter {
         return this.base_power + bonus;
     }
     skill_power() {
+        if (this.owner.ai != undefined)
+            return this.power() * this.owner.ai.skill_bonus;
         if (this.owner.equipment != undefined) {
             return this.power() * this.owner.equipment.skill_bonus;
         }
@@ -5344,15 +5346,16 @@ class Fighter {
         }
         return result;
     }
-    equipment_skill(target) {
+    equipment_skill(target, dmgBlock) {
         let result;
         let damage = this.skill_power() - target.fighter.defense();
         if (damage > 0) {
             // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
+            console.log(dmgBlock);
             target.fighter.takeDamage(damage);
-            result = this.owner.name + " usou uma " + this.owner.equipment.name + " em um %c{" + target.glyph.foreground + "}" + target.name + "%c{} com " + damage + " de dano! (" + target.fighter.hp + ")";
+            result = this.owner.name + " usou uma " + dmgBlock.name + " em um %c{" + target.glyph.foreground + "}" + target.name + "%c{} com " + damage + " de dano! (" + target.fighter.hp + ")";
         }
         else {
             result = this.owner.name + " bateu em um %c{" + target.glyph.foreground + "}" + target.name + "%c{} mas não causou dano!";
@@ -5393,16 +5396,16 @@ class Knife extends equipment_1.Equipment {
         let attack = null;
         dmg.owner = this.owner;
         if (this.owner.face == 's') {
-            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 1);
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 1, this.name);
         }
         else if (this.owner.face == 'n') {
-            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 1);
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 1, this.name);
         }
         else if (this.owner.face == 'w') {
-            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y);
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y, this.name);
         }
         else if (this.owner.face == 'e') {
-            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y);
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y, this.name);
         }
     }
 }
@@ -5422,8 +5425,11 @@ exports.Knife = Knife;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const deathFunction_1 = __webpack_require__(/*! ../../helper/deathFunction */ "./src/helper/deathFunction.ts");
-const damageBlock_1 = __webpack_require__(/*! ../../components/damageBlock */ "./src/components/damageBlock.ts");
+const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
 class Fungi {
+    constructor() {
+        this.skill_bonus = 1;
+    }
     startCountDown(seconds) {
         var counter = seconds;
         var interval = setInterval(() => {
@@ -5448,17 +5454,20 @@ class Fungi {
             return;
         let dist = Math.sqrt(Math.pow((player.x - this.owner.x), 2) + Math.pow((player.y - this.owner.y), 2));
         if (dist < this.owner.sight * 2) {
-            this.owner.hunt(player);
+            //this.owner.hunt(player);
+            this.poison_cloud(player);
         }
         else {
             this.owner.wander();
         }
     }
-    poison_cloud() {
-        let dir = this.owner.face;
-        let dmg = new damageBlock_1.DamageBlock();
-        let attack = null;
-        dmg.owner = this.owner;
+    poison_cloud(player) {
+        let nameAtk = 'nuvem de esporos';
+        createDamageBlock_1.createDamageBlock(this.owner, player.x, player.y, nameAtk);
+        createDamageBlock_1.createDamageBlock(this.owner, player.x + 1, player.y, nameAtk);
+        createDamageBlock_1.createDamageBlock(this.owner, player.x - 1, player.y, nameAtk);
+        createDamageBlock_1.createDamageBlock(this.owner, player.x, player.y + 1, nameAtk);
+        createDamageBlock_1.createDamageBlock(this.owner, player.x, player.y - 1, nameAtk);
     }
 }
 exports.Fungi = Fungi;
@@ -5625,11 +5634,11 @@ class Entity {
             }
         }
     }
-    equipment_skill(targets) {
+    skill(targets) {
         targets.forEach((entity, i) => {
             if (entity != this.owner) {
                 if (entity.fighter != undefined)
-                    this._map.messageLog.addMessage(this.owner.fighter.equipment_skill(entity));
+                    this._map.messageLog.addMessage(this.owner.fighter.equipment_skill(entity, this));
             }
         });
     }
@@ -5882,12 +5891,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const entity_1 = __webpack_require__(/*! ../entity */ "./src/entity.ts");
 const damageBlock_1 = __webpack_require__(/*! ../components/damageBlock */ "./src/components/damageBlock.ts");
 const glyph_1 = __webpack_require__(/*! ../glyph */ "./src/glyph.ts");
-function createDamageBlock(creator, x, y) {
+function createDamageBlock(creator, x, y, name) {
     let dir = creator.face;
     let dmg = new damageBlock_1.DamageBlock();
     let attack = null;
     dmg.owner = creator;
-    attack = new entity_1.Entity(x, y, new glyph_1.Glyph('x', 'black', 'red'), 'strike', 1, false, 0, 5, undefined, undefined, undefined, undefined, dmg);
+    attack = new entity_1.Entity(x, y, new glyph_1.Glyph('x', 'black', 'red'), name, 1, false, 0, 5, undefined, undefined, undefined, undefined, dmg);
     attack._map = creator._map;
     attack.damage.startCountDown();
     attack.owner = creator;
@@ -6280,7 +6289,7 @@ function startScreen() {
                 y += 1;
             }
             // Render our prompt to the screen
-            display.drawText((game._screenWidth / 2) + 6, game._screenHeight - 5, "%c{yellow}tfw no rl4");
+            display.drawText((game._screenWidth / 2) + 6, game._screenHeight - 5, "%c{yellow}tfw no rl1");
             display.drawText((game._screenWidth / 2), game._screenHeight - 3, "Press [Enter] to start");
         },
         handleInput: (inputType, inputData, game) => {

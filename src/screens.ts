@@ -28,7 +28,7 @@ export function startScreen() {
             }
 
              // Render our prompt to the screen
-            display.drawText((game._screenWidth/2)+6,game._screenHeight-5, "%c{yellow}tfw no rl4");
+            display.drawText((game._screenWidth/2)+6,game._screenHeight-5, "%c{yellow}tfw no rl1");
             display.drawText((game._screenWidth/2),game._screenHeight-3, "Press [Enter] to start");
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {

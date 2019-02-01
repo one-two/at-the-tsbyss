@@ -21,9 +21,9 @@ export class Knife extends Equipment {
         let dmg = new DamageBlock()
         let attack:Entity = null;
         dmg.owner = this.owner;
-        if (this.owner.face == 's') { createDamageBlock(this.owner, this.owner.x, this.owner.y+1, name);}
-        else if (this.owner.face == 'n') { createDamageBlock(this.owner, this.owner.x, this.owner.y-1, name);}
-        else if (this.owner.face == 'w') { createDamageBlock(this.owner, this.owner.x-1, this.owner.y, name);}
-        else if (this.owner.face == 'e') { createDamageBlock(this.owner, this.owner.x+1, this.owner.y, name);}
+        if (this.owner.face == 's') { createDamageBlock(this.owner, this.owner.x, this.owner.y+1, this.name);}
+        else if (this.owner.face == 'n') { createDamageBlock(this.owner, this.owner.x, this.owner.y-1, this.name);}
+        else if (this.owner.face == 'w') { createDamageBlock(this.owner, this.owner.x-1, this.owner.y, this.name);}
+        else if (this.owner.face == 'e') { createDamageBlock(this.owner, this.owner.x+1, this.owner.y, this.name);}
     }
 }

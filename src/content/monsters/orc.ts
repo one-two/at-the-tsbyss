@@ -4,6 +4,7 @@ import { Enemy } from "../../helper/enemy";
 import { deathFunction } from "../../helper/deathFunction";
 
 export class Orc implements Enemy {
+    skill_bonus: number;
     owner: Entity;
 
     startCountDown(seconds: number){
