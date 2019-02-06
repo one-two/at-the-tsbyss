@@ -1,4 +1,4 @@
-import { Display } from "../lib/index";
+import { Display, Color } from "../lib/index";
 import { Tile } from "./tiles";
 import { Entity } from "./entity";
 import { playScreen, startScreen, winScreen, loseScreen } from "./screens";
@@ -99,6 +99,7 @@ export class Game {
 
 	writeMessages() {
 		let x = 0;
+		//let clr = Color.rgb(255,255,255);
 		for (const message of this.messageLog.messages) {
 			this._messaging.drawText(1, x, message);
 			x += 1
@@ -163,8 +164,8 @@ export class Game {
 window.onload = function() {
 	let game = new Game();
 	// Initialize the game
-	let fighter = new Fighter(30, 1, 4, 0);
-	let player = new Entity(60, 45, new Glyph('@', 'black', 'deepskyblue'), 'Player', 1, true, 5, 1, fighter);
+	let fighter = new Fighter(9997, 1, 4, 0);
+	let player = new Entity(60, 45, new Glyph('@', 'black', 'deepskyblue'), 'Player', 1, true, 20, 1, fighter, undefined, true);
 	game._player = player
 	game._entities = [game._player];
 	game.init();

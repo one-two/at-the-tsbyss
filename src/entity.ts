@@ -5,6 +5,8 @@ import { Path } from "../lib";
 import { randint } from "./helper/randint";
 import { Equipment } from "./components/equipment";
 import { DamageBlock } from "./components/damageBlock";
+import { Enemy } from "./helper/enemy";
+import { deathFunction } from "./helper/deathFunction";
 
 export class Entity {
     x: number;
@@ -33,9 +35,10 @@ export class Entity {
     equipment: Equipment;
     // equippable
     owner: Entity;
+    player: boolean;
 
     constructor(x:number, y:number, glyph: Glyph, name: string, size:number = 0, blocks: boolean = false, maxStamina:number=0,
-                render_order:number = 99, fighter: Fighter = undefined, ai: any = undefined,
+                render_order:number = 99, fighter: Fighter = undefined, ai: any = undefined, player: boolean = false,
                 item: any = undefined, inventory: any = undefined, damage: DamageBlock = undefined, stairs: any = undefined, level: any = undefined, 
                 equipment: Equipment = undefined, equippable: any = undefined, _map: Map = undefined, _entities: Entity[] = undefined) {
         this.x = x;
@@ -55,6 +58,11 @@ export class Entity {
         this.cooldown = 0;
         this.face = 'n';
         this.damage = damage;
+        this.player = player;
+
+        if (this.player == true) {
+            this.startMoveCountDown();
+        }
 
         if (this.ai != undefined) {
             this.ai.owner = this;
@@ -76,6 +84,8 @@ export class Entity {
     }
 
     move(dx: number, dy: number, map: Map) {
+        if (this.player == true && this.stamina < this.maxStamina) return;
+        else if (this.player == true) this.stamina = 0
         if (dx == -1) this.face = 'w';
         if (dx == 1) this.face = 'e';
         if (dy == -1) this.face = 'n';
@@ -100,6 +110,20 @@ export class Entity {
             // if (this.glyph.char == '@') this._map.messageLog.addMessage("this is a %c{goldenrod}wall%c{}!");
             // else this._map.messageLog.addMessage("hey fungi, this is a %c{goldenrod}wall%c{}!");
         }
+    }
+
+    startMoveCountDown(){
+        var moveinterval = setInterval(() => {
+            //console.log(counter);
+            if (this.stamina <= this.maxStamina) {
+                this.stamina++;
+            }
+                // code here will run when the counter reaches zero.
+            if (this.fighter.hp == 0) {
+                clearInterval(moveinterval);
+                deathFunction(this);
+            }
+        }, 100);
     }
 
     equip(item: Entity) {

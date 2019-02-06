@@ -4,10 +4,25 @@ import { Enemy } from "../../helper/enemy";
 import { deathFunction } from "../../helper/deathFunction";
 import { DamageBlock } from "../../components/damageBlock";
 import { createDamageBlock } from "../../helper/createDamageBlock";
+import { skilllist, poison_cloud2 } from "../../components/skilllist"
 
 export class Fungi implements Enemy {
     skill_bonus: number = 1;
     owner: Entity;
+    skills: skilllist[];
+
+    constructor() {
+        this.skills = [{
+            name: 'oi',
+            cooldown: 5,
+            maxCooldown: 5
+        },
+        {
+            name: 'st',
+            cooldown:3,
+            maxCooldown: 7
+        }]
+    }
 
     startCountDown(seconds: number){
         var counter = seconds;
@@ -35,7 +50,8 @@ export class Fungi implements Enemy {
         let dist = Math.sqrt( (player.x - this.owner.x)**2+(player.y - this.owner.y)**2 );
         if (dist < this.owner.sight*2) {
             //this.owner.hunt(player);
-            this.poison_cloud(player);
+            //this.poison_cloud(player);
+            poison_cloud2(this.owner, player);
         } else {
             this.owner.wander();
         }

@@ -85,11 +85,13 @@ export function playScreen() {
             game._player._map = game._map;  
             game._map._display = game._display;
             game._map.messageLog = game.messageLog;
-            let ai_component = new Fungi();
-            let fighter_component = new Fighter(20, 0, 3, 35);
-            let monster = new Entity(60, 47, new Glyph('f', 'black', '#0000aa'), 'fungi', 1, true, 2, 2, fighter_component, ai_component);
-            monster._map = game._map;
-            game._map._entities.push(monster);
+
+            
+            //let ai_component = new Fungi();
+            //let fighter_component = new Fighter(20, 0, 3, 35);
+            //let monster = new Entity(60, 47, new Glyph('f', 'black', '#0000aa'), 'fungi', 1, true, 2, 2, fighter_component, ai_component, false);
+            //monster._map = game._map;
+            //game._map._entities.push(monster);
 
             //let knifeItem = new Entity()
 

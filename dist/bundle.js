@@ -5368,6 +5368,30 @@ exports.Fighter = Fighter;
 
 /***/ }),
 
+/***/ "./src/components/skilllist.ts":
+/*!*************************************!*\
+  !*** ./src/components/skilllist.ts ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const createDamageBlock_1 = __webpack_require__(/*! ../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
+function poison_cloud2(owner, target) {
+    let nameAtk = 'nuvem de esporos';
+    createDamageBlock_1.createDamageBlock(owner, target.x, target.y, nameAtk);
+    createDamageBlock_1.createDamageBlock(owner, target.x + 1, target.y, nameAtk);
+    createDamageBlock_1.createDamageBlock(owner, target.x - 1, target.y, nameAtk);
+    createDamageBlock_1.createDamageBlock(owner, target.x, target.y + 1, nameAtk);
+    createDamageBlock_1.createDamageBlock(owner, target.x, target.y - 1, nameAtk);
+}
+exports.poison_cloud2 = poison_cloud2;
+
+
+/***/ }),
+
 /***/ "./src/content/itens/knife.ts":
 /*!************************************!*\
   !*** ./src/content/itens/knife.ts ***!
@@ -5426,9 +5450,20 @@ exports.Knife = Knife;
 Object.defineProperty(exports, "__esModule", { value: true });
 const deathFunction_1 = __webpack_require__(/*! ../../helper/deathFunction */ "./src/helper/deathFunction.ts");
 const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
+const skilllist_1 = __webpack_require__(/*! ../../components/skilllist */ "./src/components/skilllist.ts");
 class Fungi {
     constructor() {
         this.skill_bonus = 1;
+        this.skills = [{
+                name: 'oi',
+                cooldown: 5,
+                maxCooldown: 5
+            },
+            {
+                name: 'st',
+                cooldown: 3,
+                maxCooldown: 7
+            }];
     }
     startCountDown(seconds) {
         var counter = seconds;
@@ -5455,7 +5490,8 @@ class Fungi {
         let dist = Math.sqrt(Math.pow((player.x - this.owner.x), 2) + Math.pow((player.y - this.owner.y), 2));
         if (dist < this.owner.sight * 2) {
             //this.owner.hunt(player);
-            this.poison_cloud(player);
+            //this.poison_cloud(player);
+            skilllist_1.poison_cloud2(this.owner, player);
         }
         else {
             this.owner.wander();
@@ -5535,8 +5571,9 @@ exports.Orc = Orc;
 Object.defineProperty(exports, "__esModule", { value: true });
 const lib_1 = __webpack_require__(/*! ../lib */ "./lib/index.js");
 const randint_1 = __webpack_require__(/*! ./helper/randint */ "./src/helper/randint.ts");
+const deathFunction_1 = __webpack_require__(/*! ./helper/deathFunction */ "./src/helper/deathFunction.ts");
 class Entity {
-    constructor(x, y, glyph, name, size = 0, blocks = false, maxStamina = 0, render_order = 99, fighter = undefined, ai = undefined, item = undefined, inventory = undefined, damage = undefined, stairs = undefined, level = undefined, equipment = undefined, equippable = undefined, _map = undefined, _entities = undefined) {
+    constructor(x, y, glyph, name, size = 0, blocks = false, maxStamina = 0, render_order = 99, fighter = undefined, ai = undefined, player = false, item = undefined, inventory = undefined, damage = undefined, stairs = undefined, level = undefined, equipment = undefined, equippable = undefined, _map = undefined, _entities = undefined) {
         this.x = x;
         this.y = y;
         this.x2 = x + size - 1;
@@ -5554,6 +5591,10 @@ class Entity {
         this.cooldown = 0;
         this.face = 'n';
         this.damage = damage;
+        this.player = player;
+        if (this.player == true) {
+            this.startMoveCountDown();
+        }
         if (this.ai != undefined) {
             this.ai.owner = this;
             this.ai.startCountDown(this.maxStamina);
@@ -5572,6 +5613,10 @@ class Entity {
         }
     }
     move(dx, dy, map) {
+        if (this.player == true && this.stamina < this.maxStamina)
+            return;
+        else if (this.player == true)
+            this.stamina = 0;
         if (dx == -1)
             this.face = 'w';
         if (dx == 1)
@@ -5603,6 +5648,19 @@ class Entity {
             // if (this.glyph.char == '@') this._map.messageLog.addMessage("this is a %c{goldenrod}wall%c{}!");
             // else this._map.messageLog.addMessage("hey fungi, this is a %c{goldenrod}wall%c{}!");
         }
+    }
+    startMoveCountDown() {
+        var moveinterval = setInterval(() => {
+            //console.log(counter);
+            if (this.stamina <= this.maxStamina) {
+                this.stamina++;
+            }
+            // code here will run when the counter reaches zero.
+            if (this.fighter.hp == 0) {
+                clearInterval(moveinterval);
+                deathFunction_1.deathFunction(this);
+            }
+        }, 100);
     }
     equip(item) {
         if (this.equipment == undefined) {
@@ -5834,8 +5892,8 @@ exports.Game = Game;
 window.onload = function () {
     let game = new Game();
     // Initialize the game
-    let fighter = new fighter_1.Fighter(30, 1, 4, 0);
-    let player = new entity_1.Entity(60, 45, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 1, true, 5, 1, fighter);
+    let fighter = new fighter_1.Fighter(9997, 1, 4, 0);
+    let player = new entity_1.Entity(60, 45, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 1, true, 20, 1, fighter, undefined, true);
     game._player = player;
     game._entities = [game._player];
     game.init();
@@ -5896,7 +5954,7 @@ function createDamageBlock(creator, x, y, name) {
     let dmg = new damageBlock_1.DamageBlock();
     let attack = null;
     dmg.owner = creator;
-    attack = new entity_1.Entity(x, y, new glyph_1.Glyph('x', 'black', 'red'), name, 1, false, 0, 5, undefined, undefined, undefined, undefined, dmg);
+    attack = new entity_1.Entity(x, y, new glyph_1.Glyph('x', 'black', 'red'), name, 1, false, 0, 5, undefined, undefined, false, undefined, undefined, dmg);
     attack._map = creator._map;
     attack.damage.startCountDown();
     attack.owner = creator;
@@ -6267,11 +6325,7 @@ const constants_1 = __webpack_require__(/*! ../lib/constants */ "./lib/constants
 const Color = __webpack_require__(/*! ../lib/color */ "./lib/color.js");
 const tiles_1 = __webpack_require__(/*! ./tiles */ "./src/tiles.ts");
 const maps = __webpack_require__(/*! ../lib/map */ "./lib/map/index.js");
-const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
-const entity_1 = __webpack_require__(/*! ./entity */ "./src/entity.ts");
-const fungi_1 = __webpack_require__(/*! ./content/monsters/fungi */ "./src/content/monsters/fungi.ts");
 const randint_1 = __webpack_require__(/*! ./helper/randint */ "./src/helper/randint.ts");
-const fighter_1 = __webpack_require__(/*! ./components/fighter */ "./src/components/fighter.ts");
 const knife_1 = __webpack_require__(/*! ./content/itens/knife */ "./src/content/itens/knife.ts");
 function startScreen() {
     //Game.Screen.startScreen = {
@@ -6345,11 +6399,11 @@ function playScreen() {
             game._player._map = game._map;
             game._map._display = game._display;
             game._map.messageLog = game.messageLog;
-            let ai_component = new fungi_1.Fungi();
-            let fighter_component = new fighter_1.Fighter(20, 0, 3, 35);
-            let monster = new entity_1.Entity(60, 47, new glyph_1.Glyph('f', 'black', '#0000aa'), 'fungi', 1, true, 2, 2, fighter_component, ai_component);
-            monster._map = game._map;
-            game._map._entities.push(monster);
+            //let ai_component = new Fungi();
+            //let fighter_component = new Fighter(20, 0, 3, 35);
+            //let monster = new Entity(60, 47, new Glyph('f', 'black', '#0000aa'), 'fungi', 1, true, 2, 2, fighter_component, ai_component, false);
+            //monster._map = game._map;
+            //game._map._entities.push(monster);
             //let knifeItem = new Entity()
             game.timer = true;
             game.startCountDown();
