@@ -55,6 +55,14 @@ export class Game {
 		this._inventory = new Display({width: 10, height: this._screenHeight});
 		this._messaging = new Display({width: this._screenWidth, height: this._messageBoxSize});
 		this.messageLog = new Messagelog(0, this._screenHeight, this._messageBoxSize);
+		this.messageLog.messages = [{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"}, 
+			{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"}, 
+			{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"},
+			{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"},
+			{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"},
+			{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"},
+			{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"},
+			{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"}]
 		this._inventory.drawText(0, 1, 'ola');
 		//let game = this; // So that we don't lose this
 		let event = "keydown";
@@ -79,10 +87,10 @@ export class Game {
 			this._currentScreen.render(this._display, this);
 		});
 
-		this.messageLog.addMessage("teste1");
-		this.messageLog.addMessage("teste%c{red}2%c{} !");
-		this.messageLog.addMessage("teste%c{#00cc00}3%c{} welcome");
-		this.writeMessages();
+		//this.messageLog.addMessage("teste1");
+		//this.messageLog.addMessage("teste%c{red}2%c{} !");
+		//this.messageLog.addMessage("teste%c{#00cc00}3%c{} welcome");
+		//this.writeMessages();
 	}
 
 	getDisplay() {
@@ -99,9 +107,21 @@ export class Game {
 
 	writeMessages() {
 		let x = 0;
-		//let clr = Color.rgb(255,255,255);
-		for (const message of this.messageLog.messages) {
-			this._messaging.drawText(1, x, message);
+		let alpha = 0;
+		let fading = '';
+		let fading2 = '';
+		let out = '';
+		let out2 = '';
+		for (let message of this.messageLog.messages) {
+			alpha += 0.1;
+			if (message.type == 'death' || message.type == 'fight' || message.type == 'skill') {
+				fading = "%c{rgb(" + Math.round(message.color1[0]*alpha).toString() +","+Math.round(message.color1[1]*alpha).toString() +","+Math.round(message.color1[2]*alpha).toString() +")}";
+				fading2 = "%c{rgb(" + Math.round(message.color2[0]*alpha).toString() +","+Math.round(message.color2[1]*alpha).toString() +","+Math.round(message.color2[2]*alpha).toString() +")}";
+				out =  message.message.replace("%c{0}", fading);
+				out2 =  out.replace("%c{1}", fading2);
+				this._messaging.drawText(1, x, ''+fading2+out2);
+
+			}
 			x += 1
 		}
 	}
@@ -110,7 +130,7 @@ export class Game {
 		let hp = this._player.fighter.hp;
 		let max_hp = this._player.fighter.max_hp();
 		this._inventory.drawText(1, 1, "Stats: ")
-		this._inventory.drawText(1, 3, "%c{red}HP: %c{}" +hp + "/" +max_hp);
+		this._inventory.drawText(1, 3, "%c{rgb(255,0,0)}HP: %c{}" +hp + "/" +max_hp);
 		this._inventory.drawText(1, 5, "%c{blue}Atk: %c{}"+this._player.fighter.power());
 		this._inventory.drawText(1, 7, "%c{yellow}Def: %c{}"+this._player.fighter.defense());
 	}
@@ -165,7 +185,7 @@ window.onload = function() {
 	let game = new Game();
 	// Initialize the game
 	let fighter = new Fighter(9997, 1, 4, 0);
-	let player = new Entity(60, 45, new Glyph('@', 'black', 'deepskyblue'), 'Player', 1, true, 20, 1, fighter, undefined, true);
+	let player = new Entity(60, 45, new Glyph('@', [0,0,0], [0, 191, 255]), 'Player', 1, true, 2, 1, fighter, undefined, true);
 	game._player = player
 	game._entities = [game._player];
 	game.init();

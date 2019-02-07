@@ -1,5 +1,7 @@
+import { MessageType } from "./helper/messageType";
+
 export class Messagelog {
-    messages: string[];
+    messages: MessageType[];
     x: number;
     width: number;
     height: number;
@@ -11,7 +13,7 @@ export class Messagelog {
         this.height = height;
     }
 
-    addMessage(message: string) {
+    addMessage(message: MessageType) {
         if (this.messages.length == this.height) {
             this.messages.shift();
         }

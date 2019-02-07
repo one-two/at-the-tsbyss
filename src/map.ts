@@ -26,7 +26,7 @@ export class Map {
     }
 
     getTile(x: number, y: number) {
-        let emptyTile = new Tile('Empty', ' ', 'black', 'white', false, false);
+        let emptyTile = new Tile('Empty', ' ', [0,0,0], [255,255,255], false, false);
         if (x < 0 || x >= this._width || y < 0 || y >= this._height) {
             return emptyTile;
         } else {
@@ -148,20 +148,20 @@ export class Map {
             if (visibility == 0 ) {
                 this._tiles[x][y].visibility = visibility;
             } else {
-                let fogRGB = Color.fromString(this._tiles[x][y].baseTile.foreground);
+                let fogRGB = this._tiles[x][y].baseTile.foreground;
                 let perc = visibility + 0.1
                 this._tiles[x][y].visibility = visibility;
                 if (dist <= this._entities[0].sight-2) {
                     if (dist <= this._entities[0].sight/2) this._tiles[x][y].visited = true;
                     perc = 1-((dist)/this._entities[0].sight)+0.2;
                     
-                    this._tiles[x][y].tile.foreground = Color.toRGB([Math.floor(fogRGB[0]*perc), Math.floor(fogRGB[1]*perc), Math.floor(fogRGB[2]*perc)]);
+                    this._tiles[x][y].tile.foreground = [Math.floor(fogRGB[0]*perc), Math.floor(fogRGB[1]*perc), Math.floor(fogRGB[2]*perc)];
                 }
                 else {
-                    this._tiles[x][y].tile.foreground = Color.toRGB([Math.floor(fogRGB[0]*0.2), Math.floor(fogRGB[1]*0.2), Math.floor(fogRGB[2]*0.2)]);
+                    this._tiles[x][y].tile.foreground = [Math.floor(fogRGB[0]*0.2), Math.floor(fogRGB[1]*0.2), Math.floor(fogRGB[2]*0.2)];
                 }
                 
-                this._display.draw(x - topleftX, y - topleftY, this._tiles[x][y].tile.char, this._tiles[x][y].tile.foreground, 'black');
+                this._display.draw(x - topleftX, y - topleftY, this._tiles[x][y].tile.char, Color.toRGB(this._tiles[x][y].tile.foreground), Color.toRGB([0,0,0]));
             }
 
         })

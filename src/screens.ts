@@ -10,6 +10,7 @@ import { Fungi } from "./content/monsters/fungi";
 import { randint } from "./helper/randint";
 import { Fighter } from "./components/fighter";
 import { Knife } from "./content/itens/knife";
+import { Display } from "../lib";
 
 export function startScreen() {
     //Game.Screen.startScreen = {
@@ -48,7 +49,7 @@ export function playScreen() {
             let mapWidth = 120;
             let mapHeight = 90;
             game._map = new Map(mapWidth, mapHeight);
-            let emptyTile = new Tile('Empty', ' ', 'black', 'white', true, false, false);
+            let emptyTile = new Tile('Empty', ' ', [0,0,0], [255,255,255], true, false, false);
             console.log("Entered play screen.");
             for (let x = 0; x < mapWidth; x++) {
                 // Create the nested array for the y values
@@ -69,9 +70,9 @@ export function playScreen() {
             // Smoothen it one last time and then update our map
             generator.create((x,y,v) => {
                 if (v === 1 || x == 0 || y == 0 || x == mapWidth-1 || x == mapHeight-1) {
-                    game._map._tiles[x][y] = new Tile('Floor', '.', Color.toRGB([0,0,0]) , Color.toRGB([84, 54, 11]), true, false); //floor
+                    game._map._tiles[x][y] = new Tile('Floor', '.', [0,0,0] , [84, 54, 11], true, false); //floor
                 } else {
-                    game._map._tiles[x][y] = new Tile('Wall', '#', 'black', 'goldenrod', false, true, true);
+                    game._map._tiles[x][y] = new Tile('Wall', '#', [0,0,0], [218, 165, 32], false, true, true);
                 }
             });
             // Sync map and game variables
@@ -104,7 +105,7 @@ export function playScreen() {
         },
         exit : () => { console.log("Exited play screen."); 
         },
-        render : (display : any, game: Game) => {
+        render : (display : Display, game: Game) => {
             let screenWidth = game._screenWidth;
             let screenHeight = game._screenHeight;
             let player = game._player;
@@ -125,8 +126,8 @@ export function playScreen() {
                         x - topLeftX, 
                         y - topLeftY,
                         cell.visitedTile.char, 
-                        cell.visitedTile.foreground, 
-                        cell.visitedTile.background) :
+                        Color.toRGB(cell.visitedTile.foreground), 
+                        Color.toRGB(cell.visitedTile.background)) :
                     display.draw(
                         x - topLeftX, 
                         y - topLeftY,
@@ -152,8 +153,9 @@ export function playScreen() {
                             game._entities[i].x - topLeftX,
                             game._entities[i].y - topLeftY,
                             game._entities[i].glyph.char,
-                            game._entities[i].glyph.foreground,
-                            game._entities[i].glyph.background);
+                            Color.toRGB(game._entities[i].glyph.foreground),
+                            Color.toRGB(game._entities[i].glyph.background)
+                            );
                     }
                 }
             }

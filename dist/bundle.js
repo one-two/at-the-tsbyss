@@ -5226,15 +5226,13 @@ class DamageBlock {
             //console.log(counter);
             counter--;
             if (counter == 3) {
-                this.owner.glyph.foreground = 'palevioletred';
+                this.owner.glyph.foreground = [216, 112, 147];
             }
             if (counter == 0) {
                 clearInterval(interval);
                 let targets = this.owner._map.getEntitiesAt(this.owner.x, this.owner.x2, this.owner.y, this.owner.y2);
                 if (targets.length > 0) {
-                    console.log(this);
                     this.owner.skill(targets);
-                    console.log(targets);
                 }
                 deathFunction_1.deathFunction(this.owner);
             }
@@ -5321,7 +5319,13 @@ class Fighter {
         this.hp -= amount;
         if (this.hp <= 0) {
             this.hp = 0;
-            this.owner._map.messageLog.addMessage("%c{" + this.owner.glyph.foreground + "}" + this.owner.name + "%c{} morreu");
+            let msg = {
+                message: "%c{0}" + this.owner.name + "%c{1} morreu",
+                type: 'death',
+                color1: this.owner.glyph.foreground,
+                color2: [255, 255, 255]
+            };
+            this.owner._map.messageLog.addMessage(msg); //"%c{"+ this.owner.glyph.foreground +"}" + this.owner.name + "%c{} morreu")
             deathFunction_1.deathFunction(this.owner);
         }
     }
@@ -5332,33 +5336,42 @@ class Fighter {
         }
     }
     attack(target) {
-        let result;
+        let result = {
+            message: '',
+            type: 'fight',
+            color1: target.glyph.foreground,
+            color2: [255, 255, 255]
+        };
         let damage = this.power() - target.fighter.defense();
         if (damage > 0) {
             // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
             target.fighter.takeDamage(damage);
-            result = this.owner.name + " bateu em um %c{" + target.glyph.foreground + "}" + target.name + "%c{} com " + damage + " de dano! (" + target.fighter.hp + ")";
+            result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} com " + damage + " de dano! (" + target.fighter.hp + ")";
         }
         else {
-            result = this.owner.name + " bateu em um %c{" + target.glyph.foreground + "}" + target.name + "%c{} mas não causou dano!";
+            result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
         }
         return result;
     }
     equipment_skill(target, dmgBlock) {
-        let result;
+        let result = {
+            message: '',
+            type: 'skill',
+            color1: target.glyph.foreground,
+            color2: [255, 255, 255]
+        };
         let damage = this.skill_power() - target.fighter.defense();
         if (damage > 0) {
             // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
-            console.log(dmgBlock);
             target.fighter.takeDamage(damage);
-            result = this.owner.name + " usou uma " + dmgBlock.name + " em um %c{" + target.glyph.foreground + "}" + target.name + "%c{} com " + damage + " de dano! (" + target.fighter.hp + ")";
+            result.message = this.owner.name + " usou uma " + dmgBlock.name + " em um %c{0}" + target.name + "%c{1} com " + damage + " de dano! (" + target.fighter.hp + ")";
         }
         else {
-            result = this.owner.name + " bateu em um %c{" + target.glyph.foreground + "}" + target.name + "%c{} mas não causou dano!";
+            result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
         }
         return result;
     }
@@ -5797,6 +5810,14 @@ class Game {
         this._inventory = new index_1.Display({ width: 10, height: this._screenHeight });
         this._messaging = new index_1.Display({ width: this._screenWidth, height: this._messageBoxSize });
         this.messageLog = new messages_1.Messagelog(0, this._screenHeight, this._messageBoxSize);
+        this.messageLog.messages = [{ message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
+            { message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
+            { message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
+            { message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
+            { message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
+            { message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
+            { message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
+            { message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" }];
         this._inventory.drawText(0, 1, 'ola');
         //let game = this; // So that we don't lose this
         let event = "keydown";
@@ -5818,10 +5839,10 @@ class Game {
             this._display.clear();
             this._currentScreen.render(this._display, this);
         });
-        this.messageLog.addMessage("teste1");
-        this.messageLog.addMessage("teste%c{red}2%c{} !");
-        this.messageLog.addMessage("teste%c{#00cc00}3%c{} welcome");
-        this.writeMessages();
+        //this.messageLog.addMessage("teste1");
+        //this.messageLog.addMessage("teste%c{red}2%c{} !");
+        //this.messageLog.addMessage("teste%c{#00cc00}3%c{} welcome");
+        //this.writeMessages();
     }
     getDisplay() {
         return this._display;
@@ -5834,8 +5855,22 @@ class Game {
     }
     writeMessages() {
         let x = 0;
-        for (const message of this.messageLog.messages) {
-            this._messaging.drawText(1, x, message);
+        let alpha = 0;
+        console.log('length: ' + this.messageLog.messages.length);
+        let fading = '';
+        let fading2 = '';
+        let out = '';
+        let out2 = '';
+        for (let message of this.messageLog.messages) {
+            alpha += 0.1;
+            if (message.type == 'death' || message.type == 'fight' || message.type == 'skill') {
+                fading = "%c{rgb(" + Math.round(message.color1[0] * alpha).toString() + "," + Math.round(message.color1[1] * alpha).toString() + "," + Math.round(message.color1[2] * alpha).toString() + ")}";
+                fading2 = "%c{rgb(" + Math.round(message.color2[0] * alpha).toString() + "," + Math.round(message.color2[1] * alpha).toString() + "," + Math.round(message.color2[2] * alpha).toString() + ")}";
+                out = message.message.replace("%c{0}", fading);
+                out2 = out.replace("%c{1}", fading2);
+                this._messaging.drawText(1, x, '' + fading2 + out2);
+            }
+            //this._messaging.drawText(1, x, "%c{"+clr+"}"+message.message);
             x += 1;
         }
     }
@@ -5843,7 +5878,7 @@ class Game {
         let hp = this._player.fighter.hp;
         let max_hp = this._player.fighter.max_hp();
         this._inventory.drawText(1, 1, "Stats: ");
-        this._inventory.drawText(1, 3, "%c{red}HP: %c{}" + hp + "/" + max_hp);
+        this._inventory.drawText(1, 3, "%c{rgb(255,0,0)}HP: %c{}" + hp + "/" + max_hp);
         this._inventory.drawText(1, 5, "%c{blue}Atk: %c{}" + this._player.fighter.power());
         this._inventory.drawText(1, 7, "%c{yellow}Def: %c{}" + this._player.fighter.defense());
     }
@@ -5893,7 +5928,7 @@ window.onload = function () {
     let game = new Game();
     // Initialize the game
     let fighter = new fighter_1.Fighter(9997, 1, 4, 0);
-    let player = new entity_1.Entity(60, 45, new glyph_1.Glyph('@', 'black', 'deepskyblue'), 'Player', 1, true, 20, 1, fighter, undefined, true);
+    let player = new entity_1.Entity(60, 45, new glyph_1.Glyph('@', [0, 0, 0], [0, 191, 255]), 'Player', 1, true, 2, 1, fighter, undefined, true);
     game._player = player;
     game._entities = [game._player];
     game.init();
@@ -5924,8 +5959,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class Glyph {
     constructor(char, background, foreground) {
         this.char = ' ';
-        this.foreground = 'white';
-        this.background = 'black';
+        this.foreground = [255, 255, 255];
+        this.background = [0, 0, 0];
         this.char = char;
         this.background = background;
         this.foreground = foreground;
@@ -5954,7 +5989,7 @@ function createDamageBlock(creator, x, y, name) {
     let dmg = new damageBlock_1.DamageBlock();
     let attack = null;
     dmg.owner = creator;
-    attack = new entity_1.Entity(x, y, new glyph_1.Glyph('x', 'black', 'red'), name, 1, false, 0, 5, undefined, undefined, false, undefined, undefined, dmg);
+    attack = new entity_1.Entity(x, y, new glyph_1.Glyph('x', [0, 0, 0], [255, 0, 0]), name, 1, false, 0, 5, undefined, undefined, false, undefined, undefined, dmg);
     attack._map = creator._map;
     attack.damage.startCountDown();
     attack.owner = creator;
@@ -5984,13 +6019,13 @@ function CreateMonster(monster_choice, x, y) {
     if (monster_choice == 'fungi') {
         let fighter_component = new fighter_1.Fighter(20, 0, 4, 35);
         let ai_component = new fungi_1.Fungi();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('f', 'black', 'green'), 'fungi', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('f', [0, 0, 0], [0, 200, 0]), 'fungi', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'orc') {
         let fighter_component = new fighter_1.Fighter(20, 0, 4, 35);
         let ai_component = new orc_1.Orc();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', 'black', 'green'), 'orc', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', [0, 0, 0], [0, 128, 0]), 'orc', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'troll') {
@@ -6036,7 +6071,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const glyph_1 = __webpack_require__(/*! ../glyph */ "./src/glyph.ts");
 function deathFunction(entity) {
     if (entity.fighter != undefined) {
-        let deadG = new glyph_1.Glyph('%', 'black', 'darkred');
+        let deadG = new glyph_1.Glyph('%', [0, 0, 0], [139, 0, 0]);
         entity.glyph = deadG;
         entity.blocks = false;
         entity.render_order = 99;
@@ -6141,7 +6176,7 @@ class Map {
         this._entities = [];
     }
     getTile(x, y) {
-        let emptyTile = new tiles_1.Tile('Empty', ' ', 'black', 'white', false, false);
+        let emptyTile = new tiles_1.Tile('Empty', ' ', [0, 0, 0], [255, 255, 255], false, false);
         if (x < 0 || x >= this._width || y < 0 || y >= this._height) {
             return emptyTile;
         }
@@ -6255,19 +6290,19 @@ class Map {
                 this._tiles[x][y].visibility = visibility;
             }
             else {
-                let fogRGB = lib_1.Color.fromString(this._tiles[x][y].baseTile.foreground);
+                let fogRGB = this._tiles[x][y].baseTile.foreground;
                 let perc = visibility + 0.1;
                 this._tiles[x][y].visibility = visibility;
                 if (dist <= this._entities[0].sight - 2) {
                     if (dist <= this._entities[0].sight / 2)
                         this._tiles[x][y].visited = true;
                     perc = 1 - ((dist) / this._entities[0].sight) + 0.2;
-                    this._tiles[x][y].tile.foreground = lib_1.Color.toRGB([Math.floor(fogRGB[0] * perc), Math.floor(fogRGB[1] * perc), Math.floor(fogRGB[2] * perc)]);
+                    this._tiles[x][y].tile.foreground = [Math.floor(fogRGB[0] * perc), Math.floor(fogRGB[1] * perc), Math.floor(fogRGB[2] * perc)];
                 }
                 else {
-                    this._tiles[x][y].tile.foreground = lib_1.Color.toRGB([Math.floor(fogRGB[0] * 0.2), Math.floor(fogRGB[1] * 0.2), Math.floor(fogRGB[2] * 0.2)]);
+                    this._tiles[x][y].tile.foreground = [Math.floor(fogRGB[0] * 0.2), Math.floor(fogRGB[1] * 0.2), Math.floor(fogRGB[2] * 0.2)];
                 }
-                this._display.draw(x - topleftX, y - topleftY, this._tiles[x][y].tile.char, this._tiles[x][y].tile.foreground, 'black');
+                this._display.draw(x - topleftX, y - topleftY, this._tiles[x][y].tile.char, lib_1.Color.toRGB(this._tiles[x][y].tile.foreground), lib_1.Color.toRGB([0, 0, 0]));
             }
         });
         //this._fov.push(new FOV.DiscreteShadowcasting(this.lightPasses(x,y)) ) 
@@ -6300,6 +6335,7 @@ class Messagelog {
     }
     addMessage(message) {
         if (this.messages.length == this.height) {
+            console.log('pop');
             this.messages.shift();
         }
         this.messages.push(message);
@@ -6363,7 +6399,7 @@ function playScreen() {
             let mapWidth = 120;
             let mapHeight = 90;
             game._map = new map_1.Map(mapWidth, mapHeight);
-            let emptyTile = new tiles_1.Tile('Empty', ' ', 'black', 'white', true, false, false);
+            let emptyTile = new tiles_1.Tile('Empty', ' ', [0, 0, 0], [255, 255, 255], true, false, false);
             console.log("Entered play screen.");
             for (let x = 0; x < mapWidth; x++) {
                 // Create the nested array for the y values
@@ -6383,10 +6419,10 @@ function playScreen() {
             // Smoothen it one last time and then update our map
             generator.create((x, y, v) => {
                 if (v === 1 || x == 0 || y == 0 || x == mapWidth - 1 || x == mapHeight - 1) {
-                    game._map._tiles[x][y] = new tiles_1.Tile('Floor', '.', Color.toRGB([0, 0, 0]), Color.toRGB([84, 54, 11]), true, false); //floor
+                    game._map._tiles[x][y] = new tiles_1.Tile('Floor', '.', [0, 0, 0], [84, 54, 11], true, false); //floor
                 }
                 else {
-                    game._map._tiles[x][y] = new tiles_1.Tile('Wall', '#', 'black', 'goldenrod', false, true, true);
+                    game._map._tiles[x][y] = new tiles_1.Tile('Wall', '#', [0, 0, 0], [218, 165, 32], false, true, true);
                 }
             });
             // Sync map and game variables
@@ -6430,7 +6466,7 @@ function playScreen() {
                     // Fetch the glyph for the tile and render it to the screen
                     let cell = game._map.getTile(x, y);
                     cell.visited ?
-                        display.draw(x - topLeftX, y - topLeftY, cell.visitedTile.char, cell.visitedTile.foreground, cell.visitedTile.background) :
+                        display.draw(x - topLeftX, y - topLeftY, cell.visitedTile.char, Color.toRGB(cell.visitedTile.foreground), Color.toRGB(cell.visitedTile.background)) :
                         display.draw(x - topLeftX, y - topLeftY, ' ', Color.toRGB([0, 0, 0]), Color.toRGB([0, 0, 0]));
                 }
             }
@@ -6446,7 +6482,7 @@ function playScreen() {
                     let dy = Math.pow(game._entities[0].y - game._entities[i].y, 2);
                     let dist = Math.sqrt(dx + dy);
                     if (dist == 0 || dist <= game._entities[0].sight) {
-                        display.draw(game._entities[i].x - topLeftX, game._entities[i].y - topLeftY, game._entities[i].glyph.char, game._entities[i].glyph.foreground, game._entities[i].glyph.background);
+                        display.draw(game._entities[i].x - topLeftX, game._entities[i].y - topLeftY, game._entities[i].glyph.char, Color.toRGB(game._entities[i].glyph.foreground), Color.toRGB(game._entities[i].glyph.background));
                     }
                 }
             }
@@ -6576,7 +6612,6 @@ exports.removeExpiredDamage = removeExpiredDamage;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
-const lib_1 = __webpack_require__(/*! ../lib */ "./lib/index.js");
 class Tile {
     constructor(name, char = ' ', background = [0, 0, 0], foreground = [255, 255, 255], walkable = false, diggable = false, blockslight = false) {
         this.visibility = 0;
@@ -6591,8 +6626,8 @@ class Tile {
         this.tile = new glyph_1.Glyph(char, background, foreground);
         this.baseTile = new glyph_1.Glyph(char, background, foreground);
         this.visitedTile = new glyph_1.Glyph(char, background, foreground);
-        let fogRGB = lib_1.Color.fromString(this.tile.foreground);
-        this.visitedTile.foreground = lib_1.Color.toRGB([Math.floor(fogRGB[0] * 0.2), Math.floor(fogRGB[1] * 0.2), Math.floor(fogRGB[2] * 0.2)]);
+        let fogRGB = this.tile.foreground;
+        this.visitedTile.foreground = [Math.floor(fogRGB[0] * 0.2), Math.floor(fogRGB[1] * 0.2), Math.floor(fogRGB[2] * 0.2)];
     }
 }
 exports.Tile = Tile;

@@ -1,5 +1,7 @@
 import { Entity } from "../entity";
 import { deathFunction } from "../helper/deathFunction";
+import { MessageType } from "../helper/messageType";
+import { Color } from "../../lib";
 
 export class Fighter {
     owner: Entity;
@@ -55,7 +57,13 @@ export class Fighter {
         this.hp -= amount
         if (this.hp <= 0) {
             this.hp = 0
-            this.owner._map.messageLog.addMessage("%c{"+ this.owner.glyph.foreground +"}" + this.owner.name + "%c{} morreu")
+            let msg: MessageType = {
+                message: "%c{0}" +this.owner.name + "%c{1} morreu",
+                type: 'death',
+                color1: this.owner.glyph.foreground,
+                color2: [255,255,255]
+            };
+            this.owner._map.messageLog.addMessage(msg);//"%c{"+ this.owner.glyph.foreground +"}" + this.owner.name + "%c{} morreu")
             deathFunction(this.owner)
         }
     }
@@ -67,8 +75,13 @@ export class Fighter {
         }
     }
 
-    attack(target: Entity) {
-        let result: string;
+    attack(target: Entity): MessageType {
+        let result: MessageType = {
+            message : '',
+            type : 'fight',
+            color1 : target.glyph.foreground,
+            color2 : [255,255,255]
+        };
         let damage = this.power() - target.fighter.defense();
 
         if (damage > 0) {
@@ -76,26 +89,30 @@ export class Fighter {
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
             target.fighter.takeDamage(damage)
-            result = this.owner.name + " bateu em um %c{" + target.glyph.foreground +"}" + target.name + "%c{} com "+ damage + " de dano! (" +target.fighter.hp +")";
+            result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} com "+ damage + " de dano! (" +target.fighter.hp +")";
         } else {
-            result = this.owner.name + " bateu em um %c{" + target.glyph.foreground +"}" + target.name + "%c{} mas não causou dano!";
+            result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
         }
         return result
     }
 
     equipment_skill(target: Entity, dmgBlock: Entity) {
-        let result: string;
+        let result: MessageType = {
+            message : '',
+            type : 'skill',
+            color1 : target.glyph.foreground,
+            color2 : [255,255,255]
+        };
         let damage = this.skill_power() - target.fighter.defense();
 
         if (damage > 0) {
             // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
-            console.log(dmgBlock)
             target.fighter.takeDamage(damage)
-            result = this.owner.name + " usou uma " + dmgBlock.name + " em um %c{" + target.glyph.foreground +"}" + target.name + "%c{} com "+ damage + " de dano! (" +target.fighter.hp +")";
+            result.message = this.owner.name + " usou uma " + dmgBlock.name + " em um %c{0}" + target.name + "%c{1} com "+ damage + " de dano! (" +target.fighter.hp +")";
         } else {
-            result = this.owner.name + " bateu em um %c{" + target.glyph.foreground +"}" + target.name + "%c{} mas não causou dano!";
+            result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
         }
         return result
     }

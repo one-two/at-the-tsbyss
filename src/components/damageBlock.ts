@@ -12,15 +12,13 @@ export class DamageBlock {
             //console.log(counter);
             counter--;
             if (counter == 3) {
-                this.owner.glyph.foreground = 'palevioletred'
+                this.owner.glyph.foreground = [216, 112, 147]
             }
             if (counter == 0 ) {
                 clearInterval(interval);
                 let targets = this.owner._map.getEntitiesAt(this.owner.x, this.owner.x2, this.owner.y, this.owner.y2);
                 if (targets.length > 0) {
-                    console.log(this);
                     this.owner.skill(targets);
-                    console.log(targets);
                 }
                 deathFunction(this.owner);
             }	
