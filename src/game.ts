@@ -184,8 +184,8 @@ export class Game {
 window.onload = function() {
 	let game = new Game();
 	// Initialize the game
-	let fighter = new Fighter(9997, 1, 4, 0);
-	let player = new Entity(60, 45, new Glyph('@', [0,0,0], [0, 191, 255]), 'Player', 1, true, 2, 1, fighter, undefined, true);
+	let fighter = new Fighter(9995, 1, 4, 0);
+	let player = new Entity(60, 45, new Glyph('@', [0,0,0], [0, 191, 255]), 'Player', 1, true, 1, 1, fighter, undefined, true);
 	game._player = player
 	game._entities = [game._player];
 	game.init();

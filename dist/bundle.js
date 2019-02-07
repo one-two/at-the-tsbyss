@@ -5626,18 +5626,11 @@ class Entity {
         }
     }
     move(dx, dy, map) {
-        if (this.player == true && this.stamina < this.maxStamina)
+        let moveerror = this.changeFace(dx, dy);
+        if (this.player == true && this.stamina < this.maxStamina && moveerror)
             return;
         else if (this.player == true)
             this.stamina = 0;
-        if (dx == -1)
-            this.face = 'w';
-        if (dx == 1)
-            this.face = 'e';
-        if (dy == -1)
-            this.face = 'n';
-        if (dy == 1)
-            this.face = 's';
         let tx = this.x + dx;
         let tx2 = this.x2 + dx;
         let ty = this.y + dy;
@@ -5660,6 +5653,32 @@ class Entity {
         else {
             // if (this.glyph.char == '@') this._map.messageLog.addMessage("this is a %c{goldenrod}wall%c{}!");
             // else this._map.messageLog.addMessage("hey fungi, this is a %c{goldenrod}wall%c{}!");
+        }
+    }
+    changeFace(dx, dy) {
+        if (dx == -1) {
+            if (this.face == 'w')
+                return true;
+            this.face = 'w';
+            return false;
+        }
+        if (dx == 1) {
+            if (this.face == 'e')
+                return true;
+            this.face = 'e';
+            return false;
+        }
+        if (dy == -1) {
+            if (this.face == 'n')
+                return true;
+            this.face = 'n';
+            return false;
+        }
+        if (dy == 1) {
+            if (this.face == 's')
+                return true;
+            this.face = 's';
+            return false;
         }
     }
     startMoveCountDown() {
@@ -5856,7 +5875,6 @@ class Game {
     writeMessages() {
         let x = 0;
         let alpha = 0;
-        console.log('length: ' + this.messageLog.messages.length);
         let fading = '';
         let fading2 = '';
         let out = '';
@@ -5870,7 +5888,6 @@ class Game {
                 out2 = out.replace("%c{1}", fading2);
                 this._messaging.drawText(1, x, '' + fading2 + out2);
             }
-            //this._messaging.drawText(1, x, "%c{"+clr+"}"+message.message);
             x += 1;
         }
     }
@@ -5927,8 +5944,8 @@ exports.Game = Game;
 window.onload = function () {
     let game = new Game();
     // Initialize the game
-    let fighter = new fighter_1.Fighter(9997, 1, 4, 0);
-    let player = new entity_1.Entity(60, 45, new glyph_1.Glyph('@', [0, 0, 0], [0, 191, 255]), 'Player', 1, true, 2, 1, fighter, undefined, true);
+    let fighter = new fighter_1.Fighter(9995, 1, 4, 0);
+    let player = new entity_1.Entity(60, 45, new glyph_1.Glyph('@', [0, 0, 0], [0, 191, 255]), 'Player', 1, true, 1, 1, fighter, undefined, true);
     game._player = player;
     game._entities = [game._player];
     game.init();
@@ -6335,7 +6352,6 @@ class Messagelog {
     }
     addMessage(message) {
         if (this.messages.length == this.height) {
-            console.log('pop');
             this.messages.shift();
         }
         this.messages.push(message);

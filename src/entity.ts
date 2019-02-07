@@ -84,12 +84,9 @@ export class Entity {
     }
 
     move(dx: number, dy: number, map: Map) {
-        if (this.player == true && this.stamina < this.maxStamina) return;
+        let moveerror = this.changeFace(dx, dy);
+        if (this.player == true && this.stamina < this.maxStamina && moveerror ) return;
         else if (this.player == true) this.stamina = 0
-        if (dx == -1) this.face = 'w';
-        if (dx == 1) this.face = 'e';
-        if (dy == -1) this.face = 'n';
-        if (dy == 1) this.face = 's';
         let tx = this.x + dx;
         let tx2 = this.x2 + dx;
         let ty = this.y + dy;
@@ -109,6 +106,29 @@ export class Entity {
         } else {
             // if (this.glyph.char == '@') this._map.messageLog.addMessage("this is a %c{goldenrod}wall%c{}!");
             // else this._map.messageLog.addMessage("hey fungi, this is a %c{goldenrod}wall%c{}!");
+        }
+    }
+
+    private changeFace(dx: number, dy: number):boolean {
+        if (dx == -1) {
+            if (this.face == 'w') return true;
+            this.face = 'w';
+            return false;
+        }
+        if (dx == 1) {
+            if (this.face == 'e') return true;
+            this.face = 'e';
+            return false;
+        }
+        if (dy == -1) {
+            if (this.face == 'n') return true;
+            this.face = 'n';
+            return false;
+        }
+        if (dy == 1) {
+            if (this.face == 's') return true;
+            this.face = 's';
+            return false;
         }
     }
 
