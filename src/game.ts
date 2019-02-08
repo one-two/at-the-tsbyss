@@ -71,8 +71,6 @@ export class Game {
 		window.addEventListener(event, e => {
 			// When an event is received, send it to the
 			// screen if there is one
-			//console.log(this._player);
-			
 			if (this._currentScreen !== null) {
 				// Send the event type and data to the screen
 				this._currentScreen.handleInput(event, e, this);

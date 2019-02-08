@@ -62,6 +62,7 @@ export class Entity {
 
         if (this.player == true) {
             this.startMoveCountDown();
+            this.startAttackCountDown();
         }
 
         if (this.ai != undefined) {
@@ -101,7 +102,14 @@ export class Entity {
                 this.y = ty;
                 this.y2 = ty2;
             } else {
-                this.attack(targets);
+                if (this.player == true) {
+                    if (this.cooldown == 0) {
+                        this.attack(targets);
+                        this.cooldown = 5;
+                    }
+                } else {
+                    this.attack(targets);
+                }
             }
         } else {
             // if (this.glyph.char == '@') this._map.messageLog.addMessage("this is a %c{goldenrod}wall%c{}!");
@@ -134,13 +142,24 @@ export class Entity {
 
     startMoveCountDown(){
         var moveinterval = setInterval(() => {
-            //console.log(counter);
             if (this.stamina <= this.maxStamina) {
                 this.stamina++;
             }
                 // code here will run when the counter reaches zero.
             if (this.fighter.hp == 0) {
                 clearInterval(moveinterval);
+                deathFunction(this);
+            }
+        }, 100);
+    }
+    startAttackCountDown(){
+        var attackinterval = setInterval(() => {
+            if (this.cooldown > 0) {
+                this.cooldown--;
+            }
+                // code here will run when the counter reaches zero.
+            if (this.fighter.hp == 0) {
+                clearInterval(attackinterval);
                 deathFunction(this);
             }
         }, 100);

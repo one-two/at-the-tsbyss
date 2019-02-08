@@ -5222,11 +5222,11 @@ class DamageBlock {
         this.multiplier = multi;
     }
     startCountDown() {
-        var counter = 8;
+        var counter = 6;
         var interval = setInterval(() => {
             //console.log(counter);
             counter--;
-            if (counter == 3) {
+            if (counter == 2) {
                 this.owner.glyph.foreground = [216, 112, 147];
             }
             if (counter == 0) {
@@ -5439,23 +5439,38 @@ class Knife extends equipment_1.Equipment {
         this.defense_bonus = 0;
         this.hp_bonus = 0;
         this.name = 'faca';
+        this.cooldown = 10;
+        this.startCountDown();
+    }
+    startCountDown() {
+        var interval = setInterval(() => {
+            //console.log(counter);
+            if (this.cooldown > 0)
+                this.cooldown--;
+        }, 100);
     }
     strike() {
-        let dir = this.owner.face;
-        let dmg = new damageBlock_1.DamageBlock(this.skill_bonus);
-        let attack = null;
-        dmg.owner = this.owner;
-        if (this.owner.face == 's') {
-            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 1, this.name, this.skill_bonus);
+        if (this.cooldown == 0) {
+            this.cooldown = 10;
+            let dir = this.owner.face;
+            let dmg = new damageBlock_1.DamageBlock(this.skill_bonus);
+            let attack = null;
+            dmg.owner = this.owner;
+            if (this.owner.face == 's') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 1, this.name, this.skill_bonus);
+            }
+            else if (this.owner.face == 'n') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 1, this.name, this.skill_bonus);
+            }
+            else if (this.owner.face == 'w') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y, this.name, this.skill_bonus);
+            }
+            else if (this.owner.face == 'e') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y, this.name, this.skill_bonus);
+            }
         }
-        else if (this.owner.face == 'n') {
-            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 1, this.name, this.skill_bonus);
-        }
-        else if (this.owner.face == 'w') {
-            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y, this.name, this.skill_bonus);
-        }
-        else if (this.owner.face == 'e') {
-            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y, this.name, this.skill_bonus);
+        else {
+            console.log('undo');
         }
     }
 }
@@ -5623,6 +5638,7 @@ class Entity {
         this.player = player;
         if (this.player == true) {
             this.startMoveCountDown();
+            this.startAttackCountDown();
         }
         if (this.ai != undefined) {
             this.ai.owner = this;
@@ -5663,7 +5679,15 @@ class Entity {
                 this.y2 = ty2;
             }
             else {
-                this.attack(targets);
+                if (this.player == true) {
+                    if (this.cooldown == 0) {
+                        this.attack(targets);
+                        this.cooldown = 5;
+                    }
+                }
+                else {
+                    this.attack(targets);
+                }
             }
         }
         else {
@@ -5706,6 +5730,19 @@ class Entity {
             // code here will run when the counter reaches zero.
             if (this.fighter.hp == 0) {
                 clearInterval(moveinterval);
+                deathFunction_1.deathFunction(this);
+            }
+        }, 100);
+    }
+    startAttackCountDown() {
+        var attackinterval = setInterval(() => {
+            //console.log(counter);
+            if (this.cooldown > 0) {
+                this.cooldown--;
+            }
+            // code here will run when the counter reaches zero.
+            if (this.fighter.hp == 0) {
+                clearInterval(attackinterval);
                 deathFunction_1.deathFunction(this);
             }
         }, 100);
@@ -6050,13 +6087,13 @@ const glyph_1 = __webpack_require__(/*! ../glyph */ "./src/glyph.ts");
 const fighter_1 = __webpack_require__(/*! ../components/fighter */ "./src/components/fighter.ts");
 function CreateMonster(monster_choice, x, y) {
     if (monster_choice == 'fungi') {
-        let fighter_component = new fighter_1.Fighter(20, 0, 4, 35);
+        let fighter_component = new fighter_1.Fighter(200, 0, 4, 35);
         let ai_component = new fungi_1.Fungi();
         let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('f', [0, 0, 0], [0, 200, 0]), 'fungi', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'orc') {
-        let fighter_component = new fighter_1.Fighter(20, 0, 4, 35);
+        let fighter_component = new fighter_1.Fighter(200, 0, 4, 35);
         let ai_component = new orc_1.Orc();
         let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', [0, 0, 0], [0, 128, 0]), 'orc', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
@@ -6520,6 +6557,7 @@ function playScreen() {
             }
         },
         handleInput: (inputType, inputData, game) => {
+            console.log(inputType);
             if (inputType === 'keydown') {
                 switch (inputData.keyCode) {
                     case constants_1.KEYS.VK_RETURN:

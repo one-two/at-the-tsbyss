@@ -27,7 +27,6 @@ export class Fungi implements Enemy {
     startCountDown(seconds: number){
         var counter = seconds;
         var interval = setInterval(() => {
-            //console.log(counter);
             counter--;
             this.skills.forEach(element => {
                 if (element.cooldown < element.maxCooldown) element.cooldown++;

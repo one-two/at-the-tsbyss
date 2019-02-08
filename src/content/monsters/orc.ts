@@ -10,7 +10,6 @@ export class Orc implements Enemy {
     startCountDown(seconds: number){
         var counter = seconds;
         var interval = setInterval(() => {
-            //console.log(counter);
             counter--;
             if (counter < 0 ) {
                 

@@ -12,11 +12,10 @@ export class DamageBlock {
     }
 
     startCountDown(){
-        var counter = 8;
+        var counter = 6;
         var interval = setInterval(() => {
-            //console.log(counter);
             counter--;
-            if (counter == 3) {
+            if (counter == 2) {
                 this.owner.glyph.foreground = [216, 112, 147]
             }
             if (counter == 0 ) {
