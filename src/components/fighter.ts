@@ -103,7 +103,7 @@ export class Fighter {
             color1 : target.glyph.foreground,
             color2 : [255,255,255]
         };
-        let damage = this.skill_power() - target.fighter.defense();
+        let damage = this.skill_power()*dmgBlock.damage.multiplier - target.fighter.defense();
 
         if (damage > 0) {
             // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(

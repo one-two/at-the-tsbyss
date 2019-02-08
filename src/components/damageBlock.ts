@@ -5,6 +5,11 @@ export class DamageBlock {
     owner: Entity;
     name: string;
     expire: boolean = false;
+    multiplier: number;
+
+    constructor(multi: number) {
+        this.multiplier = multi;
+    }
 
     startCountDown(){
         var counter = 8;

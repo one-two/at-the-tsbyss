@@ -5217,8 +5217,9 @@ process.umask = function() { return 0; };
 Object.defineProperty(exports, "__esModule", { value: true });
 const deathFunction_1 = __webpack_require__(/*! ../helper/deathFunction */ "./src/helper/deathFunction.ts");
 class DamageBlock {
-    constructor() {
+    constructor(multi) {
         this.expire = false;
+        this.multiplier = multi;
     }
     startCountDown() {
         var counter = 8;
@@ -5362,7 +5363,7 @@ class Fighter {
             color1: target.glyph.foreground,
             color2: [255, 255, 255]
         };
-        let damage = this.skill_power() - target.fighter.defense();
+        let damage = this.skill_power() * dmgBlock.damage.multiplier - target.fighter.defense();
         if (damage > 0) {
             // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
@@ -5392,15 +5393,27 @@ exports.Fighter = Fighter;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const createDamageBlock_1 = __webpack_require__(/*! ../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
-function poison_cloud2(owner, target) {
+function poison_cloud2(owner, target, multi) {
     let nameAtk = 'nuvem de esporos';
-    createDamageBlock_1.createDamageBlock(owner, target.x, target.y, nameAtk);
-    createDamageBlock_1.createDamageBlock(owner, target.x + 1, target.y, nameAtk);
-    createDamageBlock_1.createDamageBlock(owner, target.x - 1, target.y, nameAtk);
-    createDamageBlock_1.createDamageBlock(owner, target.x, target.y + 1, nameAtk);
-    createDamageBlock_1.createDamageBlock(owner, target.x, target.y - 1, nameAtk);
+    createDamageBlock_1.createDamageBlock(owner, target.x, target.y, nameAtk, multi);
+    createDamageBlock_1.createDamageBlock(owner, target.x + 1, target.y, nameAtk, multi);
+    createDamageBlock_1.createDamageBlock(owner, target.x - 1, target.y, nameAtk, multi);
+    createDamageBlock_1.createDamageBlock(owner, target.x, target.y + 1, nameAtk, multi);
+    createDamageBlock_1.createDamageBlock(owner, target.x, target.y - 1, nameAtk, multi);
 }
 exports.poison_cloud2 = poison_cloud2;
+function poison_shield(owner, target, multi) {
+    let nameAtk = 'escudo de esporos';
+    createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y - 1, nameAtk, multi);
+    createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y, nameAtk, multi);
+    createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y + 1, nameAtk, multi);
+    createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 1, nameAtk, multi);
+    createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 1, nameAtk, multi);
+    createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y - 1, nameAtk, multi);
+    createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y, nameAtk, multi);
+    createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y + 1, nameAtk, multi);
+}
+exports.poison_shield = poison_shield;
 
 
 /***/ }),
@@ -5429,20 +5442,20 @@ class Knife extends equipment_1.Equipment {
     }
     strike() {
         let dir = this.owner.face;
-        let dmg = new damageBlock_1.DamageBlock();
+        let dmg = new damageBlock_1.DamageBlock(this.skill_bonus);
         let attack = null;
         dmg.owner = this.owner;
         if (this.owner.face == 's') {
-            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 1, this.name);
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 1, this.name, this.skill_bonus);
         }
         else if (this.owner.face == 'n') {
-            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 1, this.name);
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 1, this.name, this.skill_bonus);
         }
         else if (this.owner.face == 'w') {
-            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y, this.name);
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y, this.name, this.skill_bonus);
         }
         else if (this.owner.face == 'e') {
-            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y, this.name);
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y, this.name, this.skill_bonus);
         }
     }
 }
@@ -5462,20 +5475,19 @@ exports.Knife = Knife;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const deathFunction_1 = __webpack_require__(/*! ../../helper/deathFunction */ "./src/helper/deathFunction.ts");
-const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
 const skilllist_1 = __webpack_require__(/*! ../../components/skilllist */ "./src/components/skilllist.ts");
 class Fungi {
     constructor() {
         this.skill_bonus = 1;
         this.skills = [{
-                name: 'oi',
-                cooldown: 5,
-                maxCooldown: 5
+                name: 'poison cloud',
+                cooldown: 10,
+                maxCooldown: 10
             },
             {
-                name: 'st',
-                cooldown: 3,
-                maxCooldown: 7
+                name: 'poison shield',
+                cooldown: 20,
+                maxCooldown: 20
             }];
     }
     startCountDown(seconds) {
@@ -5483,6 +5495,10 @@ class Fungi {
         var interval = setInterval(() => {
             //console.log(counter);
             counter--;
+            this.skills.forEach(element => {
+                if (element.cooldown < element.maxCooldown)
+                    element.cooldown++;
+            });
             if (counter < 0) {
                 // code here will run when the counter reaches zero.
                 if (this.owner.fighter.hp == 0) {
@@ -5501,22 +5517,22 @@ class Fungi {
         if (player == undefined)
             return;
         let dist = Math.sqrt(Math.pow((player.x - this.owner.x), 2) + Math.pow((player.y - this.owner.y), 2));
-        if (dist < this.owner.sight * 2) {
+        if (dist < this.owner.sight * 1.4) {
+            if (this.skills[0].cooldown == this.skills[0].maxCooldown) {
+                skilllist_1.poison_cloud2(this.owner, player, 0.5);
+                this.skills[0].cooldown = 0;
+            }
             //this.owner.hunt(player);
             //this.poison_cloud(player);
-            skilllist_1.poison_cloud2(this.owner, player);
         }
         else {
             this.owner.wander();
         }
-    }
-    poison_cloud(player) {
-        let nameAtk = 'nuvem de esporos';
-        createDamageBlock_1.createDamageBlock(this.owner, player.x, player.y, nameAtk);
-        createDamageBlock_1.createDamageBlock(this.owner, player.x + 1, player.y, nameAtk);
-        createDamageBlock_1.createDamageBlock(this.owner, player.x - 1, player.y, nameAtk);
-        createDamageBlock_1.createDamageBlock(this.owner, player.x, player.y + 1, nameAtk);
-        createDamageBlock_1.createDamageBlock(this.owner, player.x, player.y - 1, nameAtk);
+        if (dist < 2)
+            if (this.skills[1].cooldown == this.skills[1].maxCooldown) {
+                skilllist_1.poison_shield(this.owner, player, 1);
+                this.skills[1].cooldown = 0;
+            }
     }
 }
 exports.Fungi = Fungi;
@@ -6001,9 +6017,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const entity_1 = __webpack_require__(/*! ../entity */ "./src/entity.ts");
 const damageBlock_1 = __webpack_require__(/*! ../components/damageBlock */ "./src/components/damageBlock.ts");
 const glyph_1 = __webpack_require__(/*! ../glyph */ "./src/glyph.ts");
-function createDamageBlock(creator, x, y, name) {
+function createDamageBlock(creator, x, y, name, multi) {
     let dir = creator.face;
-    let dmg = new damageBlock_1.DamageBlock();
+    let dmg = new damageBlock_1.DamageBlock(multi);
     let attack = null;
     dmg.owner = creator;
     attack = new entity_1.Entity(x, y, new glyph_1.Glyph('x', [0, 0, 0], [255, 0, 0]), name, 1, false, 0, 5, undefined, undefined, false, undefined, undefined, dmg);

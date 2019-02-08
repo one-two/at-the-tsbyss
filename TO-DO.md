@@ -23,6 +23,6 @@ Todo list to fill the void of our souls (but i really want to make it web)
 - [X] decide on how player will attack
 - [X] State machines? sorta
 - [ ] Monster attack patterns
-- [ ] Attack stamina != moving stamina
+- [X] Attack stamina != moving stamina
 - [ ] Exits
 - [X] Larger mobs?

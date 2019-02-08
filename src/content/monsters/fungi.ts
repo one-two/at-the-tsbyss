@@ -4,7 +4,7 @@ import { Enemy } from "../../helper/enemy";
 import { deathFunction } from "../../helper/deathFunction";
 import { DamageBlock } from "../../components/damageBlock";
 import { createDamageBlock } from "../../helper/createDamageBlock";
-import { skilllist, poison_cloud2 } from "../../components/skilllist"
+import { skilllist, poison_cloud2, poison_shield } from "../../components/skilllist"
 
 export class Fungi implements Enemy {
     skill_bonus: number = 1;
@@ -13,14 +13,14 @@ export class Fungi implements Enemy {
 
     constructor() {
         this.skills = [{
-            name: 'oi',
-            cooldown: 5,
-            maxCooldown: 5
+            name: 'poison cloud',
+            cooldown: 10,
+            maxCooldown: 10
         },
         {
-            name: 'st',
-            cooldown:3,
-            maxCooldown: 7
+            name: 'poison shield',
+            cooldown: 20,
+            maxCooldown: 20
         }]
     }
 
@@ -29,6 +29,9 @@ export class Fungi implements Enemy {
         var interval = setInterval(() => {
             //console.log(counter);
             counter--;
+            this.skills.forEach(element => {
+                if (element.cooldown < element.maxCooldown) element.cooldown++;
+            });
             if (counter < 0 ) {
                 
                 // code here will run when the counter reaches zero.
@@ -48,21 +51,20 @@ export class Fungi implements Enemy {
         let player = this.owner._map.getPlayer();
         if (player == undefined) return;
         let dist = Math.sqrt( (player.x - this.owner.x)**2+(player.y - this.owner.y)**2 );
-        if (dist < this.owner.sight*2) {
+        if (dist < this.owner.sight*1.4) {
+            if (this.skills[0].cooldown == this.skills[0].maxCooldown) {
+                poison_cloud2(this.owner, player, 0.5);
+                this.skills[0].cooldown = 0
+            }
             //this.owner.hunt(player);
             //this.poison_cloud(player);
-            poison_cloud2(this.owner, player);
         } else {
             this.owner.wander();
         }
+        if (dist < 2) if (this.skills[1].cooldown == this.skills[1].maxCooldown) {
+            poison_shield(this.owner, player, 1);
+            this.skills[1].cooldown = 0
+        }
     }
 
-    poison_cloud(player: Entity) {
-        let nameAtk = 'nuvem de esporos';
-        createDamageBlock(this.owner, player.x, player.y, nameAtk);
-        createDamageBlock(this.owner, player.x+1, player.y, nameAtk);
-        createDamageBlock(this.owner, player.x-1, player.y, nameAtk);
-        createDamageBlock(this.owner, player.x, player.y+1, nameAtk);
-        createDamageBlock(this.owner, player.x, player.y-1, nameAtk);
-    }
 }
