@@ -7,6 +7,7 @@ import { Equipment } from "./components/equipment";
 import { DamageBlock } from "./components/damageBlock";
 import { Enemy } from "./helper/enemy";
 import { deathFunction } from "./helper/deathFunction";
+import { MessageType } from "./helper/messageType";
 
 export class Entity {
     x: number;
@@ -25,7 +26,7 @@ export class Entity {
     sight: number;
     cooldown: number;
     face: string;
-    // item
+    item: Equipment;
     // inventory
     // cooldown
     // maxCooldown 
@@ -59,6 +60,7 @@ export class Entity {
         this.face = 'n';
         this.damage = damage;
         this.player = player;
+        this.item = item;
 
         if (this.player == true) {
             this.startMoveCountDown();
@@ -81,6 +83,10 @@ export class Entity {
 
         if (this.damage != undefined) {
             this.damage.owner = this;
+        }
+
+        if (this.item != undefined) {
+            this.item.owner = this;
         }
     }
 
@@ -166,10 +172,23 @@ export class Entity {
     }
 
     equip(item: Entity) {
+        console.log(item);
+        let equip: MessageType = {
+            message : this.owner.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
+            type : 'pickup',
+            color1 : item.glyph.foreground,
+            color2 : [255,255,255]
+        };
+        this._map.messageLog.addMessage(equip);
         if (this.equipment == undefined) {
-            this.equipment = item.equipment;
+            this.equipment = item.item;
+            this.equipment.owner = this;
+            item.item.expire = true;
         } else {
             // colocar na backpack
+            this.equipment = item.item;
+            this.equipment.owner = this;
+            item.item.expire = true;
         }
 
     }

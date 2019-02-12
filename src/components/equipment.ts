@@ -7,6 +7,7 @@ export abstract class Equipment {
     defense_bonus: number;
     hp_bonus: number;
     name: string;
+    expire: boolean = false;
 
     constructor() {
     }

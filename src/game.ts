@@ -112,7 +112,7 @@ export class Game {
 		let out2 = '';
 		for (let message of this.messageLog.messages) {
 			alpha += 0.1;
-			if (message.type == 'death' || message.type == 'fight' || message.type == 'skill') {
+			if (message.type == 'death' || message.type == 'fight' || message.type == 'skill' || message.type == 'pickup') {
 				fading = "%c{rgb(" + Math.round(message.color1[0]*alpha).toString() +","+Math.round(message.color1[1]*alpha).toString() +","+Math.round(message.color1[2]*alpha).toString() +")}";
 				fading2 = "%c{rgb(" + Math.round(message.color2[0]*alpha).toString() +","+Math.round(message.color2[1]*alpha).toString() +","+Math.round(message.color2[2]*alpha).toString() +")}";
 				out =  message.message.replace("%c{0}", fading);

@@ -6,6 +6,7 @@ import { randint } from "./helper/randint";
 import { CreateMonster } from "./helper/createMonters"
 import { Color, FOV, Display } from "../lib";
 import { Messagelog } from "./messages";
+import { CreateItem } from "./helper/createItens";
 
 export class Map {
     _display: Display;
@@ -60,6 +61,20 @@ export class Map {
         return targets;
     }
 
+    getItemAt(x: number, x2: number, y:number, y2: number): Entity[] {
+        let targets: Entity[] = [];
+        for (let index = 0; index < this._entities.length; index++) {
+            for (let i = x; i <= x2; i++) {
+                for (let j = y; j <= y2; j++) {
+                    if (this._entities[index].x == i && this._entities[index].y == j && this._entities[index].item != undefined) {
+                        targets.push(this._entities[index]);
+                    }
+                }
+            }
+        }
+        return targets;
+    }
+
     getPlayer(): Entity {
         let player: Entity;
         for (let index = 0; index < this._entities.length; index++) {
@@ -72,13 +87,13 @@ export class Map {
         let max_monsters_per_room = from_dungeon_level([[20, 1], [3, 4], [5, 6]], this.dungeon_level)
         let max_items_per_room = from_dungeon_level([[1, 1], [2, 4]], this.dungeon_level)
 
-        let number_of_monsters = 20;//randint(0, max_monsters_per_room)
+        let number_of_monsters = randint(0, max_monsters_per_room)
         let number_of_items = randint(0, max_items_per_room);
         
         let monster_chances = {
             'fungi': from_dungeon_level([[200, 1]], this.dungeon_level),
             'orc': from_dungeon_level([[200, 1], [60, 3], [40, 7]], this.dungeon_level),
-            'troll': from_dungeon_level([[5, 1], [10, 3], [30, 5], [60, 7]], this.dungeon_level),
+            'troll': from_dungeon_level([[50, 1], [10, 3], [30, 5], [60, 7]], this.dungeon_level),
             'wyvern': from_dungeon_level([[1, 1], [50, 2], [50, 5]], this.dungeon_level),
             'dragon': from_dungeon_level([[1, 1], [10, 3], [20, 7]], this.dungeon_level),
             'ranger': from_dungeon_level([[1, 1]], this.dungeon_level)
@@ -87,11 +102,12 @@ export class Map {
         console.log(monster_chances);
 
         let item_chances = {
-            'healing_potion': 35,
-            'dagger': from_dungeon_level([[10, 0]], this.dungeon_level),
-            'sword': from_dungeon_level([[5, 0], [10, 2]], this.dungeon_level),
-            'spear': from_dungeon_level([[5, 1], [10, 3]], this.dungeon_level),
-            'shield': from_dungeon_level([[5, 0]], this.dungeon_level)
+            //'healing_potion': 35,
+            'knife': from_dungeon_level([[10, 1]], this.dungeon_level),
+            'dagger': from_dungeon_level([[10, 1]], this.dungeon_level),
+            'sword': from_dungeon_level([[500, 0], [10, 2]], this.dungeon_level),
+            'spear': from_dungeon_level([[5, 1], [10, 3]], this.dungeon_level)
+            //'shield': from_dungeon_level([[5, 0]], this.dungeon_level)
         }
 
         for (let index = 0; index < number_of_monsters; index++) {
@@ -118,6 +134,34 @@ export class Map {
                 index -= 1;
             }
         }
+
+        for (let index = 0; index < number_of_items; index++) {
+            let x = randint(0, this._width - 1)
+            let y = randint(0, this._height - 1)
+            let emptyspace = true;
+            for (let index = 0; index < this._entities.length; index++) {
+                if (this._entities[index].x == x && this._entities[index].y == y) {
+                    emptyspace = false;
+                }
+
+            }
+
+            if (this.getTile(x, y)._isWalkable == false) {
+                emptyspace = false;
+            }
+
+            if (emptyspace == true) {
+                let item_choice = random_choice_from_dict(item_chances);
+                let q = CreateItem(item_choice, 61, 45);
+                console.log(item_choice + '- '+ x + ' ' + y);
+                q._map = this;
+                this._entities.push(q);
+            } else {
+                index -= 1;
+            }
+        }
+
+
         return null;
     }
 

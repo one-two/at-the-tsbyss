@@ -5224,7 +5224,6 @@ class DamageBlock {
     startCountDown() {
         var counter = 6;
         var interval = setInterval(() => {
-            //console.log(counter);
             counter--;
             if (counter == 2) {
                 this.owner.glyph.foreground = [216, 112, 147];
@@ -5257,6 +5256,7 @@ exports.DamageBlock = DamageBlock;
 Object.defineProperty(exports, "__esModule", { value: true });
 class Equipment {
     constructor() {
+        this.expire = false;
     }
     strike() {
     }
@@ -5344,6 +5344,7 @@ class Fighter {
             color2: [255, 255, 255]
         };
         let damage = this.power() - target.fighter.defense();
+        damage = +damage.toFixed(2);
         if (damage > 0) {
             // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
@@ -5364,6 +5365,7 @@ class Fighter {
             color2: [255, 255, 255]
         };
         let damage = this.skill_power() * dmgBlock.damage.multiplier - target.fighter.defense();
+        damage = +damage.toFixed(2);
         if (damage > 0) {
             // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
@@ -5393,7 +5395,7 @@ exports.Fighter = Fighter;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const createDamageBlock_1 = __webpack_require__(/*! ../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
-function poison_cloud2(owner, target, multi) {
+function poison_cloud(owner, target, multi) {
     let nameAtk = 'nuvem de esporos';
     createDamageBlock_1.createDamageBlock(owner, target.x, target.y, nameAtk, multi);
     createDamageBlock_1.createDamageBlock(owner, target.x + 1, target.y, nameAtk, multi);
@@ -5401,7 +5403,7 @@ function poison_cloud2(owner, target, multi) {
     createDamageBlock_1.createDamageBlock(owner, target.x, target.y + 1, nameAtk, multi);
     createDamageBlock_1.createDamageBlock(owner, target.x, target.y - 1, nameAtk, multi);
 }
-exports.poison_cloud2 = poison_cloud2;
+exports.poison_cloud = poison_cloud;
 function poison_shield(owner, target, multi) {
     let nameAtk = 'escudo de esporos';
     createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y - 1, nameAtk, multi);
@@ -5414,6 +5416,34 @@ function poison_shield(owner, target, multi) {
     createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y + 1, nameAtk, multi);
 }
 exports.poison_shield = poison_shield;
+function punch(owner, target, multi) {
+    let nameAtk = 'socao';
+    if (owner.face == 'n') {
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 1, nameAtk, multi);
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 2, nameAtk, multi);
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 3, nameAtk, multi);
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 4, nameAtk, multi);
+    }
+    if (owner.face == 's') {
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 1, nameAtk, multi);
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 2, nameAtk, multi);
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 3, nameAtk, multi);
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 4, nameAtk, multi);
+    }
+    if (owner.face == 'w') {
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y, nameAtk, multi);
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 2, owner.y, nameAtk, multi);
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 3, owner.y, nameAtk, multi);
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 4, owner.y, nameAtk, multi);
+    }
+    if (owner.face == 'e') {
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y, nameAtk, multi);
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 2, owner.y, nameAtk, multi);
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 3, owner.y, nameAtk, multi);
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 4, owner.y, nameAtk, multi);
+    }
+}
+exports.punch = punch;
 
 
 /***/ }),
@@ -5444,7 +5474,6 @@ class Knife extends equipment_1.Equipment {
     }
     startCountDown() {
         var interval = setInterval(() => {
-            //console.log(counter);
             if (this.cooldown > 0)
                 this.cooldown--;
         }, 100);
@@ -5469,12 +5498,78 @@ class Knife extends equipment_1.Equipment {
                 createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y, this.name, this.skill_bonus);
             }
         }
-        else {
-            console.log('undo');
-        }
     }
 }
 exports.Knife = Knife;
+
+
+/***/ }),
+
+/***/ "./src/content/itens/sword.ts":
+/*!************************************!*\
+  !*** ./src/content/itens/sword.ts ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const equipment_1 = __webpack_require__(/*! ../../components/equipment */ "./src/components/equipment.ts");
+const damageBlock_1 = __webpack_require__(/*! ../../components/damageBlock */ "./src/components/damageBlock.ts");
+const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
+class Sword extends equipment_1.Equipment {
+    constructor() {
+        super();
+        this.power_bonus = 4;
+        this.skill_bonus = 1.7;
+        this.defense_bonus = 0;
+        this.hp_bonus = 0;
+        this.name = 'espada';
+        this.cooldown = 10;
+        this.startCountDown();
+    }
+    startCountDown() {
+        var interval = setInterval(() => {
+            if (this.cooldown > 0)
+                this.cooldown--;
+        }, 100);
+    }
+    strike() {
+        if (this.cooldown == 0) {
+            this.cooldown = 10;
+            let dir = this.owner.face;
+            let dmg = new damageBlock_1.DamageBlock(this.skill_bonus);
+            let attack = null;
+            dmg.owner = this.owner;
+            if (this.owner.face == 's') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 1, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 2, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 3, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 4, this.name, this.skill_bonus);
+            }
+            else if (this.owner.face == 'n') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 1, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 2, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 3, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 4, this.name, this.skill_bonus);
+            }
+            else if (this.owner.face == 'w') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 2, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 3, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 4, this.owner.y, this.name, this.skill_bonus);
+            }
+            else if (this.owner.face == 'e') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 2, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 3, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 4, this.owner.y, this.name, this.skill_bonus);
+            }
+        }
+    }
+}
+exports.Sword = Sword;
 
 
 /***/ }),
@@ -5508,7 +5603,6 @@ class Fungi {
     startCountDown(seconds) {
         var counter = seconds;
         var interval = setInterval(() => {
-            //console.log(counter);
             counter--;
             this.skills.forEach(element => {
                 if (element.cooldown < element.maxCooldown)
@@ -5534,7 +5628,7 @@ class Fungi {
         let dist = Math.sqrt(Math.pow((player.x - this.owner.x), 2) + Math.pow((player.y - this.owner.y), 2));
         if (dist < this.owner.sight * 1.4) {
             if (this.skills[0].cooldown == this.skills[0].maxCooldown) {
-                skilllist_1.poison_cloud2(this.owner, player, 0.5);
+                skilllist_1.poison_cloud(this.owner, player, 0.5);
                 this.skills[0].cooldown = 0;
             }
             //this.owner.hunt(player);
@@ -5566,12 +5660,24 @@ exports.Fungi = Fungi;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const deathFunction_1 = __webpack_require__(/*! ../../helper/deathFunction */ "./src/helper/deathFunction.ts");
+const skilllist_1 = __webpack_require__(/*! ../../components/skilllist */ "./src/components/skilllist.ts");
 class Orc {
+    constructor() {
+        this.skill_bonus = 1.5;
+        this.skills = [{
+                name: 'punch',
+                cooldown: 12,
+                maxCooldown: 12
+            }];
+    }
     startCountDown(seconds) {
         var counter = seconds;
         var interval = setInterval(() => {
-            //console.log(counter);
             counter--;
+            this.skills.forEach(element => {
+                if (element.cooldown < element.maxCooldown)
+                    element.cooldown++;
+            });
             if (counter < 0) {
                 // code here will run when the counter reaches zero.
                 if (this.owner.fighter.hp == 0) {
@@ -5592,6 +5698,9 @@ class Orc {
         let dist = Math.sqrt(Math.pow((player.x - this.owner.x), 2) + Math.pow((player.y - this.owner.y), 2));
         if (dist < this.owner.sight) {
             this.owner.hunt(player);
+            if (dist <= 5 && (this.owner.x == player.x || this.owner.y == player.y)) {
+                skilllist_1.punch(this.owner, player, 1.2);
+            }
         }
         else {
             this.owner.wander();
@@ -5599,6 +5708,69 @@ class Orc {
     }
 }
 exports.Orc = Orc;
+
+
+/***/ }),
+
+/***/ "./src/content/monsters/troll.ts":
+/*!***************************************!*\
+  !*** ./src/content/monsters/troll.ts ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const deathFunction_1 = __webpack_require__(/*! ../../helper/deathFunction */ "./src/helper/deathFunction.ts");
+const skilllist_1 = __webpack_require__(/*! ../../components/skilllist */ "./src/components/skilllist.ts");
+class Troll {
+    constructor() {
+        this.skill_bonus = 1.5;
+        this.skills = [{
+                name: 'punch',
+                cooldown: 12,
+                maxCooldown: 12
+            }];
+    }
+    startCountDown(seconds) {
+        var counter = seconds;
+        var interval = setInterval(() => {
+            counter--;
+            this.skills.forEach(element => {
+                if (element.cooldown < element.maxCooldown)
+                    element.cooldown++;
+            });
+            if (counter < 0) {
+                // code here will run when the counter reaches zero.
+                if (this.owner.fighter.hp == 0) {
+                    clearInterval(interval);
+                    deathFunction_1.deathFunction(this.owner);
+                }
+                else {
+                    counter = this.owner.maxStamina;
+                    this.act();
+                }
+            }
+        }, 100);
+    }
+    act() {
+        let player = this.owner._map.getPlayer();
+        if (player == undefined)
+            return;
+        let dist = Math.sqrt(Math.pow((player.x - this.owner.x), 2) + Math.pow((player.y - this.owner.y), 2));
+        if (dist < this.owner.sight) {
+            this.owner.hunt(player);
+            if (dist <= 5 && (this.owner.x == player.x || this.owner.y == player.y)) {
+                skilllist_1.punch(this.owner, player, 1.2);
+            }
+        }
+        else {
+            this.owner.wander();
+        }
+    }
+}
+exports.Troll = Troll;
 
 
 /***/ }),
@@ -5636,6 +5808,7 @@ class Entity {
         this.face = 'n';
         this.damage = damage;
         this.player = player;
+        this.item = item;
         if (this.player == true) {
             this.startMoveCountDown();
             this.startAttackCountDown();
@@ -5655,6 +5828,9 @@ class Entity {
         }
         if (this.damage != undefined) {
             this.damage.owner = this;
+        }
+        if (this.item != undefined) {
+            this.item.owner = this;
         }
     }
     move(dx, dy, map) {
@@ -5723,7 +5899,6 @@ class Entity {
     }
     startMoveCountDown() {
         var moveinterval = setInterval(() => {
-            //console.log(counter);
             if (this.stamina <= this.maxStamina) {
                 this.stamina++;
             }
@@ -5736,7 +5911,6 @@ class Entity {
     }
     startAttackCountDown() {
         var attackinterval = setInterval(() => {
-            //console.log(counter);
             if (this.cooldown > 0) {
                 this.cooldown--;
             }
@@ -5748,11 +5922,31 @@ class Entity {
         }, 100);
     }
     equip(item) {
+        console.log(item);
         if (this.equipment == undefined) {
-            this.equipment = item.equipment;
+            this.equipment = item.item;
+            this.equipment.owner = this;
+            item.item.expire = true;
+            let equip = {
+                message: this.owner.name + " empunhou uma %c{0}" + item.name + "%c{1} !",
+                type: 'pickup',
+                color1: item.glyph.foreground,
+                color2: [255, 255, 255]
+            };
+            this._map.messageLog.addMessage(equip);
         }
         else {
             // colocar na backpack
+            this.equipment = item.item;
+            this.equipment.owner = this;
+            item.item.expire = true;
+            let equip = {
+                message: this.owner.name + " empunhou uma %c{0}" + item.name + "%c{1} !",
+                type: 'pickup',
+                color1: item.glyph.foreground,
+                color2: [255, 255, 255]
+            };
+            this._map.messageLog.addMessage(equip);
         }
     }
     attack(targets) {
@@ -5897,7 +6091,6 @@ class Game {
         window.addEventListener(event, e => {
             // When an event is received, send it to the
             // screen if there is one
-            //console.log(this._player);
             if (this._currentScreen !== null) {
                 // Send the event type and data to the screen
                 this._currentScreen.handleInput(event, e, this);
@@ -5934,7 +6127,7 @@ class Game {
         let out2 = '';
         for (let message of this.messageLog.messages) {
             alpha += 0.1;
-            if (message.type == 'death' || message.type == 'fight' || message.type == 'skill') {
+            if (message.type == 'death' || message.type == 'fight' || message.type == 'skill' || message.type == 'pickup') {
                 fading = "%c{rgb(" + Math.round(message.color1[0] * alpha).toString() + "," + Math.round(message.color1[1] * alpha).toString() + "," + Math.round(message.color1[2] * alpha).toString() + ")}";
                 fading2 = "%c{rgb(" + Math.round(message.color2[0] * alpha).toString() + "," + Math.round(message.color2[1] * alpha).toString() + "," + Math.round(message.color2[2] * alpha).toString() + ")}";
                 out = message.message.replace("%c{0}", fading);
@@ -6070,6 +6263,47 @@ exports.createDamageBlock = createDamageBlock;
 
 /***/ }),
 
+/***/ "./src/helper/createItens.ts":
+/*!***********************************!*\
+  !*** ./src/helper/createItens.ts ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const entity_1 = __webpack_require__(/*! ../entity */ "./src/entity.ts");
+const knife_1 = __webpack_require__(/*! ../content/itens/knife */ "./src/content/itens/knife.ts");
+const glyph_1 = __webpack_require__(/*! ../glyph */ "./src/glyph.ts");
+const sword_1 = __webpack_require__(/*! ../content/itens/sword */ "./src/content/itens/sword.ts");
+function CreateItem(monster_choice, x, y) {
+    if (monster_choice == 'knife') {
+        let item_component = new knife_1.Knife();
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph(';', [0, 0, 0], [204, 200, 0]), 'knife', 1, false, 5, 2, undefined, undefined, false, item_component);
+        return monster;
+    }
+    else if (monster_choice == 'sword') {
+        let item_component = new sword_1.Sword();
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('\\', [0, 0, 0], [200, 200, 0]), 'sword', 1, false, 5, 2, undefined, undefined, false, item_component);
+        return monster;
+    }
+    else if (monster_choice == 'spear') {
+        let item_component = new knife_1.Knife();
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('Î', [0, 0, 0], [200, 200, 0]), 'spear', 1, false, 5, 2, undefined, undefined, false, item_component);
+        return monster;
+    }
+    else if (monster_choice == 'dagger') {
+        let item_component = new knife_1.Knife();
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph(';', [0, 0, 0], [200, 200, 0]), 'dagger', 1, false, 5, 2, undefined, undefined, false, item_component);
+        return monster;
+    }
+}
+exports.CreateItem = CreateItem;
+
+
+/***/ }),
+
 /***/ "./src/helper/createMonters.ts":
 /*!*************************************!*\
   !*** ./src/helper/createMonters.ts ***!
@@ -6083,6 +6317,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const entity_1 = __webpack_require__(/*! ../entity */ "./src/entity.ts");
 const fungi_1 = __webpack_require__(/*! ../content/monsters/fungi */ "./src/content/monsters/fungi.ts");
 const orc_1 = __webpack_require__(/*! ../content/monsters/orc */ "./src/content/monsters/orc.ts");
+const troll_1 = __webpack_require__(/*! ../content/monsters/troll */ "./src/content/monsters/troll.ts");
 const glyph_1 = __webpack_require__(/*! ../glyph */ "./src/glyph.ts");
 const fighter_1 = __webpack_require__(/*! ../components/fighter */ "./src/components/fighter.ts");
 function CreateMonster(monster_choice, x, y) {
@@ -6099,10 +6334,10 @@ function CreateMonster(monster_choice, x, y) {
         return monster;
     }
     else if (monster_choice == 'troll') {
-        // fighter_component = Fighter(hp=30, defense=2, power=8, xp=100)
-        // ai_component = Troll()
-        // monster = Entity(x,y, 'T', libtcod.darker_green, 0, 'troll', 200, blocks = True, render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component)
-        // return monster
+        let fighter_component = new fighter_1.Fighter(30, 2, 8, 60);
+        let ai_component = new troll_1.Troll();
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', [0, 0, 0], [128, 0, 128]), 'troll', 1, true, 5, 2, fighter_component, ai_component);
+        return monster;
     }
     else if (monster_choice == 'wyvern') {
         // fighter_component = Fighter(hp=20, defense=0, power=5, xp=40)
@@ -6237,6 +6472,7 @@ const randFromLevel_1 = __webpack_require__(/*! ./helper/randFromLevel */ "./src
 const randint_1 = __webpack_require__(/*! ./helper/randint */ "./src/helper/randint.ts");
 const createMonters_1 = __webpack_require__(/*! ./helper/createMonters */ "./src/helper/createMonters.ts");
 const lib_1 = __webpack_require__(/*! ../lib */ "./lib/index.js");
+const createItens_1 = __webpack_require__(/*! ./helper/createItens */ "./src/helper/createItens.ts");
 class Map {
     constructor(width, height) {
         this._width = width;
@@ -6278,6 +6514,19 @@ class Map {
         }
         return targets;
     }
+    getItemAt(x, x2, y, y2) {
+        let targets = [];
+        for (let index = 0; index < this._entities.length; index++) {
+            for (let i = x; i <= x2; i++) {
+                for (let j = y; j <= y2; j++) {
+                    if (this._entities[index].x == i && this._entities[index].y == j && this._entities[index].item != undefined) {
+                        targets.push(this._entities[index]);
+                    }
+                }
+            }
+        }
+        return targets;
+    }
     getPlayer() {
         let player;
         for (let index = 0; index < this._entities.length; index++) {
@@ -6289,12 +6538,12 @@ class Map {
     addEntityToMap() {
         let max_monsters_per_room = randFromLevel_1.from_dungeon_level([[20, 1], [3, 4], [5, 6]], this.dungeon_level);
         let max_items_per_room = randFromLevel_1.from_dungeon_level([[1, 1], [2, 4]], this.dungeon_level);
-        let number_of_monsters = 20; //randint(0, max_monsters_per_room)
+        let number_of_monsters = randint_1.randint(0, max_monsters_per_room);
         let number_of_items = randint_1.randint(0, max_items_per_room);
         let monster_chances = {
             'fungi': randFromLevel_1.from_dungeon_level([[200, 1]], this.dungeon_level),
             'orc': randFromLevel_1.from_dungeon_level([[200, 1], [60, 3], [40, 7]], this.dungeon_level),
-            'troll': randFromLevel_1.from_dungeon_level([[5, 1], [10, 3], [30, 5], [60, 7]], this.dungeon_level),
+            'troll': randFromLevel_1.from_dungeon_level([[50, 1], [10, 3], [30, 5], [60, 7]], this.dungeon_level),
             'wyvern': randFromLevel_1.from_dungeon_level([[1, 1], [50, 2], [50, 5]], this.dungeon_level),
             'dragon': randFromLevel_1.from_dungeon_level([[1, 1], [10, 3], [20, 7]], this.dungeon_level),
             'ranger': randFromLevel_1.from_dungeon_level([[1, 1]], this.dungeon_level)
@@ -6302,11 +6551,12 @@ class Map {
         console.log('monster chances');
         console.log(monster_chances);
         let item_chances = {
-            'healing_potion': 35,
-            'dagger': randFromLevel_1.from_dungeon_level([[10, 0]], this.dungeon_level),
-            'sword': randFromLevel_1.from_dungeon_level([[5, 0], [10, 2]], this.dungeon_level),
-            'spear': randFromLevel_1.from_dungeon_level([[5, 1], [10, 3]], this.dungeon_level),
-            'shield': randFromLevel_1.from_dungeon_level([[5, 0]], this.dungeon_level)
+            //'healing_potion': 35,
+            'knife': randFromLevel_1.from_dungeon_level([[10, 1]], this.dungeon_level),
+            'dagger': randFromLevel_1.from_dungeon_level([[10, 1]], this.dungeon_level),
+            'sword': randFromLevel_1.from_dungeon_level([[500, 0], [10, 2]], this.dungeon_level),
+            'spear': randFromLevel_1.from_dungeon_level([[5, 1], [10, 3]], this.dungeon_level)
+            //'shield': from_dungeon_level([[5, 0]], this.dungeon_level)
         };
         for (let index = 0; index < number_of_monsters; index++) {
             let x = randint_1.randint(0, this._width - 1);
@@ -6323,6 +6573,29 @@ class Map {
             if (emptyspace == true) {
                 let monster_choice = randFromLevel_1.random_choice_from_dict(monster_chances);
                 let q = createMonters_1.CreateMonster(monster_choice, x, y);
+                q._map = this;
+                this._entities.push(q);
+            }
+            else {
+                index -= 1;
+            }
+        }
+        for (let index = 0; index < number_of_items; index++) {
+            let x = randint_1.randint(0, this._width - 1);
+            let y = randint_1.randint(0, this._height - 1);
+            let emptyspace = true;
+            for (let index = 0; index < this._entities.length; index++) {
+                if (this._entities[index].x == x && this._entities[index].y == y) {
+                    emptyspace = false;
+                }
+            }
+            if (this.getTile(x, y)._isWalkable == false) {
+                emptyspace = false;
+            }
+            if (emptyspace == true) {
+                let item_choice = randFromLevel_1.random_choice_from_dict(item_chances);
+                let q = createItens_1.CreateItem(item_choice, 61, 45);
+                console.log(item_choice + '- ' + x + ' ' + y);
                 q._map = this;
                 this._entities.push(q);
             }
@@ -6557,12 +6830,18 @@ function playScreen() {
             }
         },
         handleInput: (inputType, inputData, game) => {
-            console.log(inputType);
             if (inputType === 'keydown') {
                 switch (inputData.keyCode) {
                     case constants_1.KEYS.VK_RETURN:
                         //game.switchScreen(game.Screen.winScreen);
-                        game.timer = false;
+                        let gnd = game._map.getItemAt(game._entities[0].x, game._entities[0].x2, game._entities[0].y, game._entities[0].y2);
+                        console.log(gnd);
+                        if (gnd.length > 0) {
+                            game._entities[0].equip(gnd[0]);
+                        }
+                        else {
+                            console.log(game._entities[0]);
+                        }
                         break;
                     case constants_1.KEYS.VK_ESCAPE:
                         //game.switchScreen(game.Screen.loseScreen);
@@ -6660,6 +6939,12 @@ function removeExpiredDamage(entities) {
     for (let i = 0; i < entities.length; i++) {
         if (entities[i].damage != undefined) {
             if (entities[i].damage.expire) {
+                entities.splice(i, 1);
+                i--;
+            }
+        }
+        if (entities[i].item != undefined) {
+            if (entities[i].item.expire) {
                 entities.splice(i, 1);
                 i--;
             }

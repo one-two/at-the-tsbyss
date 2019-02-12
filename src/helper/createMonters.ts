@@ -1,6 +1,7 @@
 import { Entity } from "../entity";
 import { Fungi } from "../content/monsters/fungi";
 import { Orc } from "../content/monsters/orc";
+import { Troll } from "../content/monsters/troll";
 import { Glyph } from "../glyph";
 import { Fighter } from "../components/fighter";
 
@@ -15,13 +16,13 @@ export function CreateMonster(monster_choice: string, x: number, y: number): Ent
         let fighter_component = new Fighter(200, 0, 4, 35)
         let ai_component = new Orc();
         let monster = new Entity(x, y, new Glyph('o', [0,0,0], [0, 128, 0]), 'orc', 1, true, 5, 2, fighter_component, ai_component);
-        return monster
+        return monster;
     }
     else if (monster_choice == 'troll') {
-        // fighter_component = Fighter(hp=30, defense=2, power=8, xp=100)
-        // ai_component = Troll()
-        // monster = Entity(x,y, 'T', libtcod.darker_green, 0, 'troll', 200, blocks = True, render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component)
-        // return monster
+        let fighter_component = new Fighter(30, 2, 8, 60)
+        let ai_component = new Troll()
+        let monster = new Entity(x,y, new Glyph('o', [0,0,0], [128, 0, 128]), 'troll', 1, true, 5, 2, fighter_component, ai_component);
+        return monster;
     }
     else if (monster_choice == 'wyvern') {
         // fighter_component = Fighter(hp=20, defense=0, power=5, xp=40)

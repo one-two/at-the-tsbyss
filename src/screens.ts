@@ -165,7 +165,13 @@ export function playScreen() {
                 switch (inputData.keyCode) {
                     case KEYS.VK_RETURN:
                         //game.switchScreen(game.Screen.winScreen);
-                        game.timer = false;
+                        let gnd = game._map.getItemAt(game._entities[0].x, game._entities[0].x2, game._entities[0].y, game._entities[0].y2);
+                        console.log(gnd);
+                        if (gnd.length > 0) {
+                            game._entities[0].equip(gnd[0]);
+                        } else {
+                            console.log(game._entities[0])
+                        }
                         break;
                     case KEYS.VK_ESCAPE:
                         //game.switchScreen(game.Screen.loseScreen);
@@ -261,6 +267,12 @@ export function removeExpiredDamage(entities: Entity[]) {
     for (let i = 0; i < entities.length; i++) {
         if (entities[i].damage != undefined) {
             if (entities[i].damage.expire) {
+                entities.splice(i, 1);
+                i--;
+            }
+        }
+        if (entities[i].item != undefined) {
+            if (entities[i].item.expire) {
                 entities.splice(i, 1);
                 i--;
             }

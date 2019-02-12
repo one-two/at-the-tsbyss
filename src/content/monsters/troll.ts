@@ -2,25 +2,18 @@ import { Entity } from "../../entity";
 import { randint } from "../../helper/randint";
 import { Enemy } from "../../helper/enemy";
 import { deathFunction } from "../../helper/deathFunction";
-import { DamageBlock } from "../../components/damageBlock";
-import { createDamageBlock } from "../../helper/createDamageBlock";
-import { skilllist, poison_cloud, poison_shield } from "../../components/skilllist"
+import { skilllist, punch } from "../../components/skilllist";
 
-export class Fungi implements Enemy {
-    skill_bonus: number = 1;
+export class Troll implements Enemy {
+    skill_bonus: number = 1.5;
     owner: Entity;
     skills: skilllist[];
 
     constructor() {
         this.skills = [{
-            name: 'poison cloud',
-            cooldown: 10,
-            maxCooldown: 10
-        },
-        {
-            name: 'poison shield',
-            cooldown: 20,
-            maxCooldown: 20
+            name: 'punch',
+            cooldown: 12,
+            maxCooldown: 12
         }]
     }
 
@@ -50,20 +43,13 @@ export class Fungi implements Enemy {
         let player = this.owner._map.getPlayer();
         if (player == undefined) return;
         let dist = Math.sqrt( (player.x - this.owner.x)**2+(player.y - this.owner.y)**2 );
-        if (dist < this.owner.sight*1.4) {
-            if (this.skills[0].cooldown == this.skills[0].maxCooldown) {
-                poison_cloud(this.owner, player, 0.5);
-                this.skills[0].cooldown = 0
+        if (dist < this.owner.sight) {
+            this.owner.hunt(player);
+            if (dist <= 5 && (this.owner.x == player.x || this.owner.y == player.y)) {
+                punch(this.owner, player, 1.2);
             }
-            //this.owner.hunt(player);
-            //this.poison_cloud(player);
         } else {
             this.owner.wander();
         }
-        if (dist < 2) if (this.skills[1].cooldown == this.skills[1].maxCooldown) {
-            poison_shield(this.owner, player, 1);
-            this.skills[1].cooldown = 0
-        }
     }
-
 }
