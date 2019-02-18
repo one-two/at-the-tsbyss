@@ -170,7 +170,6 @@ export function playScreen() {
                         if (gnd.length > 0) {
                             game._entities[0].equip(gnd[0]);
                         } else {
-                            console.log(game._entities[0])
                         }
                         break;
                     case KEYS.VK_ESCAPE:

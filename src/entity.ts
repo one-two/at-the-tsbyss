@@ -174,7 +174,7 @@ export class Entity {
     equip(item: Entity) {
         console.log(item);
         let equip: MessageType = {
-            message : this.owner.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
+            message : this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
             type : 'pickup',
             color1 : item.glyph.foreground,
             color2 : [255,255,255]

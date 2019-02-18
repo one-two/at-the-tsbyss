@@ -5343,7 +5343,7 @@ class Fighter {
             color1: target.glyph.foreground,
             color2: [255, 255, 255]
         };
-        let damage = this.power() - target.fighter.defense();
+        let damage = this.power() * (1 - (target.fighter.defense() / (10 + target.fighter.defense())));
         damage = +damage.toFixed(2);
         if (damage > 0) {
             // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(
@@ -5364,7 +5364,7 @@ class Fighter {
             color1: target.glyph.foreground,
             color2: [255, 255, 255]
         };
-        let damage = this.skill_power() * dmgBlock.damage.multiplier - target.fighter.defense();
+        let damage = this.skill_power() * dmgBlock.damage.multiplier * (1 - (target.fighter.defense() / (10 + target.fighter.defense())));
         damage = +damage.toFixed(2);
         if (damage > 0) {
             // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(
@@ -5923,30 +5923,23 @@ class Entity {
     }
     equip(item) {
         console.log(item);
+        let equip = {
+            message: this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
+            type: 'pickup',
+            color1: item.glyph.foreground,
+            color2: [255, 255, 255]
+        };
+        this._map.messageLog.addMessage(equip);
         if (this.equipment == undefined) {
             this.equipment = item.item;
             this.equipment.owner = this;
             item.item.expire = true;
-            let equip = {
-                message: this.owner.name + " empunhou uma %c{0}" + item.name + "%c{1} !",
-                type: 'pickup',
-                color1: item.glyph.foreground,
-                color2: [255, 255, 255]
-            };
-            this._map.messageLog.addMessage(equip);
         }
         else {
             // colocar na backpack
             this.equipment = item.item;
             this.equipment.owner = this;
             item.item.expire = true;
-            let equip = {
-                message: this.owner.name + " empunhou uma %c{0}" + item.name + "%c{1} !",
-                type: 'pickup',
-                color1: item.glyph.foreground,
-                color2: [255, 255, 255]
-            };
-            this._map.messageLog.addMessage(equip);
         }
     }
     attack(targets) {
@@ -6840,7 +6833,6 @@ function playScreen() {
                             game._entities[0].equip(gnd[0]);
                         }
                         else {
-                            console.log(game._entities[0]);
                         }
                         break;
                     case constants_1.KEYS.VK_ESCAPE:
