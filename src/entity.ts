@@ -71,7 +71,7 @@ export class Entity {
             this.ai.owner = this;
             this.ai.startCountDown(this.maxStamina);
             this.sight = 10;
-        } else this.sight = 12;
+        } else this.sight = 12; //12
 
         if (this.fighter != undefined) {
             this.fighter.owner = this;

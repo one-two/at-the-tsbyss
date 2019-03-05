@@ -5819,7 +5819,7 @@ class Entity {
             this.sight = 10;
         }
         else
-            this.sight = 12;
+            this.sight = 12; //12
         if (this.fighter != undefined) {
             this.fighter.owner = this;
         }
@@ -6055,6 +6055,7 @@ class Game {
         this._currentScreen = null;
         this.Screen = {
             startScreen: screens_1.startScreen(),
+            debugScreen: screens_1.debugScreen(),
             playScreen: screens_1.playScreen(),
             winScreen: screens_1.winScreen(),
             loseScreen: screens_1.loseScreen()
@@ -6384,6 +6385,300 @@ exports.deathFunction = deathFunction;
 
 /***/ }),
 
+/***/ "./src/helper/dungeonMaze.ts":
+/*!***********************************!*\
+  !*** ./src/helper/dungeonMaze.ts ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const randint_1 = __webpack_require__(/*! ./randint */ "./src/helper/randint.ts");
+function ones(maxx, maxy) {
+    let array = [[1]];
+    for (let x = 0; x < maxx; x++) {
+        // Create the nested array for the y values
+        array.push([]);
+        // Add all the tiles
+        for (let y = 0; y < maxy; y++) {
+            array[x].push(1);
+        }
+    }
+    return array;
+}
+function randomRoom(maxx, maxy) {
+    let room;
+    let roomsizex = randint_1.randint(4, 16);
+    while (roomsizex % 2 == 0)
+        roomsizex -= 1;
+    roomsizex = (roomsizex * 2) - 1;
+    let roomsizey = randint_1.randint(4, 14);
+    while (roomsizey % 2 == 0)
+        roomsizey -= 1;
+    roomsizey = (roomsizey * 2) - 1;
+    let roomx = randint_1.randint(5, maxx - roomsizex - 1);
+    while (roomx % 4 != 0)
+        roomx += 1;
+    roomx += 1;
+    let roomy = randint_1.randint(5, maxy - roomsizey - 1);
+    while (roomy % 4 != 0)
+        roomy += 1;
+    roomy += 1;
+    room = {
+        x: roomx,
+        y: roomy,
+        sizex: roomsizex,
+        sizey: roomsizey
+    };
+    //console.log(room)
+    return room;
+}
+function digHere(here, map) {
+    let x = here.x;
+    let y = here.y;
+    switch (here.past) {
+        case 'N':
+            if (map[x - 1][y] != 0 && map[x - 1][y - 1] != 0 && map[x][y - 1] != 0 && map[x + 2][y - 1] != 0 && map[x + 2][y] != 0) {
+                map[x][y] = 0;
+                map[x + 1][y] = 0;
+                map[x][y + 1] = 0;
+                map[x + 1][y + 1] = 0;
+            }
+            else {
+                //map[x][y] = 2;
+            }
+            break;
+        case 'S':
+            if (map[x - 1][y] != 0 && map[x - 1][y + 2] != 0 && map[x][y + 2] != 0 && map[x + 2][y + 2] != 0 && map[x + 2][y] != 0) {
+                map[x][y] = 0;
+                map[x + 1][y] = 0;
+                map[x][y + 1] = 0;
+                map[x + 1][y + 1] = 0;
+            }
+            else {
+                //map[x][y] = 2;
+            }
+            break;
+        case 'E':
+            if (map[x][y - 1] != 0 && map[x + 2][y - 1] != 0 && map[x + 2][y] != 0 && map[x + 2][y + 2] != 0 && map[x][y + 2] != 0) {
+                map[x][y] = 0;
+                map[x + 1][y] = 0;
+                map[x][y + 1] = 0;
+                map[x + 1][y + 1] = 0;
+            }
+            else {
+                //map[x][y] = 2;
+            }
+            break;
+        case 'W':
+            if (map[x][y - 1] != 0 && map[x - 1][y - 1] != 0 && map[x - 1][y] != 0 && map[x - 1][y + 2] != 0 && map[x][y + 2] != 0) {
+                map[x][y] = 0;
+                map[x + 1][y] = 0;
+                map[x][y + 1] = 0;
+                map[x + 1][y + 1] = 0;
+            }
+            else {
+                //map[x][y] = 2;
+            }
+            break;
+        default:
+            console.log('default');
+            map[x][y] = 2;
+            break;
+    }
+    // if (map[x][y] != 0 && map[x][y] != 0 && map[x][y] != 0 && map[x][y] != 0) {
+    //     map[x][y] = 0;
+    //     map[x+1][y] = 0;
+    //     map[x][y+1] = 0;
+    //     map[x+1][y+1] = 0;
+    // }
+}
+function testDirections(here, map, path, maxx, maxy) {
+    let next = [];
+    let nextCandidates = [];
+    let y = here.y;
+    let x = here.x;
+    if (y + 4 < maxy)
+        if (map[x][y + 4] == 1) {
+            if (map[x - 1][y + 3] == 1 && map[x + 2][y + 3] == 1)
+                nextCandidates.push({
+                    x: x,
+                    y: y + 2,
+                    dir: 'S',
+                    past: 'S'
+                });
+        }
+    if (x + 4 < maxx)
+        if (map[x + 4][y] == 1) {
+            if (map[x + 3][y - 1] == 1 && map[x + 3][y + 2] == 1)
+                nextCandidates.push({
+                    x: x + 2,
+                    y: y,
+                    dir: 'E',
+                    past: 'E'
+                });
+        }
+    if (y - 3 > 0)
+        if (map[x][y - 3] == 1) {
+            if (map[x - 1][y - 3] == 1 && map[x + 2][y - 3] == 1)
+                nextCandidates.push({
+                    x: x,
+                    y: y - 2,
+                    dir: 'N',
+                    past: 'N'
+                });
+        }
+    if (x - 3 > 0)
+        if (map[x - 3][y] == 1) {
+            if (map[x - 3][y + 2] == 1 && map[x - 3][y - 1] == 1)
+                nextCandidates.push({
+                    x: x - 2,
+                    y: y,
+                    dir: 'W',
+                    past: 'W'
+                });
+        }
+    if (nextCandidates.length != 0) {
+        if (nextCandidates.length == 1) {
+            next.push(nextCandidates[0]);
+        }
+        else {
+            let selected = randint_1.randint(0, nextCandidates.length - 1);
+            let priority = (selected + 1) % nextCandidates.length;
+            while (priority != selected) {
+                next.push(nextCandidates[priority]);
+                priority = (priority + 1) % nextCandidates.length;
+                //console.log(priority);
+            }
+            next.push(nextCandidates[selected]);
+        }
+    }
+    return next;
+}
+function digFront(here, pathFRONT, map) {
+    let next;
+    if (here.dir == 'N') {
+        next = {
+            x: here.x,
+            y: here.y - 2,
+            dir: 'z',
+            past: 'N'
+        };
+    }
+    if (here.dir == 'E') {
+        next = {
+            x: here.x + 2,
+            y: here.y,
+            dir: 'z',
+            past: 'E'
+        };
+    }
+    if (here.dir == 'S') {
+        next = {
+            x: here.x,
+            y: here.y + 2,
+            dir: 'z',
+            past: 'S'
+        };
+    }
+    if (here.dir == 'W') {
+        next = {
+            x: here.x - 2,
+            y: here.y,
+            dir: 'z',
+            past: 'W'
+        };
+    }
+    return next;
+}
+function digUp(pathGO, map, maxx, maxy) {
+    let db = 0;
+    while (pathGO.length > 0) {
+        let here = pathGO.pop();
+        if (map[here.x][here.y] != 0) {
+            digHere(here, map);
+            if (here.dir == 'z') {
+                let nxt = testDirections(here, map, pathGO, maxx, maxy);
+                //console.log(nxt);
+                nxt.forEach(element => {
+                    pathGO.push(element);
+                });
+                //console.log(pathGO);
+            }
+            else {
+                pathGO.push(digFront(here, pathGO, map));
+            }
+            //console.log('pathGO: ' + pathGO.length.toString());
+            //console.log(pathGO);
+            db += 1;
+            if (db == 10000) {
+                const pate = pathGO;
+                console.log('10000');
+                console.log(pate);
+                pathGO = [];
+            }
+            ;
+        }
+    }
+}
+function generateDunMaze(maxx, maxy) {
+    let map = ones(maxx, maxy);
+    let rooms = 100;
+    let roomsInGame = [];
+    let path = [];
+    let reject = 0;
+    for (let i = 0; i < rooms; i++) {
+        let room = randomRoom(maxx, maxy);
+        for (let ri = room.x - 1; ri <= room.x + room.sizex; ri++) {
+            for (let rj = room.y - 1; rj <= room.y + room.sizey; rj++) {
+                if (ri > maxx || rj > maxy)
+                    reject = 1;
+                else if (map[ri][rj] == 0) {
+                    ri = maxx;
+                    reject = 1;
+                }
+            }
+        }
+        if (reject != 1) {
+            roomsInGame.push(room);
+            for (let ri = room.x; ri <= room.x + room.sizex; ri++) {
+                for (let rj = room.y; rj <= room.y + room.sizey; rj++) {
+                    map[ri][rj] = 0;
+                }
+            }
+        }
+        reject = 0;
+    }
+    path.push({
+        x: 1,
+        y: 1,
+        dir: 'S',
+        past: 'S'
+    });
+    digUp(path, map, maxx, maxy);
+    // for (let i = 1; i < maxx; i=i+2) {
+    //     for (let j = 1; j < maxy; j=j+2) {
+    //         if (map[i][j] == 1 && map[i+1][j] == 1 && map[i][j+1] == 1 && map[i+1][j+1] == 1) { // coordenada atual
+    //             path.push({
+    //                 x: i,
+    //                 y: j,
+    //                 dir: 'z'
+    //             })
+    //             digUp(path, map, maxx, maxy);
+    //         }
+    //     }
+    // }
+    console.log(roomsInGame);
+    //console.log(map);
+    return map;
+}
+exports.generateDunMaze = generateDunMaze;
+
+
+/***/ }),
+
 /***/ "./src/helper/randFromLevel.ts":
 /*!*************************************!*\
   !*** ./src/helper/randFromLevel.ts ***!
@@ -6698,6 +6993,7 @@ const tiles_1 = __webpack_require__(/*! ./tiles */ "./src/tiles.ts");
 const maps = __webpack_require__(/*! ../lib/map */ "./lib/map/index.js");
 const randint_1 = __webpack_require__(/*! ./helper/randint */ "./src/helper/randint.ts");
 const knife_1 = __webpack_require__(/*! ./content/itens/knife */ "./src/content/itens/knife.ts");
+const dungeonMaze_1 = __webpack_require__(/*! ./helper/dungeonMaze */ "./src/helper/dungeonMaze.ts");
 function startScreen() {
     //Game.Screen.startScreen = {
     return {
@@ -6723,11 +7019,164 @@ function startScreen() {
                 if (inputData.keyCode === constants_1.KEYS.VK_RETURN) {
                     game.switchScreen(game.Screen.playScreen);
                 }
+                if (inputData.keyCode === constants_1.KEYS.VK_BACK_SPACE) {
+                    game.switchScreen(game.Screen.debugScreen);
+                }
             }
         }
     };
 }
 exports.startScreen = startScreen;
+function debugScreen() {
+    return {
+        enter: (game) => {
+            let mapWidth = 120;
+            let mapHeight = 90;
+            game._map = new map_1.Map(mapWidth, mapHeight);
+            let emptyTile = new tiles_1.Tile('Empty', ' ', [0, 0, 0], [255, 255, 255], true, false, false);
+            console.log("Entered debug screen.");
+            for (let x = 0; x < mapWidth; x++) {
+                // Create the nested array for the y values
+                game._map._tiles.push([]);
+                // Add all the tiles
+                for (let y = 0; y < mapHeight; y++) {
+                    game._map._tiles[x].push(emptyTile);
+                }
+            }
+            let generator = dungeonMaze_1.generateDunMaze(mapWidth, mapHeight);
+            for (let x = 0; x < mapWidth; x++) {
+                for (let y = 0; y < mapHeight; y++) {
+                    // if (generator[x][y] == 1) {
+                    //     game._map._tiles[x][y] = new Tile('Wall', '#', [0,0,0], [218, 165, 32], true, true, false); // false, true, true
+                    // } else {
+                    //     game._map._tiles[x][y] = new Tile('Floor', '.', [0,0,0] , [84, 54, 11], true, false); //floor
+                    // }
+                    if (generator[x][y] == 1) {
+                        game._map._tiles[x][y] = new tiles_1.Tile('Wall', '#', [0, 0, 0], [218, 165, 32], true, true, false); // false, true, true
+                    }
+                    if (generator[x][y] == 0) {
+                        game._map._tiles[x][y] = new tiles_1.Tile('Floor', '.', [0, 0, 0], [84, 54, 11], true, false); //floor
+                    }
+                    if (generator[x][y] == 2) {
+                        game._map._tiles[x][y] = new tiles_1.Tile('Floor', 'E', [0, 0, 0], [200, 0, 0], true, false); //floor
+                    }
+                }
+            }
+            //game._map._tiles[0][0] = new Tile('Floor', 'X', [0,0,0] , [200, 0, 200], true, false);
+            // Sync map and game variables
+            game._map._entities = [];
+            // debug stuff
+            let knife = new knife_1.Knife();
+            knife.owner = game._player;
+            game._player.equipment = knife;
+            game._map._entities.push(game._player); //player always [0]
+            game._player._map = game._map;
+            game._map._display = game._display;
+            game._map.messageLog = game.messageLog;
+            //let ai_component = new Fungi();
+            //let fighter_component = new Fighter(20, 0, 3, 35);
+            //let monster = new Entity(60, 47, new Glyph('f', 'black', '#0000aa'), 'fungi', 1, true, 2, 2, fighter_component, ai_component, false);
+            //monster._map = game._map;
+            //game._map._entities.push(monster);
+            //let knifeItem = new Entity()
+            game.timer = true;
+            game.startCountDown();
+            game._map.addEntityToMap();
+            game._entities = game._map._entities;
+        },
+        exit: () => {
+            console.log("Exited play screen.");
+        },
+        render: (display, game) => {
+            let screenWidth = game._screenWidth;
+            let screenHeight = game._screenHeight;
+            let player = game._player;
+            // Make sure the x-axis doesn't go to the left of the left bound
+            let topLeftX = Math.max(0, player.x - (screenWidth / 2));
+            // Make sure we still have enough space to fit an entire game screen
+            topLeftX = Math.min(topLeftX, game._map._width - screenWidth);
+            // Make sure the y-axis doesn't above the top bound
+            let topLeftY = Math.max(0, player.y - (screenHeight / 2));
+            // Make sure we still have enough space to fit an entire game screen
+            topLeftY = Math.min(topLeftY, game._map._height - screenHeight);
+            for (let x = topLeftX; x < topLeftX + screenWidth; x++) {
+                for (let y = topLeftY; y < topLeftY + screenHeight; y++) {
+                    // Fetch the glyph for the tile and render it to the screen
+                    let cell = game._map.getTile(x, y);
+                    //cell.visited ?
+                    display.draw(x - topLeftX, y - topLeftY, cell.visitedTile.char, Color.toRGB(cell.tile.foreground), Color.toRGB(cell.tile.background)); //:
+                    /* display.draw(
+                        x - topLeftX,
+                        y - topLeftY,
+                        ' ',
+                        Color.toRGB([0,0,0]),
+                        Color.toRGB([0,0,0]));*/
+                }
+            }
+            //game._map.setupFov(topLeftX, topLeftY);
+            removeExpiredDamage(game._entities);
+            game._map._entities = entityRenderSort(game);
+            game._entities = game._map._entities;
+            for (let i = game._entities.length - 1; i >= 0; i--) {
+                //console.log(game._entities[i]); 
+                let cell = game._map.getTile(game._entities[i].x, game._entities[i].y);
+                if (cell.visibility != 0) { // 0
+                    let dx = Math.pow(game._entities[0].x - game._entities[i].x, 2);
+                    let dy = Math.pow(game._entities[0].y - game._entities[i].y, 2);
+                    let dist = Math.sqrt(dx + dy);
+                    if (dist == 0 || dist <= game._entities[0].sight) {
+                        display.draw(game._entities[i].x - topLeftX, game._entities[i].y - topLeftY, game._entities[i].glyph.char, Color.toRGB(game._entities[i].glyph.foreground), Color.toRGB(game._entities[i].glyph.background));
+                    }
+                }
+            }
+        },
+        handleInput: (inputType, inputData, game) => {
+            if (inputType === 'keydown') {
+                switch (inputData.keyCode) {
+                    case constants_1.KEYS.VK_RETURN:
+                        //game.switchScreen(game.Screen.winScreen);
+                        let gnd = game._map.getItemAt(game._entities[0].x, game._entities[0].x2, game._entities[0].y, game._entities[0].y2);
+                        console.log(gnd);
+                        if (gnd.length > 0) {
+                            game._entities[0].equip(gnd[0]);
+                        }
+                        else {
+                        }
+                        break;
+                    case constants_1.KEYS.VK_ESCAPE:
+                        //game.switchScreen(game.Screen.loseScreen);
+                        game.timer = false;
+                        break;
+                    case constants_1.KEYS.VK_SPACE:
+                        if (game._entities[0].equipment != undefined) {
+                            game._entities[0].equipment.strike();
+                        }
+                        break;
+                    case constants_1.KEYS.VK_LEFT:
+                        game._entities[0].move(-1, 0, game._map);
+                        break;
+                    case constants_1.KEYS.VK_DOWN:
+                        game._entities[0].move(0, 1, game._map);
+                        break;
+                    case constants_1.KEYS.VK_UP:
+                        game._entities[0].move(0, -1, game._map);
+                        break;
+                    case constants_1.KEYS.VK_RIGHT:
+                        game._entities[0].move(1, 0, game._map);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            if (inputType === 'click') {
+                let xx = randint_1.randint(-5, 5);
+                let yy = randint_1.randint(-5, 5);
+                game._entities[0].move(xx, yy, game._map);
+            }
+        }
+    };
+}
+exports.debugScreen = debugScreen;
 function playScreen() {
     return {
         enter: (game) => {

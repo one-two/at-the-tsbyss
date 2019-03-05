@@ -1,7 +1,7 @@
 import { Display, Color } from "../lib/index";
 import { Tile } from "./tiles";
 import { Entity } from "./entity";
-import { playScreen, startScreen, winScreen, loseScreen } from "./screens";
+import { playScreen, startScreen, winScreen, loseScreen, debugScreen } from "./screens";
 import { KEYS } from "../lib/constants";
 import { Objeto } from "./interface/objeto";
 import { Glyph } from "./glyph";
@@ -21,6 +21,8 @@ export class Game {
 	_currentScreen : any;
 	_screenWidth: number = 90;
 	_screenHeight: number = 30;
+	//_screenWidth: number = 120;
+	//_screenHeight: number = 90;
 	_centerX: number;
 	_centerY: number;
 	Screen : any;
@@ -37,6 +39,7 @@ export class Game {
 		this._currentScreen= null;
 		this.Screen = {
 			startScreen : startScreen(),
+			debugScreen : debugScreen(),
 			playScreen : playScreen(),
 			winScreen : winScreen(),
 			loseScreen : loseScreen()
