@@ -220,7 +220,9 @@ function digUp(pathGO: path[], map: number[][], maxx: number, maxy: number) {
         let here = pathGO.pop();
         if (map[here.x][here.y] != 0) {
             digHere(here, map);
-            if (here.dir == 'z') {
+            // if (((here.x-1) % 4 == 0) && ((here.y-1) % 4 == 0)) {
+            //if (here.dir == 'z') {
+            if (((here.x-1) % 4 == 0) && ((here.y-1) % 4 == 0)) {
                 let nxt = testDirections(here, map, pathGO, maxx, maxy);
                 //console.log(nxt);
                 nxt.forEach(element => {
@@ -246,7 +248,7 @@ function digUp(pathGO: path[], map: number[][], maxx: number, maxy: number) {
 
 export function generateDunMaze(maxx: number, maxy: number): number[][] {
     let map = ones(maxx, maxy);
-    let rooms = 100;
+    let rooms = 400;
     let roomsInGame : room[] = [];
     let path: path[] = [];
     
@@ -273,26 +275,27 @@ export function generateDunMaze(maxx: number, maxy: number): number[][] {
         reject = 0;
     }
 
-    path.push({
-        x: 1,
-        y: 1,
-        dir: 'S',
-        past: 'S'
-    })
-    digUp(path, map, maxx, maxy);
+    // path.push({
+    //     x: 1,
+    //     y: 1,
+    //     dir: 'S',
+    //     past: 'S'
+    // })
+    // digUp(path, map, maxx, maxy);
 
-    // for (let i = 1; i < maxx; i=i+2) {
-    //     for (let j = 1; j < maxy; j=j+2) {
-    //         if (map[i][j] == 1 && map[i+1][j] == 1 && map[i][j+1] == 1 && map[i+1][j+1] == 1) { // coordenada atual
-    //             path.push({
-    //                 x: i,
-    //                 y: j,
-    //                 dir: 'z'
-    //             })
-    //             digUp(path, map, maxx, maxy);
-    //         }
-    //     }
-    // }
+    for (let i = 1; i < maxx; i=i+4) {
+        for (let j = 1; j < maxy; j=j+4) {
+            if (map[i][j] == 1 && map[i+1][j] == 1 && map[i][j+1] == 1 && map[i+1][j+1] == 1) { // coordenada atual
+                path.push({
+                    x: i,
+                    y: j,
+                    dir: 'z',
+                    past: 'S'
+                })
+                digUp(path, map, maxx, maxy);
+            }
+        }
+    }
     
 
 

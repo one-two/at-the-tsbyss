@@ -6045,8 +6045,10 @@ const logo_1 = __webpack_require__(/*! ../logo/logo */ "./logo/logo.ts");
 class Game {
     constructor() {
         this._messageBoxSize = 10;
-        this._screenWidth = 90;
-        this._screenHeight = 30;
+        //_screenWidth: number = 90;
+        //_screenHeight: number = 30;
+        this._screenWidth = 120;
+        this._screenHeight = 90;
         this._entities = [];
         this.timer = true;
         this._centerX = 0;
@@ -6599,7 +6601,9 @@ function digUp(pathGO, map, maxx, maxy) {
         let here = pathGO.pop();
         if (map[here.x][here.y] != 0) {
             digHere(here, map);
-            if (here.dir == 'z') {
+            // if (((here.x-1) % 4 == 0) && ((here.y-1) % 4 == 0)) {
+            //if (here.dir == 'z') {
+            if (((here.x - 1) % 4 == 0) && ((here.y - 1) % 4 == 0)) {
                 let nxt = testDirections(here, map, pathGO, maxx, maxy);
                 //console.log(nxt);
                 nxt.forEach(element => {
@@ -6625,7 +6629,7 @@ function digUp(pathGO, map, maxx, maxy) {
 }
 function generateDunMaze(maxx, maxy) {
     let map = ones(maxx, maxy);
-    let rooms = 100;
+    let rooms = 400;
     let roomsInGame = [];
     let path = [];
     let reject = 0;
@@ -6651,25 +6655,26 @@ function generateDunMaze(maxx, maxy) {
         }
         reject = 0;
     }
-    path.push({
-        x: 1,
-        y: 1,
-        dir: 'S',
-        past: 'S'
-    });
-    digUp(path, map, maxx, maxy);
-    // for (let i = 1; i < maxx; i=i+2) {
-    //     for (let j = 1; j < maxy; j=j+2) {
-    //         if (map[i][j] == 1 && map[i+1][j] == 1 && map[i][j+1] == 1 && map[i+1][j+1] == 1) { // coordenada atual
-    //             path.push({
-    //                 x: i,
-    //                 y: j,
-    //                 dir: 'z'
-    //             })
-    //             digUp(path, map, maxx, maxy);
-    //         }
-    //     }
-    // }
+    // path.push({
+    //     x: 1,
+    //     y: 1,
+    //     dir: 'S',
+    //     past: 'S'
+    // })
+    // digUp(path, map, maxx, maxy);
+    for (let i = 1; i < maxx; i = i + 4) {
+        for (let j = 1; j < maxy; j = j + 4) {
+            if (map[i][j] == 1 && map[i + 1][j] == 1 && map[i][j + 1] == 1 && map[i + 1][j + 1] == 1) { // coordenada atual
+                path.push({
+                    x: i,
+                    y: j,
+                    dir: 'z',
+                    past: 'S'
+                });
+                digUp(path, map, maxx, maxy);
+            }
+        }
+    }
     console.log(roomsInGame);
     //console.log(map);
     return map;
@@ -7031,7 +7036,7 @@ function debugScreen() {
     return {
         enter: (game) => {
             let mapWidth = 120;
-            let mapHeight = 90;
+            let mapHeight = 88;
             game._map = new map_1.Map(mapWidth, mapHeight);
             let emptyTile = new tiles_1.Tile('Empty', ' ', [0, 0, 0], [255, 255, 255], true, false, false);
             console.log("Entered debug screen.");

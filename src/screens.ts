@@ -51,7 +51,7 @@ export function debugScreen() {
     return {
         enter : (game : Game) => {
             let mapWidth = 120;
-            let mapHeight = 90;
+            let mapHeight = 88;
             game._map = new Map(mapWidth, mapHeight);
             let emptyTile = new Tile('Empty', ' ', [0,0,0], [255,255,255], true, false, false);
             console.log("Entered debug screen.");

@@ -19,10 +19,10 @@ export class Game {
 	messageLog: Messagelog;
 	_messageBoxSize: number = 10;
 	_currentScreen : any;
-	_screenWidth: number = 90;
-	_screenHeight: number = 30;
-	//_screenWidth: number = 120;
-	//_screenHeight: number = 90;
+	//_screenWidth: number = 90;
+	//_screenHeight: number = 30;
+	_screenWidth: number = 120;
+	_screenHeight: number = 90;
 	_centerX: number;
 	_centerY: number;
 	Screen : any;
