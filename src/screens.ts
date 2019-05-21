@@ -77,7 +77,7 @@ export function debugScreen() {
                         game._map._tiles[x][y] = new Tile('Wall', '#', [0,0,0], [218, 165, 32], true, true, false); // false, true, true
                     } 
                     if (generator[x][y] == 0) {
-                        game._map._tiles[x][y] = new Tile('Floor', '.', [0,0,0] , [84, 54, 11], true, false); //floor
+                        game._map._tiles[x][y] = new Tile('Floor', '·', [0,0,0] , [84, 54, 11], true, false); //floor
                     }
                     if (generator[x][y] == 2) {
                         game._map._tiles[x][y] = new Tile('Floor', 'E', [0,0,0] , [200, 0, 0], true, false); //floor

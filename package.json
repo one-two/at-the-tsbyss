@@ -7,7 +7,8 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "http-server -c-1 -p 8081"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,7 @@
   "dependencies": {
     "awesome-typescript-loader": "^5.2.1",
     "file-system": "^2.2.2",
+    "http-server": "^0.11.1",
     "rot-js": "^2.0.2",
     "source-map-loader": "^0.2.4",
     "typescript": "^3.2.2"
@@ -29,6 +31,6 @@
   "devDependencies": {
     "@types/node": "^10.12.18",
     "webpack": "^4.27.1",
-    "webpack-cli": "^3.1.2"
+    "webpack-cli": "^3.3.2"
   }
 }
