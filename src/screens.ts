@@ -39,7 +39,7 @@ export function startScreen() {
                 if (inputData.keyCode === KEYS.VK_RETURN) {
                     game.switchScreen(game.Screen.playScreen);
                 }
-                if (inputData.keyCode === KEYS.VK_BACK_SPACE) {
+                if (inputData.keyCode === KEYS.VK_COMMA) {
                     game.switchScreen(game.Screen.debugScreen);
                 }
             }
@@ -53,7 +53,7 @@ export function debugScreen() {
             let mapWidth = 120;
             let mapHeight = 88;
             game._map = new Map(mapWidth, mapHeight);
-            let emptyTile = new Tile('Empty', ' ', [0,0,0], [255,255,255], true, false, false);
+            let emptyTile = new Tile('empty', ' ', [0,0,0], [255,255,255]);
             console.log("Entered debug screen.");
             for (let x = 0; x < mapWidth; x++) {
                 // Create the nested array for the y values
@@ -74,13 +74,13 @@ export function debugScreen() {
                     //     game._map._tiles[x][y] = new Tile('Floor', '.', [0,0,0] , [84, 54, 11], true, false); //floor
                     // }
                     if (generator[x][y] == 1) {
-                        game._map._tiles[x][y] = new Tile('Wall', '#', [0,0,0], [218, 165, 32], true, true, false); // false, true, true
+                        game._map._tiles[x][y] = new Tile('debugWall', '#', [0,0,0], [218, 165, 32]); // false, true, true
                     } 
                     if (generator[x][y] == 0) {
-                        game._map._tiles[x][y] = new Tile('Floor', '·', [0,0,0] , [84, 54, 11], true, false); //floor
+                        game._map._tiles[x][y] = new Tile('floor', '·', [0,0,0] , [84, 54, 11]); //floor
                     }
                     if (generator[x][y] == 2) {
-                        game._map._tiles[x][y] = new Tile('Floor', 'E', [0,0,0] , [200, 0, 0], true, false); //floor
+                        game._map._tiles[x][y] = new Tile('floor', 'E', [0,0,0] , [200, 0, 0]); //floor
                     }
                 }
             }
@@ -222,7 +222,7 @@ export function playScreen() {
             let mapWidth = 120;
             let mapHeight = 90;
             game._map = new Map(mapWidth, mapHeight);
-            let emptyTile = new Tile('Empty', ' ', [0,0,0], [255,255,255], true, false, false);
+            let emptyTile = new Tile('empty', ' ', [0,0,0], [255,255,255]);
             console.log("Entered play screen.");
             for (let x = 0; x < mapWidth; x++) {
                 // Create the nested array for the y values
@@ -243,9 +243,9 @@ export function playScreen() {
             // Smoothen it one last time and then update our map
             generator.create((x,y,v) => {
                 if (v === 1 || x == 0 || y == 0 || x == mapWidth-1 || x == mapHeight-1) {
-                    game._map._tiles[x][y] = new Tile('Floor', '.', [0,0,0] , [84, 54, 11], true, false); //floor
+                    game._map._tiles[x][y] = new Tile('floor', '.', [0,0,0] , [84, 54, 11]); //floor
                 } else {
-                    game._map._tiles[x][y] = new Tile('Wall', '#', [0,0,0], [218, 165, 32], false, true, true);
+                    game._map._tiles[x][y] = new Tile('wall', '#', [0,0,0], [218, 165, 32]);
                 }
             });
             // Sync map and game variables

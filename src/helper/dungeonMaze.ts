@@ -256,6 +256,69 @@ function digUp(pathGO: path[], map: number[][], maxx: number, maxy: number) {
     }
 }
 
+function digBack(here: coordenada, map: number[][], maxx: number, maxy: number) {
+    let digHere: coordenada[] = [];
+
+    digHere.push(here);
+    while (digHere.length == 1) {
+        here = digHere.pop();
+        let next: coordenada = {
+            x : here.x,
+            y : here.y
+        };
+        console.log('here: ' + here.x + ' ' + here.y);
+        let walls = 0;
+        if (here.x + 2 < maxx ) {
+            if (map[here.x + 2][here.y] >= 1)
+                walls += 1;
+            else {
+                next.x = here.x + 2;
+                digHere.push(next);
+            }
+        } else walls += 1;
+
+        if (here.x - 2 > 0) {
+            if (map[here.x - 2][here.y] >= 1)
+                walls += 1;
+            else {
+                next.x = here.x - 2;
+                digHere.push(next);
+            }
+        } else walls += 1;
+
+        if (here.y + 2 < maxy) {
+            if (map[here.x][here.y + 2] >= 1)
+                walls += 1;
+            else {
+                next.y = here.y + 2;
+                digHere.push(next);
+            }
+        } else walls += 1;
+
+        if (here.y - 2 > 0) {
+            if (map[here.x][here.y - 2] >= 1)
+                walls += 1;
+            else {
+                next.y = here.y - 2;
+                digHere.push(next);
+            }
+        } else walls += 1;
+        console.log('walls: ' + walls);
+
+        if (walls > 2) {
+            map[here.x][here.y] = 1;
+            map[here.x+1][here.y] = 1;
+            map[here.x][here.y+1] = 1;
+            map[here.x+1][here.y+1] = 1;
+
+            console.log('empilhado: ' + digHere.length);
+        }
+
+
+    }
+    console.log("digHere: " + digHere.length);
+}
+
 export function generateDunMaze(maxx: number, maxy: number): number[][] {
     let map = ones(maxx, maxy);
     let rooms = 400;
@@ -286,14 +349,6 @@ export function generateDunMaze(maxx: number, maxy: number): number[][] {
         reject = 0;
     }
 
-    // path.push({
-    //     x: 1,
-    //     y: 1,
-    //     dir: 'S',
-    //     past: 'S'
-    // })
-    // digUp(path, map, maxx, maxy);
-
     for (let i = 1; i < maxx; i=i+4) {
         for (let j = 1; j < maxy; j=j+4) {
             if (map[i][j] == 1 && map[i+1][j] == 1 && map[i][j+1] == 1 && map[i+1][j+1] == 1) { // coordenada atual
@@ -308,8 +363,45 @@ export function generateDunMaze(maxx: number, maxy: number): number[][] {
             if (map[i][j] == 2) deadEnds.push({x: i, y: j});
         }
     }
+
+
+    removeDeadEnds(deadEnds, map, maxx, maxy);
     console.log(roomsInGame);
     console.log(deadEnds);
     //console.log(map);
     return map;
+}
+
+function removeDeadEnds(deadEnds: coordenada[], map: number[][], maxx: number, maxy: number) {
+    let deadlen = deadEnds.length;
+    let count = 0;
+    for (let i = 1; i < deadlen; i = i + 1) {
+        let walls = 0;
+        if (deadEnds[i].x + 2 < maxx ) {
+            if (map[deadEnds[i].x + 2][deadEnds[i].y] == 1)
+                walls += 1;
+        } else walls += 1;
+
+        if (deadEnds[i].x - 2 > 0) {
+            if (map[deadEnds[i].x - 2][deadEnds[i].y] == 1)
+                walls += 1;
+        } else walls += 1;
+
+        if (deadEnds[i].y + 2 < maxy) {
+            if (map[deadEnds[i].x][deadEnds[i].y + 2] == 1)
+                walls += 1;
+        } else walls += 1;
+
+        if (deadEnds[i].y - 2 > 0) {
+            if (map[deadEnds[i].x][deadEnds[i].y - 2] == 1)
+                walls += 1;
+        } else walls += 1;
+
+        if (walls > 2) {
+            count += 1;
+            console.log('deadends: ' + deadEnds[i].x + ' ' + deadEnds[i].y);
+            digBack(deadEnds[i], map, maxx, maxy);
+        }
+    }
+    console.log(count);
 }

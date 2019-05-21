@@ -27,7 +27,7 @@ export class Map {
     }
 
     getTile(x: number, y: number) {
-        let emptyTile = new Tile('Empty', ' ', [0,0,0], [255,255,255], false, false);
+        let emptyTile = new Tile('empty', ' ', [0,0,0], [255,255,255]);
         if (x < 0 || x >= this._width || y < 0 || y >= this._height) {
             return emptyTile;
         } else {

@@ -86,201 +86,6 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "../../../AppData/Roaming/npm/node_modules/webpack/node_modules/process/browser.js":
-/*!*************************************************!*\
-  !*** (webpack)/node_modules/process/browser.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-
-/***/ }),
-
 /***/ "./lib/color.js":
 /*!**********************!*\
   !*** ./lib/color.js ***!
@@ -1414,7 +1219,7 @@ class Term extends _backend_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     computeSize() { return [process.stdout.columns, process.stdout.rows]; }
 }
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../AppData/Roaming/npm/node_modules/webpack/node_modules/process/browser.js */ "../../../AppData/Roaming/npm/node_modules/webpack/node_modules/process/browser.js")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../node_modules/process/browser.js */ "./node_modules/process/browser.js")))
 
 /***/ }),
 
@@ -5205,6 +5010,201 @@ exports.Logo = Logo;
 
 /***/ }),
 
+/***/ "./node_modules/process/browser.js":
+/*!*****************************************!*\
+  !*** ./node_modules/process/browser.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+
+/***/ }),
+
 /***/ "./src/components/damageBlock.ts":
 /*!***************************************!*\
   !*** ./src/components/damageBlock.ts ***!
@@ -6557,6 +6557,12 @@ function testDirections(here, map, path, maxx, maxy) {
             next.push(nextCandidates[selected]);
         }
     }
+    else {
+        map[x][y] = 2;
+        // map[x+1][y] = 2;
+        // map[x+1][y+1] = 2;
+        // map[x][y+1] = 2;
+    }
     return next;
 }
 function digFront(here, pathFRONT, map) {
@@ -6627,11 +6633,74 @@ function digUp(pathGO, map, maxx, maxy) {
         }
     }
 }
+function digBack(here, map, maxx, maxy) {
+    let digHere = [];
+    digHere.push(here);
+    while (digHere.length == 1) {
+        here = digHere.pop();
+        let next = {
+            x: here.x,
+            y: here.y
+        };
+        console.log('here: ' + here.x + ' ' + here.y);
+        let walls = 0;
+        if (here.x + 2 < maxx) {
+            if (map[here.x + 2][here.y] >= 1)
+                walls += 1;
+            else {
+                next.x = here.x + 2;
+                digHere.push(next);
+            }
+        }
+        else
+            walls += 1;
+        if (here.x - 2 > 0) {
+            if (map[here.x - 2][here.y] >= 1)
+                walls += 1;
+            else {
+                next.x = here.x - 2;
+                digHere.push(next);
+            }
+        }
+        else
+            walls += 1;
+        if (here.y + 2 < maxy) {
+            if (map[here.x][here.y + 2] >= 1)
+                walls += 1;
+            else {
+                next.y = here.y + 2;
+                digHere.push(next);
+            }
+        }
+        else
+            walls += 1;
+        if (here.y - 2 > 0) {
+            if (map[here.x][here.y - 2] >= 1)
+                walls += 1;
+            else {
+                next.y = here.y - 2;
+                digHere.push(next);
+            }
+        }
+        else
+            walls += 1;
+        console.log('walls: ' + walls);
+        if (walls > 2) {
+            map[here.x][here.y] = 1;
+            map[here.x + 1][here.y] = 1;
+            map[here.x][here.y + 1] = 1;
+            map[here.x + 1][here.y + 1] = 1;
+            console.log('empilhado: ' + digHere.length);
+        }
+    }
+    console.log("digHere: " + digHere.length);
+}
 function generateDunMaze(maxx, maxy) {
     let map = ones(maxx, maxy);
     let rooms = 400;
     let roomsInGame = [];
     let path = [];
+    let deadEnds = [];
     let reject = 0;
     for (let i = 0; i < rooms; i++) {
         let room = randomRoom(maxx, maxy);
@@ -6655,13 +6724,6 @@ function generateDunMaze(maxx, maxy) {
         }
         reject = 0;
     }
-    // path.push({
-    //     x: 1,
-    //     y: 1,
-    //     dir: 'S',
-    //     past: 'S'
-    // })
-    // digUp(path, map, maxx, maxy);
     for (let i = 1; i < maxx; i = i + 4) {
         for (let j = 1; j < maxy; j = j + 4) {
             if (map[i][j] == 1 && map[i + 1][j] == 1 && map[i][j + 1] == 1 && map[i + 1][j + 1] == 1) { // coordenada atual
@@ -6673,13 +6735,54 @@ function generateDunMaze(maxx, maxy) {
                 });
                 digUp(path, map, maxx, maxy);
             }
+            if (map[i][j] == 2)
+                deadEnds.push({ x: i, y: j });
         }
     }
+    removeDeadEnds(deadEnds, map, maxx, maxy);
     console.log(roomsInGame);
+    console.log(deadEnds);
     //console.log(map);
     return map;
 }
 exports.generateDunMaze = generateDunMaze;
+function removeDeadEnds(deadEnds, map, maxx, maxy) {
+    let deadlen = deadEnds.length;
+    let count = 0;
+    for (let i = 1; i < deadlen; i = i + 1) {
+        let walls = 0;
+        if (deadEnds[i].x + 2 < maxx) {
+            if (map[deadEnds[i].x + 2][deadEnds[i].y] == 1)
+                walls += 1;
+        }
+        else
+            walls += 1;
+        if (deadEnds[i].x - 2 > 0) {
+            if (map[deadEnds[i].x - 2][deadEnds[i].y] == 1)
+                walls += 1;
+        }
+        else
+            walls += 1;
+        if (deadEnds[i].y + 2 < maxy) {
+            if (map[deadEnds[i].x][deadEnds[i].y + 2] == 1)
+                walls += 1;
+        }
+        else
+            walls += 1;
+        if (deadEnds[i].y - 2 > 0) {
+            if (map[deadEnds[i].x][deadEnds[i].y - 2] == 1)
+                walls += 1;
+        }
+        else
+            walls += 1;
+        if (walls > 2) {
+            count += 1;
+            console.log('deadends: ' + deadEnds[i].x + ' ' + deadEnds[i].y);
+            digBack(deadEnds[i], map, maxx, maxy);
+        }
+    }
+    console.log(count);
+}
 
 
 /***/ }),
@@ -6775,7 +6878,7 @@ class Map {
         this._entities = [];
     }
     getTile(x, y) {
-        let emptyTile = new tiles_1.Tile('Empty', ' ', [0, 0, 0], [255, 255, 255], false, false);
+        let emptyTile = new tiles_1.Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
         if (x < 0 || x >= this._width || y < 0 || y >= this._height) {
             return emptyTile;
         }
@@ -7024,7 +7127,7 @@ function startScreen() {
                 if (inputData.keyCode === constants_1.KEYS.VK_RETURN) {
                     game.switchScreen(game.Screen.playScreen);
                 }
-                if (inputData.keyCode === constants_1.KEYS.VK_BACK_SPACE) {
+                if (inputData.keyCode === constants_1.KEYS.VK_COMMA) {
                     game.switchScreen(game.Screen.debugScreen);
                 }
             }
@@ -7038,7 +7141,7 @@ function debugScreen() {
             let mapWidth = 120;
             let mapHeight = 88;
             game._map = new map_1.Map(mapWidth, mapHeight);
-            let emptyTile = new tiles_1.Tile('Empty', ' ', [0, 0, 0], [255, 255, 255], true, false, false);
+            let emptyTile = new tiles_1.Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
             console.log("Entered debug screen.");
             for (let x = 0; x < mapWidth; x++) {
                 // Create the nested array for the y values
@@ -7057,13 +7160,13 @@ function debugScreen() {
                     //     game._map._tiles[x][y] = new Tile('Floor', '.', [0,0,0] , [84, 54, 11], true, false); //floor
                     // }
                     if (generator[x][y] == 1) {
-                        game._map._tiles[x][y] = new tiles_1.Tile('Wall', '▒', [0, 0, 0], [218, 165, 32], true, true, false); // false, true, true
+                        game._map._tiles[x][y] = new tiles_1.Tile('debugWall', '#', [0, 0, 0], [218, 165, 32]); // false, true, true
                     }
                     if (generator[x][y] == 0) {
-                        game._map._tiles[x][y] = new tiles_1.Tile('Floor', '·', [0, 0, 0], [84, 54, 11], true, false); //floor
+                        game._map._tiles[x][y] = new tiles_1.Tile('floor', '·', [0, 0, 0], [84, 54, 11]); //floor
                     }
                     if (generator[x][y] == 2) {
-                        game._map._tiles[x][y] = new tiles_1.Tile('Floor', 'E', [0, 0, 0], [200, 0, 0], true, false); //floor
+                        game._map._tiles[x][y] = new tiles_1.Tile('floor', 'E', [0, 0, 0], [200, 0, 0]); //floor
                     }
                 }
             }
@@ -7188,7 +7291,7 @@ function playScreen() {
             let mapWidth = 120;
             let mapHeight = 90;
             game._map = new map_1.Map(mapWidth, mapHeight);
-            let emptyTile = new tiles_1.Tile('Empty', ' ', [0, 0, 0], [255, 255, 255], true, false, false);
+            let emptyTile = new tiles_1.Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
             console.log("Entered play screen.");
             for (let x = 0; x < mapWidth; x++) {
                 // Create the nested array for the y values
@@ -7208,10 +7311,10 @@ function playScreen() {
             // Smoothen it one last time and then update our map
             generator.create((x, y, v) => {
                 if (v === 1 || x == 0 || y == 0 || x == mapWidth - 1 || x == mapHeight - 1) {
-                    game._map._tiles[x][y] = new tiles_1.Tile('Floor', '.', [0, 0, 0], [84, 54, 11], true, false); //floor
+                    game._map._tiles[x][y] = new tiles_1.Tile('floor', '.', [0, 0, 0], [84, 54, 11]); //floor
                 }
                 else {
-                    game._map._tiles[x][y] = new tiles_1.Tile('Wall', '#', [0, 0, 0], [218, 165, 32], false, true, true);
+                    game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [218, 165, 32]);
                 }
             });
             // Sync map and game variables
@@ -7414,12 +7517,30 @@ exports.removeExpiredDamage = removeExpiredDamage;
 Object.defineProperty(exports, "__esModule", { value: true });
 const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
 class Tile {
-    constructor(name, char = ' ', background = [0, 0, 0], foreground = [255, 255, 255], walkable = false, diggable = false, blockslight = false) {
+    constructor(name, char = ' ', background = [0, 0, 0], foreground = [255, 255, 255]) {
         this.visibility = 0;
         this.visited = false;
         this._isWalkable = false;
         this._isDiggable = false;
         this._blocksLight = false;
+        let walkable = false;
+        let diggable = false;
+        let blockslight = false;
+        switch (name) {
+            case 'debugWall':
+                blockslight = false;
+            case 'wall':
+                walkable = false;
+                diggable = false;
+                blockslight = true;
+                break;
+            case 'floor':
+                walkable = true;
+            case 'empty':
+                walkable = true;
+            default:
+                break;
+        }
         this.name = name;
         this._isDiggable = diggable;
         this._isWalkable = walkable;

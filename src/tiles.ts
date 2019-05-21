@@ -12,7 +12,28 @@ export class Tile {
     _blocksLight: boolean = false;
     name: string;
 
-    constructor(name: string, char: string=' ', background: [number,number,number]=[0,0,0], foreground: [number,number,number]=[255,255,255], walkable: boolean=false, diggable: boolean=false, blockslight: boolean=false) {
+    constructor(name: string, char: string=' ', background: [number,number,number]=[0,0,0], foreground: [number,number,number]=[255,255,255]) {
+        let walkable = false;
+        let diggable = false;
+        let blockslight = false;
+
+        switch (name) {
+            case 'debugWall':
+                blockslight = false;
+            case 'wall':
+                walkable = false;
+                diggable = false;
+                blockslight = true;
+                break;
+            case 'floor':
+                walkable = true;
+            case 'empty':
+                walkable = true;
+            default:
+                break;
+        }
+        
+        
         this.name = name;
         this._isDiggable = diggable;
         this._isWalkable = walkable;
