@@ -15,6 +15,11 @@ interface path {
     past: string
 }
 
+interface coordenada {
+    x: number,
+    y: number,
+}
+
 function ones(maxx: number, maxy: number): number[][] {
     let array : number[][] = [[1]];
 
@@ -173,6 +178,11 @@ function testDirections(here: path, map: number[][], path: path[], maxx: number,
             }
             next.push(nextCandidates[selected]);
         }
+    } else {
+        map[x][y] = 2;
+        // map[x+1][y] = 2;
+        // map[x+1][y+1] = 2;
+        // map[x][y+1] = 2;
     }
     return next;
 }
@@ -251,6 +261,7 @@ export function generateDunMaze(maxx: number, maxy: number): number[][] {
     let rooms = 400;
     let roomsInGame : room[] = [];
     let path: path[] = [];
+    let deadEnds: coordenada[] = [];
     
     let reject = 0;
     for (let i = 0; i < rooms; i++) {
@@ -294,12 +305,11 @@ export function generateDunMaze(maxx: number, maxy: number): number[][] {
                 })
                 digUp(path, map, maxx, maxy);
             }
+            if (map[i][j] == 2) deadEnds.push({x: i, y: j});
         }
     }
-    
-
-
     console.log(roomsInGame);
+    console.log(deadEnds);
     //console.log(map);
     return map;
 }
