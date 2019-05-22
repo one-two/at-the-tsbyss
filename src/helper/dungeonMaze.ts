@@ -109,7 +109,7 @@ function digHere(here: path, map: number[][]) {
             break;    
         default:
             console.log('default');
-            map[x][y] = 2;
+            //map[x][y] = 2;
             break;
     }
     // if (map[x][y] != 0 && map[x][y] != 0 && map[x][y] != 0 && map[x][y] != 0) {
@@ -248,8 +248,6 @@ function digUp(pathGO: path[], map: number[][], maxx: number, maxy: number) {
             db += 1;
             if (db == 10000) {
                 const pate = pathGO;
-                console.log('10000')
-                console.log(pate);
                 pathGO = [];
             };
         }
@@ -266,7 +264,6 @@ function digBack(here: coordenada, map: number[][], maxx: number, maxy: number) 
             x : here.x,
             y : here.y
         };
-        console.log('here: ' + here.x + ' ' + here.y);
         let walls = 0;
         if (here.x + 2 < maxx ) {
             if (map[here.x + 2][here.y] >= 1)
@@ -303,7 +300,6 @@ function digBack(here: coordenada, map: number[][], maxx: number, maxy: number) 
                 digHere.push(next);
             }
         } else walls += 1;
-        console.log('walls: ' + walls);
 
         if (walls > 2) {
             map[here.x][here.y] = 1;
@@ -311,12 +307,161 @@ function digBack(here: coordenada, map: number[][], maxx: number, maxy: number) 
             map[here.x][here.y+1] = 1;
             map[here.x+1][here.y+1] = 1;
 
-            console.log('empilhado: ' + digHere.length);
         }
 
 
     }
-    console.log("digHere: " + digHere.length);
+}
+
+function openWalls(roomsInGame: room[], map: number[][], maxx: number, maxy: number) {
+    let directions: string[] = [];
+    let rooms = roomsInGame.length;
+    for (let i = 0; i < rooms; i++) {
+        if ( Math.random()*100 > 70) directions.push('n');
+        if ( Math.random()*100 > 70) directions.push('e');
+        if ( Math.random()*100 > 70) directions.push('s');
+        if ( Math.random()*100 > 70) directions.push('w');
+        if (directions.length == 0) directions.push('z');
+
+        while (directions.length > 0) {
+            let dir = directions.pop();
+            let candidates: number[] = [];
+            switch (dir) {
+                case 'n':
+                    if (roomsInGame[i].y - 3 > 0) {
+                        for (let roomTop = 0; roomTop < roomsInGame[i].sizex; roomTop+=2) {
+                            if (map[roomsInGame[i].x + roomTop][roomsInGame[i].y-3] < 1) {
+                                candidates.push(roomTop);
+                                //map[roomsInGame[i].x + roomTop][roomsInGame[i].y-3] = 1
+                            } else {
+                                if (candidates.length > 0) {
+                                    console.log('candidates: ' + candidates);
+                                    let x = randint(0, candidates.length-1);
+                                    console.log(x);
+                                    console.log('x: ' + (roomsInGame[i].x + candidates[x]) + ' y: '+ (roomsInGame[i].y-1));
+                                    map[roomsInGame[i].x + candidates[x]][roomsInGame[i].y-1] = 0
+                                    map[roomsInGame[i].x + candidates[x] + 1][roomsInGame[i].y-1] = 0
+                                    map[roomsInGame[i].x + candidates[x]][roomsInGame[i].y-2] = 0
+                                    map[roomsInGame[i].x + candidates[x] + 1][roomsInGame[i].y-2] = 0
+                                    candidates = [];
+                                }
+                            }
+                        }
+                        if (candidates.length > 0) {
+                            let x = randint(0, candidates.length-1);
+                            map[roomsInGame[i].x + candidates[x]][roomsInGame[i].y-1] = 0
+                            map[roomsInGame[i].x + candidates[x] + 1][roomsInGame[i].y-1] = 0
+                            map[roomsInGame[i].x + candidates[x]][roomsInGame[i].y-2] = 0
+                            map[roomsInGame[i].x + candidates[x] + 1][roomsInGame[i].y-2] = 0
+                            candidates = [];
+                        }
+
+                    }
+                    break;
+                case 'e':
+                    if (roomsInGame[i].x + roomsInGame[i].sizex + 3 < maxx) {
+                        for (let roomRight = 0; roomRight < roomsInGame[i].sizey; roomRight+=2) {
+                            if (map[roomsInGame[i].x + roomsInGame[i].sizex + 3][roomsInGame[i].y + roomRight] < 1) {
+                                console.log('add: ' + map[roomsInGame[i].x + roomsInGame[i].sizex][roomsInGame[i].y + roomRight] )
+                                candidates.push(roomRight);
+                                //map[roomsInGame[i].x + roomsInGame[i].sizex + 3][roomsInGame[i].y + roomRight] = 2
+                            } else {
+                                if (candidates.length > 0) {
+                                    console.log('candidates: ' + candidates);
+                                    let x = randint(0, candidates.length-1);
+                                    console.log(x);
+                                    console.log('x: ' + (roomsInGame[i].x + roomsInGame[i].sizex ) + ' y: '+ (roomsInGame[i].y + candidates[x]));
+                                    map[roomsInGame[i].x + roomsInGame[i].sizex + 1][roomsInGame[i].y + candidates[x]] = 0
+                                    map[roomsInGame[i].x + roomsInGame[i].sizex + 2][roomsInGame[i].y + candidates[x]] = 0
+                                    map[roomsInGame[i].x + roomsInGame[i].sizex + 1][roomsInGame[i].y + candidates[x] + 1] = 0
+                                    map[roomsInGame[i].x + roomsInGame[i].sizex + 2][roomsInGame[i].y + candidates[x] + 1] = 0
+                                    candidates = [];
+                                }
+                            }
+                            
+                        }
+                        if (candidates.length > 0) {
+                            console.log('candidates: ' + candidates);
+                            let x = randint(0, candidates.length-1);
+                            console.log(x);
+                            console.log('x: ' + (roomsInGame[i].x + roomsInGame[i].sizex ) + ' y: '+ (roomsInGame[i].y + candidates[x]));
+                            map[roomsInGame[i].x + roomsInGame[i].sizex + 1][roomsInGame[i].y + candidates[x]] = 0
+                            map[roomsInGame[i].x + roomsInGame[i].sizex + 2][roomsInGame[i].y + candidates[x]] = 0
+                            map[roomsInGame[i].x + roomsInGame[i].sizex + 1][roomsInGame[i].y + candidates[x] + 1] = 0
+                            map[roomsInGame[i].x + roomsInGame[i].sizex + 2][roomsInGame[i].y + candidates[x] + 1] = 0
+                            candidates = [];
+                        }
+
+                    }
+                    break;
+                case 's':
+                    if (roomsInGame[i].y + 3 < maxy) {
+                        for (let roomBot = 0; roomBot < roomsInGame[i].sizex; roomBot+=2) {
+                            if (map[roomsInGame[i].x + roomBot][roomsInGame[i].y+3 + roomsInGame[i].sizey] < 1) {
+                                candidates.push(roomBot);
+                                //map[roomsInGame[i].x + roomBot][roomsInGame[i].y+3 + roomsInGame[i].sizey] = 2
+                            } else {
+                                if (candidates.length > 0) {
+                                    let x = randint(0, candidates.length-1);
+                                    map[roomsInGame[i].x + candidates[x]][roomsInGame[i].y+1 + roomsInGame[i].sizey] = 0
+                                    map[roomsInGame[i].x + candidates[x] + 1][roomsInGame[i].y+1 + roomsInGame[i].sizey] = 0
+                                    map[roomsInGame[i].x + candidates[x]][roomsInGame[i].y+2 + roomsInGame[i].sizey] = 0
+                                    map[roomsInGame[i].x + candidates[x] + 1][roomsInGame[i].y+2 + roomsInGame[i].sizey] = 0
+                                    candidates = [];
+                                }
+                            }
+                            
+                        }
+                        if (candidates.length > 0) {
+                            let x = randint(0, candidates.length-1);
+                            map[roomsInGame[i].x + candidates[x]][roomsInGame[i].y+1 + roomsInGame[i].sizey] = 0
+                            map[roomsInGame[i].x + candidates[x] + 1][roomsInGame[i].y+1 + roomsInGame[i].sizey] = 0
+                            map[roomsInGame[i].x + candidates[x]][roomsInGame[i].y+2 + roomsInGame[i].sizey] = 0
+                            map[roomsInGame[i].x + candidates[x] + 1][roomsInGame[i].y+2 + roomsInGame[i].sizey] = 0
+                            candidates = [];
+                        }
+
+                    }
+                    break;
+                case 'w':
+                    if (roomsInGame[i].x - 3 > 0) {
+                        for (let roomLeft = 0; roomLeft < roomsInGame[i].sizey; roomLeft+=2) {
+                            if (map[roomsInGame[i].x - 3][roomsInGame[i].y + roomLeft] < 1) {
+                                candidates.push(roomLeft);
+                                //map[roomsInGame[i].x - 3][roomsInGame[i].y + roomLeft] = 2
+                            } else {
+                                if (candidates.length > 0) {
+                                    let x = randint(0, candidates.length-1);
+                                    map[roomsInGame[i].x - 1][roomsInGame[i].y + candidates[x]] = 0
+                                    map[roomsInGame[i].x - 2][roomsInGame[i].y + candidates[x]] = 0
+                                    map[roomsInGame[i].x - 1][roomsInGame[i].y + candidates[x] + 1] = 0
+                                    map[roomsInGame[i].x - 2][roomsInGame[i].y + candidates[x] + 1] = 0
+                                    candidates = [];
+                                }
+                            }
+                            
+                        }
+                        if (candidates.length > 0) {
+                            let x = randint(0, candidates.length-1);
+                            map[roomsInGame[i].x - 1][roomsInGame[i].y + candidates[x]] = 0
+                            map[roomsInGame[i].x - 2][roomsInGame[i].y + candidates[x]] = 0
+                            map[roomsInGame[i].x - 1][roomsInGame[i].y + candidates[x] + 1] = 0
+                            map[roomsInGame[i].x - 2][roomsInGame[i].y + candidates[x] + 1] = 0
+                            candidates = [];
+                        }
+
+                    }
+                    break;
+            
+                default:
+                    i--;
+                    break;
+            }
+            //console.log(roomsInGame[i]);
+        }
+
+    }
+
 }
 
 export function generateDunMaze(maxx: number, maxy: number): number[][] {
@@ -364,18 +509,19 @@ export function generateDunMaze(maxx: number, maxy: number): number[][] {
         }
     }
 
-
+    openWalls(roomsInGame, map, maxx, maxy);
     removeDeadEnds(deadEnds, map, maxx, maxy);
-    console.log(roomsInGame);
-    console.log(deadEnds);
+    //console.log(roomsInGame);
+    //console.log(deadEnds);
     //console.log(map);
     return map;
 }
 
 function removeDeadEnds(deadEnds: coordenada[], map: number[][], maxx: number, maxy: number) {
+    deadEnds.push({x: 1, y: 1});
     let deadlen = deadEnds.length;
     let count = 0;
-    for (let i = 1; i < deadlen; i = i + 1) {
+    for (let i = 0; i < deadlen; i = i + 1) {
         let walls = 0;
         if (deadEnds[i].x + 2 < maxx ) {
             if (map[deadEnds[i].x + 2][deadEnds[i].y] == 1)
@@ -399,9 +545,13 @@ function removeDeadEnds(deadEnds: coordenada[], map: number[][], maxx: number, m
 
         if (walls > 2) {
             count += 1;
-            console.log('deadends: ' + deadEnds[i].x + ' ' + deadEnds[i].y);
+            //console.log('deadends: ' + deadEnds[i].x + ' ' + deadEnds[i].y);
             digBack(deadEnds[i], map, maxx, maxy);
+            map[deadEnds[i].x][deadEnds[i].y] = 1;
+        } else {
+            map[deadEnds[i].x][deadEnds[i].y] = 0;
         }
+
     }
-    console.log(count);
+    //console.log(count);
 }
