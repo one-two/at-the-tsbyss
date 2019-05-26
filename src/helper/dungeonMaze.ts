@@ -112,12 +112,6 @@ function digHere(here: path, map: number[][]) {
             //map[x][y] = 2;
             break;
     }
-    // if (map[x][y] != 0 && map[x][y] != 0 && map[x][y] != 0 && map[x][y] != 0) {
-    //     map[x][y] = 0;
-    //     map[x+1][y] = 0;
-    //     map[x][y+1] = 0;
-    //     map[x+1][y+1] = 0;
-    // }
 }
 
 function testDirections(here: path, map: number[][], path: path[], maxx: number, maxy: number) : path[] {
@@ -174,7 +168,6 @@ function testDirections(here: path, map: number[][], path: path[], maxx: number,
             while (priority != selected) {
                 next.push(nextCandidates[priority]);
                 priority = (priority + 1) % nextCandidates.length;
-                //console.log(priority);
             }
             next.push(nextCandidates[selected]);
         }
@@ -230,21 +223,15 @@ function digUp(pathGO: path[], map: number[][], maxx: number, maxy: number) {
         let here = pathGO.pop();
         if (map[here.x][here.y] != 0) {
             digHere(here, map);
-            // if (((here.x-1) % 4 == 0) && ((here.y-1) % 4 == 0)) {
-            //if (here.dir == 'z') {
             if (((here.x-1) % 4 == 0) && ((here.y-1) % 4 == 0)) {
                 let nxt = testDirections(here, map, pathGO, maxx, maxy);
-                //console.log(nxt);
                 nxt.forEach(element => {
                     pathGO.push(element);
                 });
-                //console.log(pathGO);
             }
             else {
                 pathGO.push(digFront(here, pathGO, map));
             }
-            //console.log('pathGO: ' + pathGO.length.toString());
-            //console.log(pathGO);
             db += 1;
             if (db == 10000) {
                 const pate = pathGO;
@@ -335,10 +322,7 @@ function openWalls(roomsInGame: room[], map: number[][], maxx: number, maxy: num
                                 //map[roomsInGame[i].x + roomTop][roomsInGame[i].y-3] = 1
                             } else {
                                 if (candidates.length > 0) {
-                                    console.log('candidates: ' + candidates);
                                     let x = randint(0, candidates.length-1);
-                                    console.log(x);
-                                    console.log('x: ' + (roomsInGame[i].x + candidates[x]) + ' y: '+ (roomsInGame[i].y-1));
                                     map[roomsInGame[i].x + candidates[x]][roomsInGame[i].y-1] = 0
                                     map[roomsInGame[i].x + candidates[x] + 1][roomsInGame[i].y-1] = 0
                                     map[roomsInGame[i].x + candidates[x]][roomsInGame[i].y-2] = 0
@@ -362,15 +346,11 @@ function openWalls(roomsInGame: room[], map: number[][], maxx: number, maxy: num
                     if (roomsInGame[i].x + roomsInGame[i].sizex + 3 < maxx) {
                         for (let roomRight = 0; roomRight < roomsInGame[i].sizey; roomRight+=2) {
                             if (map[roomsInGame[i].x + roomsInGame[i].sizex + 3][roomsInGame[i].y + roomRight] < 1) {
-                                console.log('add: ' + map[roomsInGame[i].x + roomsInGame[i].sizex][roomsInGame[i].y + roomRight] )
                                 candidates.push(roomRight);
                                 //map[roomsInGame[i].x + roomsInGame[i].sizex + 3][roomsInGame[i].y + roomRight] = 2
                             } else {
                                 if (candidates.length > 0) {
-                                    console.log('candidates: ' + candidates);
                                     let x = randint(0, candidates.length-1);
-                                    console.log(x);
-                                    console.log('x: ' + (roomsInGame[i].x + roomsInGame[i].sizex ) + ' y: '+ (roomsInGame[i].y + candidates[x]));
                                     map[roomsInGame[i].x + roomsInGame[i].sizex + 1][roomsInGame[i].y + candidates[x]] = 0
                                     map[roomsInGame[i].x + roomsInGame[i].sizex + 2][roomsInGame[i].y + candidates[x]] = 0
                                     map[roomsInGame[i].x + roomsInGame[i].sizex + 1][roomsInGame[i].y + candidates[x] + 1] = 0
@@ -381,10 +361,7 @@ function openWalls(roomsInGame: room[], map: number[][], maxx: number, maxy: num
                             
                         }
                         if (candidates.length > 0) {
-                            console.log('candidates: ' + candidates);
                             let x = randint(0, candidates.length-1);
-                            console.log(x);
-                            console.log('x: ' + (roomsInGame[i].x + roomsInGame[i].sizex ) + ' y: '+ (roomsInGame[i].y + candidates[x]));
                             map[roomsInGame[i].x + roomsInGame[i].sizex + 1][roomsInGame[i].y + candidates[x]] = 0
                             map[roomsInGame[i].x + roomsInGame[i].sizex + 2][roomsInGame[i].y + candidates[x]] = 0
                             map[roomsInGame[i].x + roomsInGame[i].sizex + 1][roomsInGame[i].y + candidates[x] + 1] = 0
@@ -457,7 +434,6 @@ function openWalls(roomsInGame: room[], map: number[][], maxx: number, maxy: num
                     i--;
                     break;
             }
-            //console.log(roomsInGame[i]);
         }
 
     }
@@ -511,9 +487,6 @@ export function generateDunMaze(maxx: number, maxy: number): number[][] {
 
     openWalls(roomsInGame, map, maxx, maxy);
     removeDeadEnds(deadEnds, map, maxx, maxy);
-    //console.log(roomsInGame);
-    //console.log(deadEnds);
-    //console.log(map);
     return map;
 }
 
@@ -545,7 +518,6 @@ function removeDeadEnds(deadEnds: coordenada[], map: number[][], maxx: number, m
 
         if (walls > 2) {
             count += 1;
-            //console.log('deadends: ' + deadEnds[i].x + ' ' + deadEnds[i].y);
             digBack(deadEnds[i], map, maxx, maxy);
             map[deadEnds[i].x][deadEnds[i].y] = 1;
         } else {
@@ -553,5 +525,4 @@ function removeDeadEnds(deadEnds: coordenada[], map: number[][], maxx: number, m
         }
 
     }
-    //console.log(count);
 }

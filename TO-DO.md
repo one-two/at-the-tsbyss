@@ -24,4 +24,5 @@ Todo list to fill the void of our souls (but i really want to make it web)
 - [X] Attack stamina != moving stamina
 - [ ] Exits
 - [X] Larger mobs?
-- [W] Second algorithm for dungeons
+- [X] Second algorithm for dungeons
+- [ ] Level path for floors

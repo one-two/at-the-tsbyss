@@ -19,10 +19,10 @@ export class Game {
 	messageLog: Messagelog;
 	_messageBoxSize: number = 10;
 	_currentScreen : any;
-	//_screenWidth: number = 90;
-	//_screenHeight: number = 30;
-	_screenWidth: number = 120;
-	_screenHeight: number = 90;
+	_screenWidth: number = 74;
+	_screenHeight: number = 40;
+	//_screenWidth: number = 120;
+	//_screenHeight: number = 90;
 	_centerX: number;
 	_centerY: number;
 	Screen : any;
@@ -31,6 +31,7 @@ export class Game {
 	_entities: Entity[] = [];
 	timer: boolean = true;
 	logo: any;
+	level: number = 5;
 
 	constructor() {
 		this._centerX = 0;
@@ -54,9 +55,15 @@ export class Game {
 		
 		this.logo = Logo();
 		
-		this._display = new Display({width: this._screenWidth, height: this._screenHeight});
-		this._inventory = new Display({width: 10, height: this._screenHeight});
-		this._messaging = new Display({width: this._screenWidth, height: this._messageBoxSize});
+		this._display = new Display({
+			width: this._screenWidth, 
+			height: this._screenHeight, 
+			forceSquareRatio:true,
+			fontFamily: "Courier",
+			fontStyle: "bold", 
+			spacing : 0.75});
+		this._inventory = new Display({width: 14, height: this._screenHeight});
+		this._messaging = new Display({width: this._screenWidth*1.5, height: this._messageBoxSize});
 		this.messageLog = new Messagelog(0, this._screenHeight, this._messageBoxSize);
 		this.messageLog.messages = [{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"}, 
 			{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"}, 
@@ -120,7 +127,7 @@ export class Game {
 				fading2 = "%c{rgb(" + Math.round(message.color2[0]*alpha).toString() +","+Math.round(message.color2[1]*alpha).toString() +","+Math.round(message.color2[2]*alpha).toString() +")}";
 				out =  message.message.replace("%c{0}", fading);
 				out2 =  out.replace("%c{1}", fading2);
-				this._messaging.drawText(1, x, ''+fading2+out2);
+				this._messaging.drawText(1, x, ''+fading2+out2, this._screenWidth*2);
 
 			}
 			x += 1
@@ -128,7 +135,7 @@ export class Game {
 	}
 
 	writeStats() {
-		let hp = this._player.fighter.hp;
+		let hp = this._player.fighter.hp.toFixed(2);
 		let max_hp = this._player.fighter.max_hp();
 		this._inventory.drawText(1, 1, "Stats: ")
 		this._inventory.drawText(1, 3, "%c{rgb(255,0,0)}HP: %c{}" +hp + "/" +max_hp);
@@ -185,7 +192,7 @@ export class Game {
 window.onload = function() {
 	let game = new Game();
 	// Initialize the game
-	let fighter = new Fighter(9995, 1, 4, 0);
+	let fighter = new Fighter(999, 1, 4, 0);
 	let player = new Entity(60, 45, new Glyph('@', [0,0,0], [0, 191, 255]), 'Player', 1, true, 1, 1, fighter, undefined, true);
 	game._player = player
 	game._entities = [game._player];

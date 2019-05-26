@@ -90,7 +90,7 @@ export class Fighter {
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
             target.fighter.takeDamage(damage)
-            result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} com "+ damage + " de dano! (" +target.fighter.hp +")";
+            result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} com "+ damage + " de dano! (" +target.fighter.hp.toFixed(2) +")";
         } else {
             result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
         }
@@ -112,7 +112,7 @@ export class Fighter {
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
             target.fighter.takeDamage(damage)
-            result.message = this.owner.name + " usou uma " + dmgBlock.name + " em um %c{0}" + target.name + "%c{1} com "+ damage + " de dano! (" +target.fighter.hp +")";
+            result.message = this.owner.name + " usou uma " + dmgBlock.name + " em um %c{0}" + target.name + "%c{1} com "+ damage + " de dano! (" +target.fighter.hp.toFixed(2) +")";
         } else {
             result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
         }

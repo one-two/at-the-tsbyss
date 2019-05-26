@@ -86,6 +86,201 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "../../../AppData/Roaming/npm/node_modules/webpack/node_modules/process/browser.js":
+/*!*************************************************!*\
+  !*** (webpack)/node_modules/process/browser.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+
+/***/ }),
+
 /***/ "./lib/color.js":
 /*!**********************!*\
   !*** ./lib/color.js ***!
@@ -1219,7 +1414,7 @@ class Term extends _backend_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     computeSize() { return [process.stdout.columns, process.stdout.rows]; }
 }
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../node_modules/process/browser.js */ "./node_modules/process/browser.js")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../AppData/Roaming/npm/node_modules/webpack/node_modules/process/browser.js */ "../../../AppData/Roaming/npm/node_modules/webpack/node_modules/process/browser.js")))
 
 /***/ }),
 
@@ -5010,201 +5205,6 @@ exports.Logo = Logo;
 
 /***/ }),
 
-/***/ "./node_modules/process/browser.js":
-/*!*****************************************!*\
-  !*** ./node_modules/process/browser.js ***!
-  \*****************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-
-/***/ }),
-
 /***/ "./src/components/damageBlock.ts":
 /*!***************************************!*\
   !*** ./src/components/damageBlock.ts ***!
@@ -5350,7 +5350,7 @@ class Fighter {
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
             target.fighter.takeDamage(damage);
-            result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} com " + damage + " de dano! (" + target.fighter.hp + ")";
+            result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} com " + damage + " de dano! (" + target.fighter.hp.toFixed(2) + ")";
         }
         else {
             result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
@@ -5371,7 +5371,7 @@ class Fighter {
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
             target.fighter.takeDamage(damage);
-            result.message = this.owner.name + " usou uma " + dmgBlock.name + " em um %c{0}" + target.name + "%c{1} com " + damage + " de dano! (" + target.fighter.hp + ")";
+            result.message = this.owner.name + " usou uma " + dmgBlock.name + " em um %c{0}" + target.name + "%c{1} com " + damage + " de dano! (" + target.fighter.hp.toFixed(2) + ")";
         }
         else {
             result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
@@ -6045,12 +6045,11 @@ const logo_1 = __webpack_require__(/*! ../logo/logo */ "./logo/logo.ts");
 class Game {
     constructor() {
         this._messageBoxSize = 10;
-        //_screenWidth: number = 90;
-        //_screenHeight: number = 30;
-        this._screenWidth = 120;
-        this._screenHeight = 90;
+        this._screenWidth = 74;
+        this._screenHeight = 40;
         this._entities = [];
         this.timer = true;
+        this.level = 5;
         this._centerX = 0;
         this._centerY = 0;
         this._display = null;
@@ -6068,9 +6067,16 @@ class Game {
     init() {
         // Any necessary initialization will go here.
         this.logo = logo_1.Logo();
-        this._display = new index_1.Display({ width: this._screenWidth, height: this._screenHeight });
-        this._inventory = new index_1.Display({ width: 10, height: this._screenHeight });
-        this._messaging = new index_1.Display({ width: this._screenWidth, height: this._messageBoxSize });
+        this._display = new index_1.Display({
+            width: this._screenWidth,
+            height: this._screenHeight,
+            forceSquareRatio: true,
+            fontFamily: "Courier",
+            fontStyle: "bold",
+            spacing: 0.75
+        });
+        this._inventory = new index_1.Display({ width: 14, height: this._screenHeight });
+        this._messaging = new index_1.Display({ width: this._screenWidth * 1.5, height: this._messageBoxSize });
         this.messageLog = new messages_1.Messagelog(0, this._screenHeight, this._messageBoxSize);
         this.messageLog.messages = [{ message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
             { message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
@@ -6128,13 +6134,13 @@ class Game {
                 fading2 = "%c{rgb(" + Math.round(message.color2[0] * alpha).toString() + "," + Math.round(message.color2[1] * alpha).toString() + "," + Math.round(message.color2[2] * alpha).toString() + ")}";
                 out = message.message.replace("%c{0}", fading);
                 out2 = out.replace("%c{1}", fading2);
-                this._messaging.drawText(1, x, '' + fading2 + out2);
+                this._messaging.drawText(1, x, '' + fading2 + out2, this._screenWidth * 2);
             }
             x += 1;
         }
     }
     writeStats() {
-        let hp = this._player.fighter.hp;
+        let hp = this._player.fighter.hp.toFixed(2);
         let max_hp = this._player.fighter.max_hp();
         this._inventory.drawText(1, 1, "Stats: ");
         this._inventory.drawText(1, 3, "%c{rgb(255,0,0)}HP: %c{}" + hp + "/" + max_hp);
@@ -6186,7 +6192,7 @@ exports.Game = Game;
 window.onload = function () {
     let game = new Game();
     // Initialize the game
-    let fighter = new fighter_1.Fighter(9995, 1, 4, 0);
+    let fighter = new fighter_1.Fighter(999, 1, 4, 0);
     let player = new entity_1.Entity(60, 45, new glyph_1.Glyph('@', [0, 0, 0], [0, 191, 255]), 'Player', 1, true, 1, 1, fighter, undefined, true);
     game._player = player;
     game._entities = [game._player];
@@ -6332,26 +6338,26 @@ function CreateMonster(monster_choice, x, y) {
     else if (monster_choice == 'troll') {
         let fighter_component = new fighter_1.Fighter(30, 2, 8, 60);
         let ai_component = new troll_1.Troll();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', [0, 0, 0], [128, 0, 128]), 'troll', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('t', [0, 0, 0], [128, 0, 128]), 'troll', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'wyvern') {
-        // fighter_component = Fighter(hp=20, defense=0, power=5, xp=40)
-        // ai_component = Wyvern()
-        // monster = Entity(x,y, 'w', libtcod.dark_violet, 0, 'wyvern', 200, blocks = True, render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component)
-        // return monster
+        let fighter_component = new fighter_1.Fighter(20, 0, 5, 40);
+        let ai_component = new orc_1.Orc();
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('w', [0, 0, 0], [148, 0, 211]), 'wyvern', 1, true, 5, 2, fighter_component, ai_component);
+        return monster;
     }
     else if (monster_choice == 'ranger') {
-        // fighter_component = Fighter(hp=40, defense=1, power=7, xp=40)
-        // ai_component = Ranger()
-        // monster = Entity(x,y, 'r', libtcod.dark_sepia, 0, 'ranger', 200, blocks = True, render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component)
-        // return monster
+        let fighter_component = new fighter_1.Fighter(40, 1, 7, 40);
+        let ai_component = new orc_1.Orc(); //Ranger()
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('r', [0, 0, 0], [233, 150, 122]), 'ranger', 1, true, 5, 2, fighter_component, ai_component);
+        return monster;
     }
     else if (monster_choice == 'dragon') {
-        // fighter_component = Fighter(hp=100, defense=5, power=16, xp=300)
-        // ai_component = Dragon()
-        // monster = Entity(x,y, 'D', libtcod.crimson, 0, 'dragao', 200, blocks = True, render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component)
-        // return monster 
+        let fighter_component = new fighter_1.Fighter(100, 5, 16, 300);
+        let ai_component = new orc_1.Orc(); //Dragon()
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('d', [0, 0, 0], [220, 20, 60]), 'dragon', 1, true, 5, 2, fighter_component, ai_component);
+        return monster;
     }
 }
 exports.CreateMonster = CreateMonster;
@@ -6490,12 +6496,6 @@ function digHere(here, map) {
             //map[x][y] = 2;
             break;
     }
-    // if (map[x][y] != 0 && map[x][y] != 0 && map[x][y] != 0 && map[x][y] != 0) {
-    //     map[x][y] = 0;
-    //     map[x+1][y] = 0;
-    //     map[x][y+1] = 0;
-    //     map[x+1][y+1] = 0;
-    // }
 }
 function testDirections(here, map, path, maxx, maxy) {
     let next = [];
@@ -6552,7 +6552,6 @@ function testDirections(here, map, path, maxx, maxy) {
             while (priority != selected) {
                 next.push(nextCandidates[priority]);
                 priority = (priority + 1) % nextCandidates.length;
-                //console.log(priority);
             }
             next.push(nextCandidates[selected]);
         }
@@ -6607,21 +6606,15 @@ function digUp(pathGO, map, maxx, maxy) {
         let here = pathGO.pop();
         if (map[here.x][here.y] != 0) {
             digHere(here, map);
-            // if (((here.x-1) % 4 == 0) && ((here.y-1) % 4 == 0)) {
-            //if (here.dir == 'z') {
             if (((here.x - 1) % 4 == 0) && ((here.y - 1) % 4 == 0)) {
                 let nxt = testDirections(here, map, pathGO, maxx, maxy);
-                //console.log(nxt);
                 nxt.forEach(element => {
                     pathGO.push(element);
                 });
-                //console.log(pathGO);
             }
             else {
                 pathGO.push(digFront(here, pathGO, map));
             }
-            //console.log('pathGO: ' + pathGO.length.toString());
-            //console.log(pathGO);
             db += 1;
             if (db == 10000) {
                 const pate = pathGO;
@@ -6716,10 +6709,7 @@ function openWalls(roomsInGame, map, maxx, maxy) {
                             }
                             else {
                                 if (candidates.length > 0) {
-                                    console.log('candidates: ' + candidates);
                                     let x = randint_1.randint(0, candidates.length - 1);
-                                    console.log(x);
-                                    console.log('x: ' + (roomsInGame[i].x + candidates[x]) + ' y: ' + (roomsInGame[i].y - 1));
                                     map[roomsInGame[i].x + candidates[x]][roomsInGame[i].y - 1] = 0;
                                     map[roomsInGame[i].x + candidates[x] + 1][roomsInGame[i].y - 1] = 0;
                                     map[roomsInGame[i].x + candidates[x]][roomsInGame[i].y - 2] = 0;
@@ -6742,16 +6732,12 @@ function openWalls(roomsInGame, map, maxx, maxy) {
                     if (roomsInGame[i].x + roomsInGame[i].sizex + 3 < maxx) {
                         for (let roomRight = 0; roomRight < roomsInGame[i].sizey; roomRight += 2) {
                             if (map[roomsInGame[i].x + roomsInGame[i].sizex + 3][roomsInGame[i].y + roomRight] < 1) {
-                                console.log('add: ' + map[roomsInGame[i].x + roomsInGame[i].sizex][roomsInGame[i].y + roomRight]);
                                 candidates.push(roomRight);
                                 //map[roomsInGame[i].x + roomsInGame[i].sizex + 3][roomsInGame[i].y + roomRight] = 2
                             }
                             else {
                                 if (candidates.length > 0) {
-                                    console.log('candidates: ' + candidates);
                                     let x = randint_1.randint(0, candidates.length - 1);
-                                    console.log(x);
-                                    console.log('x: ' + (roomsInGame[i].x + roomsInGame[i].sizex) + ' y: ' + (roomsInGame[i].y + candidates[x]));
                                     map[roomsInGame[i].x + roomsInGame[i].sizex + 1][roomsInGame[i].y + candidates[x]] = 0;
                                     map[roomsInGame[i].x + roomsInGame[i].sizex + 2][roomsInGame[i].y + candidates[x]] = 0;
                                     map[roomsInGame[i].x + roomsInGame[i].sizex + 1][roomsInGame[i].y + candidates[x] + 1] = 0;
@@ -6761,10 +6747,7 @@ function openWalls(roomsInGame, map, maxx, maxy) {
                             }
                         }
                         if (candidates.length > 0) {
-                            console.log('candidates: ' + candidates);
                             let x = randint_1.randint(0, candidates.length - 1);
-                            console.log(x);
-                            console.log('x: ' + (roomsInGame[i].x + roomsInGame[i].sizex) + ' y: ' + (roomsInGame[i].y + candidates[x]));
                             map[roomsInGame[i].x + roomsInGame[i].sizex + 1][roomsInGame[i].y + candidates[x]] = 0;
                             map[roomsInGame[i].x + roomsInGame[i].sizex + 2][roomsInGame[i].y + candidates[x]] = 0;
                             map[roomsInGame[i].x + roomsInGame[i].sizex + 1][roomsInGame[i].y + candidates[x] + 1] = 0;
@@ -6833,7 +6816,6 @@ function openWalls(roomsInGame, map, maxx, maxy) {
                     i--;
                     break;
             }
-            //console.log(roomsInGame[i]);
         }
     }
 }
@@ -6883,9 +6865,6 @@ function generateDunMaze(maxx, maxy) {
     }
     openWalls(roomsInGame, map, maxx, maxy);
     removeDeadEnds(deadEnds, map, maxx, maxy);
-    //console.log(roomsInGame);
-    //console.log(deadEnds);
-    //console.log(map);
     return map;
 }
 exports.generateDunMaze = generateDunMaze;
@@ -6921,7 +6900,6 @@ function removeDeadEnds(deadEnds, map, maxx, maxy) {
             walls += 1;
         if (walls > 2) {
             count += 1;
-            //console.log('deadends: ' + deadEnds[i].x + ' ' + deadEnds[i].y);
             digBack(deadEnds[i], map, maxx, maxy);
             map[deadEnds[i].x][deadEnds[i].y] = 1;
         }
@@ -6929,7 +6907,6 @@ function removeDeadEnds(deadEnds, map, maxx, maxy) {
             map[deadEnds[i].x][deadEnds[i].y] = 0;
         }
     }
-    //console.log(count);
 }
 
 
@@ -7080,7 +7057,7 @@ class Map {
         return player;
     }
     addEntityToMap() {
-        let max_monsters_per_room = randFromLevel_1.from_dungeon_level([[20, 1], [3, 4], [5, 6]], this.dungeon_level);
+        let max_monsters_per_room = randFromLevel_1.from_dungeon_level([[20, 1], [30, 4], [40, 6]], this.dungeon_level);
         let max_items_per_room = randFromLevel_1.from_dungeon_level([[1, 1], [2, 4]], this.dungeon_level);
         let number_of_monsters = randint_1.randint(0, max_monsters_per_room);
         let number_of_items = randint_1.randint(0, max_items_per_room);
@@ -7098,7 +7075,7 @@ class Map {
             //'healing_potion': 35,
             'knife': randFromLevel_1.from_dungeon_level([[10, 1]], this.dungeon_level),
             'dagger': randFromLevel_1.from_dungeon_level([[10, 1]], this.dungeon_level),
-            'sword': randFromLevel_1.from_dungeon_level([[500, 0], [10, 2]], this.dungeon_level),
+            'sword': randFromLevel_1.from_dungeon_level([[500, 0], [500, 2]], this.dungeon_level),
             'spear': randFromLevel_1.from_dungeon_level([[5, 1], [10, 3]], this.dungeon_level)
             //'shield': from_dungeon_level([[5, 0]], this.dungeon_level)
         };
@@ -7117,6 +7094,7 @@ class Map {
             if (emptyspace == true) {
                 let monster_choice = randFromLevel_1.random_choice_from_dict(monster_chances);
                 let q = createMonters_1.CreateMonster(monster_choice, x, y);
+                console.log(q);
                 q._map = this;
                 this._entities.push(q);
             }
@@ -7286,38 +7264,7 @@ exports.startScreen = startScreen;
 function debugScreen() {
     return {
         enter: (game) => {
-            let mapWidth = 120;
-            let mapHeight = 88;
-            game._map = new map_1.Map(mapWidth, mapHeight);
-            let emptyTile = new tiles_1.Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
-            console.log("Entered debug screen.");
-            for (let x = 0; x < mapWidth; x++) {
-                // Create the nested array for the y values
-                game._map._tiles.push([]);
-                // Add all the tiles
-                for (let y = 0; y < mapHeight; y++) {
-                    game._map._tiles[x].push(emptyTile);
-                }
-            }
-            let generator = dungeonMaze_1.generateDunMaze(mapWidth, mapHeight);
-            for (let x = 0; x < mapWidth; x++) {
-                for (let y = 0; y < mapHeight; y++) {
-                    // if (generator[x][y] == 1) {
-                    //     game._map._tiles[x][y] = new Tile('Wall', '#', [0,0,0], [218, 165, 32], true, true, false); // false, true, true
-                    // } else {
-                    //     game._map._tiles[x][y] = new Tile('Floor', '.', [0,0,0] , [84, 54, 11], true, false); //floor
-                    // }
-                    if (generator[x][y] == 1) {
-                        game._map._tiles[x][y] = new tiles_1.Tile('debugWall', '#', [0, 0, 0], [218, 165, 32]); // false, true, true
-                    }
-                    if (generator[x][y] == 0) {
-                        game._map._tiles[x][y] = new tiles_1.Tile('floor', '·', [0, 0, 0], [84, 54, 11]); //floor
-                    }
-                    if (generator[x][y] == 2) {
-                        game._map._tiles[x][y] = new tiles_1.Tile('floor', 'E', [0, 0, 0], [200, 0, 0]); //floor
-                    }
-                }
-            }
+            createDungeon(game);
             //game._map._tiles[0][0] = new Tile('Floor', 'X', [0,0,0] , [200, 0, 200], true, false);
             // Sync map and game variables
             game._map._entities = [];
@@ -7436,35 +7383,20 @@ exports.debugScreen = debugScreen;
 function playScreen() {
     return {
         enter: (game) => {
-            let mapWidth = 120;
-            let mapHeight = 90;
-            game._map = new map_1.Map(mapWidth, mapHeight);
-            let emptyTile = new tiles_1.Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
-            console.log("Entered play screen.");
-            for (let x = 0; x < mapWidth; x++) {
-                // Create the nested array for the y values
-                game._map._tiles.push([]);
-                // Add all the tiles
-                for (let y = 0; y < mapHeight; y++) {
-                    game._map._tiles[x].push(emptyTile);
-                }
+            if (game.level < 2) {
+                createCave(game);
             }
-            let generator = new maps.default.Cellular(mapWidth, mapHeight);
-            generator.randomize(0.66);
-            let totalIterations = 3;
-            // Iteratively smoothen the map
-            for (let i = 0; i < totalIterations - 1; i++) {
-                generator.create();
-            }
-            // Smoothen it one last time and then update our map
-            generator.create((x, y, v) => {
-                if (v === 1 || x == 0 || y == 0 || x == mapWidth - 1 || x == mapHeight - 1) {
-                    game._map._tiles[x][y] = new tiles_1.Tile('floor', '.', [0, 0, 0], [84, 54, 11]); //floor
+            if (game.level >= 2 && game.level <= 4) {
+                if (Math.random() * 100 < 51) {
+                    createCave(game);
                 }
                 else {
-                    game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [218, 165, 32]);
+                    createDungeon(game);
                 }
-            });
+            }
+            if (game.level >= 5 && game.level < 7) {
+                createDungeon(game);
+            }
             // Sync map and game variables
             game._map._entities = [];
             // debug stuff
@@ -7483,6 +7415,7 @@ function playScreen() {
             //let knifeItem = new Entity()
             game.timer = true;
             game.startCountDown();
+            game._map.dungeon_level = game.level;
             game._map.addEntityToMap();
             game._entities = game._map._entities;
         },
@@ -7574,6 +7507,71 @@ function playScreen() {
     };
 }
 exports.playScreen = playScreen;
+function createCave(game) {
+    let mapWidth = 120;
+    let mapHeight = 90;
+    game._map = new map_1.Map(mapWidth, mapHeight);
+    let emptyTile = new tiles_1.Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
+    console.log("Entered play screen.");
+    for (let x = 0; x < mapWidth; x++) {
+        // Create the nested array for the y values
+        game._map._tiles.push([]);
+        // Add all the tiles
+        for (let y = 0; y < mapHeight; y++) {
+            game._map._tiles[x].push(emptyTile);
+        }
+    }
+    let generator = new maps.default.Cellular(mapWidth, mapHeight);
+    generator.randomize(0.66);
+    let totalIterations = 3;
+    // Iteratively smoothen the map
+    for (let i = 0; i < totalIterations - 1; i++) {
+        generator.create();
+    }
+    // Smoothen it one last time and then update our map
+    generator.create((x, y, v) => {
+        if (v === 1 || x == 0 || y == 0 || x == mapWidth - 1 || x == mapHeight - 1) {
+            game._map._tiles[x][y] = new tiles_1.Tile('floor', '.', [0, 0, 0], [84, 54, 11]); //floor
+        }
+        else {
+            game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [218, 165, 32]);
+        }
+    });
+}
+function createDungeon(game) {
+    let mapWidth = 120;
+    let mapHeight = 88;
+    game._map = new map_1.Map(mapWidth, mapHeight);
+    let emptyTile = new tiles_1.Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
+    console.log("Entered debug screen.");
+    for (let x = 0; x < mapWidth; x++) {
+        // Create the nested array for the y values
+        game._map._tiles.push([]);
+        // Add all the tiles
+        for (let y = 0; y < mapHeight; y++) {
+            game._map._tiles[x].push(emptyTile);
+        }
+    }
+    let generator = dungeonMaze_1.generateDunMaze(mapWidth, mapHeight);
+    for (let x = 0; x < mapWidth; x++) {
+        for (let y = 0; y < mapHeight; y++) {
+            // if (generator[x][y] == 1) {
+            //     game._map._tiles[x][y] = new Tile('Wall', '#', [0,0,0], [218, 165, 32], true, true, false); // false, true, true
+            // } else {
+            //     game._map._tiles[x][y] = new Tile('Floor', '.', [0,0,0] , [84, 54, 11], true, false); //floor
+            // }
+            if (generator[x][y] == 1) {
+                game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [218, 165, 32]); // false, true, true
+            }
+            if (generator[x][y] == 0) {
+                game._map._tiles[x][y] = new tiles_1.Tile('floor', '·', [0, 0, 0], [84, 54, 11]); //floor
+            }
+            if (generator[x][y] == 2) {
+                game._map._tiles[x][y] = new tiles_1.Tile('floor', 'E', [0, 0, 0], [200, 0, 0]);
+            }
+        }
+    }
+}
 function winScreen() {
     return {
         enter: () => {
@@ -7680,7 +7678,7 @@ class Tile {
             case 'wall':
                 walkable = false;
                 diggable = false;
-                blockslight = true;
+                blockslight = false;
                 break;
             case 'floor':
                 walkable = true;

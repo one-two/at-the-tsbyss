@@ -50,40 +50,7 @@ export function startScreen() {
 export function debugScreen() {
     return {
         enter : (game : Game) => {
-            let mapWidth = 120;
-            let mapHeight = 88;
-            game._map = new Map(mapWidth, mapHeight);
-            let emptyTile = new Tile('empty', ' ', [0,0,0], [255,255,255]);
-            console.log("Entered debug screen.");
-            for (let x = 0; x < mapWidth; x++) {
-                // Create the nested array for the y values
-                game._map._tiles.push([]);
-                // Add all the tiles
-                for (let y = 0; y < mapHeight; y++) {
-                    game._map._tiles[x].push(emptyTile);
-                }
-            }
-
-            let generator = generateDunMaze(mapWidth, mapHeight);
-
-            for (let x = 0; x < mapWidth; x++) {
-                for (let y = 0; y < mapHeight; y++) {
-                    // if (generator[x][y] == 1) {
-                    //     game._map._tiles[x][y] = new Tile('Wall', '#', [0,0,0], [218, 165, 32], true, true, false); // false, true, true
-                    // } else {
-                    //     game._map._tiles[x][y] = new Tile('Floor', '.', [0,0,0] , [84, 54, 11], true, false); //floor
-                    // }
-                    if (generator[x][y] == 1) {
-                        game._map._tiles[x][y] = new Tile('debugWall', '#', [0,0,0], [218, 165, 32]); // false, true, true
-                    } 
-                    if (generator[x][y] == 0) {
-                        game._map._tiles[x][y] = new Tile('floor', '·', [0,0,0] , [84, 54, 11]); //floor
-                    }
-                    if (generator[x][y] == 2) {
-                        game._map._tiles[x][y] = new Tile('floor', 'E', [0,0,0] , [200, 0, 0]); //floor
-                    }
-                }
-            }
+            createDungeon(game);
             //game._map._tiles[0][0] = new Tile('Floor', 'X', [0,0,0] , [200, 0, 200], true, false);
             // Sync map and game variables
             game._map._entities = [];
@@ -216,38 +183,24 @@ export function debugScreen() {
     }
 }
 
+
 export function playScreen() {
     return {
         enter : (game : Game) => {
-            let mapWidth = 120;
-            let mapHeight = 90;
-            game._map = new Map(mapWidth, mapHeight);
-            let emptyTile = new Tile('empty', ' ', [0,0,0], [255,255,255]);
-            console.log("Entered play screen.");
-            for (let x = 0; x < mapWidth; x++) {
-                // Create the nested array for the y values
-                game._map._tiles.push([]);
-                // Add all the tiles
-                for (let y = 0; y < mapHeight; y++) {
-                    game._map._tiles[x].push(emptyTile);
-                }
+            if (game.level < 2) {
+                createCave(game);
             }
-
-            let generator = new maps.default.Cellular(mapWidth, mapHeight);
-            generator.randomize(0.66);
-            let totalIterations = 3;
-            // Iteratively smoothen the map
-            for (let i = 0; i < totalIterations - 1; i++) {
-                generator.create();
-            }
-            // Smoothen it one last time and then update our map
-            generator.create((x,y,v) => {
-                if (v === 1 || x == 0 || y == 0 || x == mapWidth-1 || x == mapHeight-1) {
-                    game._map._tiles[x][y] = new Tile('floor', '.', [0,0,0] , [84, 54, 11]); //floor
+            if (game.level >= 2 && game.level <= 4) {
+                if( Math.random()*100 < 51 ) {
+                    createCave(game);
                 } else {
-                    game._map._tiles[x][y] = new Tile('wall', '#', [0,0,0], [218, 165, 32]);
+                    createDungeon(game);
                 }
-            });
+            }
+            if (game.level >= 5 && game.level < 7 ) {
+                createDungeon(game);
+            }
+            
             // Sync map and game variables
             game._map._entities = [];
 
@@ -271,6 +224,7 @@ export function playScreen() {
 
             game.timer = true;
             game.startCountDown();
+            game._map.dungeon_level = game.level;
             game._map.addEntityToMap();
             
             game._entities = game._map._entities;
@@ -374,6 +328,73 @@ export function playScreen() {
                 let xx = randint(-5, 5);
                 let yy = randint(-5, 5);
                 game._entities[0].move(xx, yy, game._map);
+            }
+        }
+    }
+}
+
+function createCave(game: Game) {
+    let mapWidth = 120;
+    let mapHeight = 90;
+    game._map = new Map(mapWidth, mapHeight);
+    let emptyTile = new Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
+    console.log("Entered play screen.");
+    for (let x = 0; x < mapWidth; x++) {
+        // Create the nested array for the y values
+        game._map._tiles.push([]);
+        // Add all the tiles
+        for (let y = 0; y < mapHeight; y++) {
+            game._map._tiles[x].push(emptyTile);
+        }
+    }
+    let generator = new maps.default.Cellular(mapWidth, mapHeight);
+    generator.randomize(0.66);
+    let totalIterations = 3;
+    // Iteratively smoothen the map
+    for (let i = 0; i < totalIterations - 1; i++) {
+        generator.create();
+    }
+    // Smoothen it one last time and then update our map
+    generator.create((x, y, v) => {
+        if (v === 1 || x == 0 || y == 0 || x == mapWidth - 1 || x == mapHeight - 1) {
+            game._map._tiles[x][y] = new Tile('floor', '.', [0, 0, 0], [84, 54, 11]); //floor
+        }
+        else {
+            game._map._tiles[x][y] = new Tile('wall', '#', [0, 0, 0], [218, 165, 32]);
+        }
+    });
+}
+
+function createDungeon(game: Game) {
+    let mapWidth = 120;
+    let mapHeight = 88;
+    game._map = new Map(mapWidth, mapHeight);
+    let emptyTile = new Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
+    console.log("Entered debug screen.");
+    for (let x = 0; x < mapWidth; x++) {
+        // Create the nested array for the y values
+        game._map._tiles.push([]);
+        // Add all the tiles
+        for (let y = 0; y < mapHeight; y++) {
+            game._map._tiles[x].push(emptyTile);
+        }
+    }
+    let generator = generateDunMaze(mapWidth, mapHeight);
+    for (let x = 0; x < mapWidth; x++) {
+        for (let y = 0; y < mapHeight; y++) {
+            // if (generator[x][y] == 1) {
+            //     game._map._tiles[x][y] = new Tile('Wall', '#', [0,0,0], [218, 165, 32], true, true, false); // false, true, true
+            // } else {
+            //     game._map._tiles[x][y] = new Tile('Floor', '.', [0,0,0] , [84, 54, 11], true, false); //floor
+            // }
+            if (generator[x][y] == 1) {
+                game._map._tiles[x][y] = new Tile('wall', '#', [0, 0, 0], [218, 165, 32]); // false, true, true
+            }
+            if (generator[x][y] == 0) {
+                game._map._tiles[x][y] = new Tile('floor', '·', [0, 0, 0], [84, 54, 11]); //floor
+            }
+            if (generator[x][y] == 2) {
+                game._map._tiles[x][y] = new Tile('floor', 'E', [0, 0, 0], [200, 0, 0]);
             }
         }
     }

@@ -23,7 +23,7 @@ export class Tile {
             case 'wall':
                 walkable = false;
                 diggable = false;
-                blockslight = true;
+                blockslight = false;
                 break;
             case 'floor':
                 walkable = true;

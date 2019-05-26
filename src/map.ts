@@ -84,7 +84,7 @@ export class Map {
     }
 
     addEntityToMap(): void {
-        let max_monsters_per_room = from_dungeon_level([[20, 1], [3, 4], [5, 6]], this.dungeon_level)
+        let max_monsters_per_room = from_dungeon_level([[20, 1], [30, 4], [40, 6]], this.dungeon_level)
         let max_items_per_room = from_dungeon_level([[1, 1], [2, 4]], this.dungeon_level)
 
         let number_of_monsters = randint(0, max_monsters_per_room)
@@ -105,7 +105,7 @@ export class Map {
             //'healing_potion': 35,
             'knife': from_dungeon_level([[10, 1]], this.dungeon_level),
             'dagger': from_dungeon_level([[10, 1]], this.dungeon_level),
-            'sword': from_dungeon_level([[500, 0], [10, 2]], this.dungeon_level),
+            'sword': from_dungeon_level([[500, 0], [500, 2]], this.dungeon_level),
             'spear': from_dungeon_level([[5, 1], [10, 3]], this.dungeon_level)
             //'shield': from_dungeon_level([[5, 0]], this.dungeon_level)
         }
@@ -128,6 +128,7 @@ export class Map {
             if (emptyspace == true) {
                 let monster_choice = random_choice_from_dict(monster_chances);
                 let q = CreateMonster(monster_choice, x, y);
+                console.log(q);
                 q._map = this;
                 this._entities.push(q);
             } else {
