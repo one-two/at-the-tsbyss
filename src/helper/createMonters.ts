@@ -5,6 +5,7 @@ import { Troll } from "../content/monsters/troll";
 import { Glyph } from "../glyph";
 import { Fighter } from "../components/fighter";
 import { Ranger } from "../content/monsters/ranger";
+import { Wyvern } from "../content/monsters/wyvern";
 
 export function CreateMonster(monster_choice: string, x: number, y: number): Entity{
     if (monster_choice == 'fungi') {
@@ -27,7 +28,7 @@ export function CreateMonster(monster_choice: string, x: number, y: number): Ent
     }
     else if (monster_choice == 'wyvern') {
         let fighter_component = new Fighter(20, 0, 5, 40)
-        let ai_component = new Orc()
+        let ai_component = new Wyvern()
         let monster = new Entity(x,y, new Glyph('w', [0,0,0], [148, 0, 211]), 'Wyvern', 1, true, 5, 2, fighter_component, ai_component);
         return monster
     }

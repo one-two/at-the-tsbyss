@@ -2,7 +2,7 @@ import { Entity } from "../../entity";
 import { randint } from "../../helper/randint";
 import { Enemy } from "../../helper/enemy";
 import { deathFunction } from "../../helper/deathFunction";
-import { skilllist, punch } from "../../components/skilllist";
+import { skilllist, punch, smash } from "../../components/skilllist";
 
 export class Troll implements Enemy {
     skill_bonus: number = 1.5;
@@ -11,7 +11,7 @@ export class Troll implements Enemy {
 
     constructor() {
         this.skills = [{
-            name: 'punch',
+            name: 'smash',
             cooldown: 12,
             maxCooldown: 12
         }]
@@ -46,7 +46,7 @@ export class Troll implements Enemy {
         if (dist < this.owner.sight) {
             this.owner.hunt(player);
             if (dist <= 5 && (this.owner.x == player.x || this.owner.y == player.y)) {
-                punch(this.owner, player, 1.2);
+                smash(this.owner, player, this.skill_bonus);
             }
         } else {
             this.owner.wander();

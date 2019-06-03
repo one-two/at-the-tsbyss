@@ -16,9 +16,14 @@ export class DamageBlock {
     startCountDown(){
         var counter = this.timeout;
         var interval = setInterval(() => {
+            
             counter--;
             if (counter == 2) {
-                this.owner.glyph.foreground = [this.owner.glyph.foreground[0]*1.3, this.owner.glyph.foreground[1]*1.3, this.owner.glyph.foreground[2]*1.3]//[216, 112, 147] //
+                let newColor = this.owner.glyph.foreground.map(element => {
+                    element = element*4.3 > 250 ? 250 : element*4.3;
+                    return element
+                });
+                this.owner.glyph.foreground = [250, newColor[1], newColor[2]]//[216, 112, 147] //
             }
             if (counter == 0 ) {
                 clearInterval(interval);
