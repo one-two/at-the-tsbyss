@@ -18,7 +18,7 @@ export class DamageBlock {
         var interval = setInterval(() => {
             counter--;
             if (counter == 2) {
-                this.owner.glyph.foreground = [216, 112, 147]
+                this.owner.glyph.foreground = [this.owner.glyph.foreground[0]*1.3, this.owner.glyph.foreground[1]*1.3, this.owner.glyph.foreground[2]*1.3]//[216, 112, 147] //
             }
             if (counter == 0 ) {
                 clearInterval(interval);

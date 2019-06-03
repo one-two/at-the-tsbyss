@@ -2,12 +2,12 @@ import { Entity } from "../entity";
 import { DamageBlock } from "../components/damageBlock";
 import { Glyph } from "../glyph";
 
-export function createDamageBlock(creator: Entity, x:number, y:number, name: string, multi: number, timeout: number = 6) {
+export function createDamageBlock(creator: Entity, x:number, y:number, name: string, multi: number, glyph: string = '╳', timeout: number = 6) {
     let dir = creator.face;
     let dmg = new DamageBlock(multi, timeout);
     let attack:Entity = null;
     dmg.owner = creator;
-    attack = new Entity(x, y, new Glyph('x', [0,0,0], [255,0,0]), name, 1, false, 0, 5, undefined, undefined, false, undefined, undefined, dmg);
+    attack = new Entity(x, y, new Glyph(glyph, [0,0,0], [creator.glyph.foreground[0], creator.glyph.foreground[1]/4, creator.glyph.foreground[2]/4]), name, 1, false, 0, 5, undefined, undefined, false, undefined, undefined, dmg);
     attack._map = creator._map;
     attack.damage.startCountDown();
     attack.owner = creator;

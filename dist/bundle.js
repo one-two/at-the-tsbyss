@@ -5227,7 +5227,7 @@ class DamageBlock {
         var interval = setInterval(() => {
             counter--;
             if (counter == 2) {
-                this.owner.glyph.foreground = [216, 112, 147];
+                this.owner.glyph.foreground = [this.owner.glyph.foreground[0] * 1.3, this.owner.glyph.foreground[1] * 1.3, this.owner.glyph.foreground[2] * 1.3]; //[216, 112, 147] //
             }
             if (counter == 0) {
                 clearInterval(interval);
@@ -5398,7 +5398,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const createDamageBlock_1 = __webpack_require__(/*! ../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
 function poison_cloud(owner, target, damageMultiplier) {
     let nameAtk = 'nuvem de esporos';
-    createDamageBlock_1.createDamageBlock(owner, target.x, target.y, nameAtk, damageMultiplier);
+    createDamageBlock_1.createDamageBlock(owner, target.x, target.y, nameAtk, damageMultiplier, "ꙮ");
     createDamageBlock_1.createDamageBlock(owner, target.x + 1, target.y, nameAtk, damageMultiplier);
     createDamageBlock_1.createDamageBlock(owner, target.x - 1, target.y, nameAtk, damageMultiplier);
     createDamageBlock_1.createDamageBlock(owner, target.x, target.y + 1, nameAtk, damageMultiplier);
@@ -5451,54 +5451,54 @@ function snipe(owner, target, damageMultiplier) {
     let dy = target.y - owner.y;
     if (Math.abs(dx) < Math.abs(dy)) {
         if (dy > 0) {
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 2, nameAtk, damageMultiplier, 6);
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 3, nameAtk, damageMultiplier, 7);
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 4, nameAtk, damageMultiplier, 8);
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 5, nameAtk, damageMultiplier, 9);
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 6, nameAtk, damageMultiplier, 10);
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 7, nameAtk, damageMultiplier, 11);
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 8, nameAtk, damageMultiplier, 12);
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 9, nameAtk, damageMultiplier, 13);
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 10, nameAtk, damageMultiplier, 14);
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 11, nameAtk, damageMultiplier, 15);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 2, nameAtk, damageMultiplier, "↓", 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 3, nameAtk, damageMultiplier, "↓", 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 4, nameAtk, damageMultiplier, "↓", 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 5, nameAtk, damageMultiplier, "↓", 9);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 6, nameAtk, damageMultiplier, "↓", 10);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 7, nameAtk, damageMultiplier, "↓", 11);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 8, nameAtk, damageMultiplier, "↓", 12);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 9, nameAtk, damageMultiplier, "↓", 13);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 10, nameAtk, damageMultiplier, "↓", 14);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 11, nameAtk, damageMultiplier, "↓", 15);
         }
         else {
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 2, nameAtk, damageMultiplier, 6);
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 3, nameAtk, damageMultiplier, 7);
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 4, nameAtk, damageMultiplier, 8);
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 5, nameAtk, damageMultiplier, 9);
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 6, nameAtk, damageMultiplier, 10);
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 7, nameAtk, damageMultiplier, 11);
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 8, nameAtk, damageMultiplier, 12);
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 9, nameAtk, damageMultiplier, 13);
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 10, nameAtk, damageMultiplier, 14);
-            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 11, nameAtk, damageMultiplier, 15);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 2, nameAtk, damageMultiplier, "↑", 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 3, nameAtk, damageMultiplier, "↑", 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 4, nameAtk, damageMultiplier, "↑", 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 5, nameAtk, damageMultiplier, "↑", 9);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 6, nameAtk, damageMultiplier, "↑", 10);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 7, nameAtk, damageMultiplier, "↑", 11);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 8, nameAtk, damageMultiplier, "↑", 12);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 9, nameAtk, damageMultiplier, "↑", 13);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 10, nameAtk, damageMultiplier, "↑", 14);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 11, nameAtk, damageMultiplier, "↑", 15);
         }
     }
     if (Math.abs(dx) > Math.abs(dy)) {
         if (dx > 0) {
-            createDamageBlock_1.createDamageBlock(owner, owner.x + 2, owner.y, nameAtk, damageMultiplier, 6);
-            createDamageBlock_1.createDamageBlock(owner, owner.x + 3, owner.y, nameAtk, damageMultiplier, 7);
-            createDamageBlock_1.createDamageBlock(owner, owner.x + 4, owner.y, nameAtk, damageMultiplier, 8);
-            createDamageBlock_1.createDamageBlock(owner, owner.x + 5, owner.y, nameAtk, damageMultiplier, 9);
-            createDamageBlock_1.createDamageBlock(owner, owner.x + 6, owner.y, nameAtk, damageMultiplier, 10);
-            createDamageBlock_1.createDamageBlock(owner, owner.x + 7, owner.y, nameAtk, damageMultiplier, 11);
-            createDamageBlock_1.createDamageBlock(owner, owner.x + 8, owner.y, nameAtk, damageMultiplier, 12);
-            createDamageBlock_1.createDamageBlock(owner, owner.x + 9, owner.y, nameAtk, damageMultiplier, 13);
-            createDamageBlock_1.createDamageBlock(owner, owner.x + 10, owner.y, nameAtk, damageMultiplier, 14);
-            createDamageBlock_1.createDamageBlock(owner, owner.x + 11, owner.y, nameAtk, damageMultiplier, 15);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 2, owner.y, nameAtk, damageMultiplier, "→", 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 3, owner.y, nameAtk, damageMultiplier, "→", 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 4, owner.y, nameAtk, damageMultiplier, "→", 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 5, owner.y, nameAtk, damageMultiplier, "→", 9);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 6, owner.y, nameAtk, damageMultiplier, "→", 10);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 7, owner.y, nameAtk, damageMultiplier, "→", 11);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 8, owner.y, nameAtk, damageMultiplier, "→", 12);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 9, owner.y, nameAtk, damageMultiplier, "→", 13);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 10, owner.y, nameAtk, damageMultiplier, "→", 14);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 11, owner.y, nameAtk, damageMultiplier, "→", 15);
         }
         else {
-            createDamageBlock_1.createDamageBlock(owner, owner.x - 2, owner.y, nameAtk, damageMultiplier, 6);
-            createDamageBlock_1.createDamageBlock(owner, owner.x - 3, owner.y, nameAtk, damageMultiplier, 7);
-            createDamageBlock_1.createDamageBlock(owner, owner.x - 4, owner.y, nameAtk, damageMultiplier, 8);
-            createDamageBlock_1.createDamageBlock(owner, owner.x - 5, owner.y, nameAtk, damageMultiplier, 9);
-            createDamageBlock_1.createDamageBlock(owner, owner.x - 6, owner.y, nameAtk, damageMultiplier, 10);
-            createDamageBlock_1.createDamageBlock(owner, owner.x - 7, owner.y, nameAtk, damageMultiplier, 11);
-            createDamageBlock_1.createDamageBlock(owner, owner.x - 8, owner.y, nameAtk, damageMultiplier, 12);
-            createDamageBlock_1.createDamageBlock(owner, owner.x - 9, owner.y, nameAtk, damageMultiplier, 13);
-            createDamageBlock_1.createDamageBlock(owner, owner.x - 10, owner.y, nameAtk, damageMultiplier, 14);
-            createDamageBlock_1.createDamageBlock(owner, owner.x - 11, owner.y, nameAtk, damageMultiplier, 15);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 2, owner.y, nameAtk, damageMultiplier, "←", 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 3, owner.y, nameAtk, damageMultiplier, "←", 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 4, owner.y, nameAtk, damageMultiplier, "←", 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 5, owner.y, nameAtk, damageMultiplier, "←", 9);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 6, owner.y, nameAtk, damageMultiplier, "←", 10);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 7, owner.y, nameAtk, damageMultiplier, "←", 11);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 8, owner.y, nameAtk, damageMultiplier, "←", 12);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 9, owner.y, nameAtk, damageMultiplier, "←", 13);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 10, owner.y, nameAtk, damageMultiplier, "←", 14);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 11, owner.y, nameAtk, damageMultiplier, "←", 15);
         }
     }
 }
@@ -6246,7 +6246,7 @@ class Game {
             fontStyle: "bold",
             spacing: 0.75
         });
-        this._inventory = new index_1.Display({ width: 14, height: this._screenHeight });
+        this._inventory = new index_1.Display({ width: 14, height: this._screenHeight * 0.75 });
         this._messaging = new index_1.Display({ width: this._screenWidth * 1.5, height: this._messageBoxSize });
         this.messageLog = new messages_1.Messagelog(0, this._screenHeight, this._messageBoxSize);
         this.messageLog.messages = [{ message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
@@ -6420,12 +6420,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const entity_1 = __webpack_require__(/*! ../entity */ "./src/entity.ts");
 const damageBlock_1 = __webpack_require__(/*! ../components/damageBlock */ "./src/components/damageBlock.ts");
 const glyph_1 = __webpack_require__(/*! ../glyph */ "./src/glyph.ts");
-function createDamageBlock(creator, x, y, name, multi, timeout = 6) {
+function createDamageBlock(creator, x, y, name, multi, glyph = '╳', timeout = 6) {
     let dir = creator.face;
     let dmg = new damageBlock_1.DamageBlock(multi, timeout);
     let attack = null;
     dmg.owner = creator;
-    attack = new entity_1.Entity(x, y, new glyph_1.Glyph('x', [0, 0, 0], [255, 0, 0]), name, 1, false, 0, 5, undefined, undefined, false, undefined, undefined, dmg);
+    attack = new entity_1.Entity(x, y, new glyph_1.Glyph(glyph, [0, 0, 0], creator.glyph.foreground), name, 1, false, 0, 5, undefined, undefined, false, undefined, undefined, dmg);
     attack._map = creator._map;
     attack.damage.startCountDown();
     attack.owner = creator;
@@ -6498,37 +6498,37 @@ function CreateMonster(monster_choice, x, y) {
     if (monster_choice == 'fungi') {
         let fighter_component = new fighter_1.Fighter(200, 0, 4, 35);
         let ai_component = new fungi_1.Fungi();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('f', [0, 0, 0], [0, 200, 0]), 'fungi', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('f', [0, 0, 0], [0, 200, 0]), 'Fungi', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'orc') {
         let fighter_component = new fighter_1.Fighter(200, 0, 4, 35);
         let ai_component = new orc_1.Orc();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', [0, 0, 0], [0, 128, 0]), 'orc', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', [0, 0, 0], [0, 128, 0]), 'Orc', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'troll') {
         let fighter_component = new fighter_1.Fighter(30, 2, 8, 60);
         let ai_component = new troll_1.Troll();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('t', [0, 0, 0], [128, 0, 128]), 'troll', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('t', [0, 0, 0], [128, 0, 128]), 'Troll', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'wyvern') {
         let fighter_component = new fighter_1.Fighter(20, 0, 5, 40);
         let ai_component = new orc_1.Orc();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('w', [0, 0, 0], [148, 0, 211]), 'wyvern', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('w', [0, 0, 0], [148, 0, 211]), 'Wyvern', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'ranger') {
         let fighter_component = new fighter_1.Fighter(40, 1, 7, 40);
         let ai_component = new ranger_1.Ranger(); //Ranger()
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('r', [0, 0, 0], [233, 150, 122]), 'ranger', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('r', [0, 0, 0], [233, 150, 122]), 'Ranger', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'dragon') {
         let fighter_component = new fighter_1.Fighter(100, 5, 16, 300);
         let ai_component = new orc_1.Orc(); //Dragon()
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('d', [0, 0, 0], [220, 20, 60]), 'dragon', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('d', [0, 0, 0], [220, 20, 60]), 'Dragon', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
 }

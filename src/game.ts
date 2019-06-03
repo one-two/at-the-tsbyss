@@ -62,7 +62,7 @@ export class Game {
 			fontFamily: "Courier",
 			fontStyle: "bold", 
 			spacing : 0.75});
-		this._inventory = new Display({width: 14, height: this._screenHeight});
+		this._inventory = new Display({width: 14, height: this._screenHeight*0.75});
 		this._messaging = new Display({width: this._screenWidth*1.5, height: this._messageBoxSize});
 		this.messageLog = new Messagelog(0, this._screenHeight, this._messageBoxSize);
 		this.messageLog.messages = [{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"}, 
@@ -73,7 +73,6 @@ export class Game {
 			{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"},
 			{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"},
 			{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"}]
-		this._inventory.drawText(0, 1, 'ola');
 		//let game = this; // So that we don't lose this
 		let event = "keydown";
 
