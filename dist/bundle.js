@@ -5447,29 +5447,59 @@ function punch(owner, target, damageMultiplier) {
 exports.punch = punch;
 function snipe(owner, target, damageMultiplier) {
     let nameAtk = 'tiro';
-    if (owner.face == 's') {
-        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 1, nameAtk, damageMultiplier, 6);
-        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 2, nameAtk, damageMultiplier, 9);
-        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 3, nameAtk, damageMultiplier, 12);
-        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 4, nameAtk, damageMultiplier, 15);
+    let dx = target.x - owner.x;
+    let dy = target.y - owner.y;
+    if (Math.abs(dx) < Math.abs(dy)) {
+        if (dy > 0) {
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 2, nameAtk, damageMultiplier, 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 3, nameAtk, damageMultiplier, 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 4, nameAtk, damageMultiplier, 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 5, nameAtk, damageMultiplier, 9);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 6, nameAtk, damageMultiplier, 10);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 7, nameAtk, damageMultiplier, 11);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 8, nameAtk, damageMultiplier, 12);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 9, nameAtk, damageMultiplier, 13);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 10, nameAtk, damageMultiplier, 14);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 11, nameAtk, damageMultiplier, 15);
+        }
+        else {
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 2, nameAtk, damageMultiplier, 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 3, nameAtk, damageMultiplier, 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 4, nameAtk, damageMultiplier, 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 5, nameAtk, damageMultiplier, 9);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 6, nameAtk, damageMultiplier, 10);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 7, nameAtk, damageMultiplier, 11);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 8, nameAtk, damageMultiplier, 12);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 9, nameAtk, damageMultiplier, 13);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 10, nameAtk, damageMultiplier, 14);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 11, nameAtk, damageMultiplier, 15);
+        }
     }
-    if (owner.face == 'n') {
-        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 1, nameAtk, damageMultiplier, 6);
-        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 2, nameAtk, damageMultiplier, 9);
-        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 3, nameAtk, damageMultiplier, 12);
-        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 4, nameAtk, damageMultiplier, 15);
-    }
-    if (owner.face == 'e') {
-        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y, nameAtk, damageMultiplier, 6);
-        createDamageBlock_1.createDamageBlock(owner, owner.x - 2, owner.y, nameAtk, damageMultiplier, 9);
-        createDamageBlock_1.createDamageBlock(owner, owner.x - 3, owner.y, nameAtk, damageMultiplier, 12);
-        createDamageBlock_1.createDamageBlock(owner, owner.x - 4, owner.y, nameAtk, damageMultiplier, 15);
-    }
-    if (owner.face == 'w') {
-        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y, nameAtk, damageMultiplier, 6);
-        createDamageBlock_1.createDamageBlock(owner, owner.x + 2, owner.y, nameAtk, damageMultiplier, 9);
-        createDamageBlock_1.createDamageBlock(owner, owner.x + 3, owner.y, nameAtk, damageMultiplier, 12);
-        createDamageBlock_1.createDamageBlock(owner, owner.x + 4, owner.y, nameAtk, damageMultiplier, 15);
+    if (Math.abs(dx) > Math.abs(dy)) {
+        if (dx > 0) {
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 2, owner.y, nameAtk, damageMultiplier, 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 3, owner.y, nameAtk, damageMultiplier, 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 4, owner.y, nameAtk, damageMultiplier, 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 5, owner.y, nameAtk, damageMultiplier, 9);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 6, owner.y, nameAtk, damageMultiplier, 10);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 7, owner.y, nameAtk, damageMultiplier, 11);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 8, owner.y, nameAtk, damageMultiplier, 12);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 9, owner.y, nameAtk, damageMultiplier, 13);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 10, owner.y, nameAtk, damageMultiplier, 14);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 11, owner.y, nameAtk, damageMultiplier, 15);
+        }
+        else {
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 2, owner.y, nameAtk, damageMultiplier, 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 3, owner.y, nameAtk, damageMultiplier, 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 4, owner.y, nameAtk, damageMultiplier, 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 5, owner.y, nameAtk, damageMultiplier, 9);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 6, owner.y, nameAtk, damageMultiplier, 10);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 7, owner.y, nameAtk, damageMultiplier, 11);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 8, owner.y, nameAtk, damageMultiplier, 12);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 9, owner.y, nameAtk, damageMultiplier, 13);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 10, owner.y, nameAtk, damageMultiplier, 14);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 11, owner.y, nameAtk, damageMultiplier, 15);
+        }
     }
 }
 exports.snipe = snipe;
@@ -5794,8 +5824,28 @@ class Ranger {
                 skilllist_1.snipe(this.owner, player, 1.2);
             }
         }
-        else if (dist < 10) {
-            this.owner.kite(player);
+        else if (dist < 12) {
+            let dx = player.x - this.owner.x;
+            let dy = player.y - this.owner.y;
+            if (Math.abs(dx) > Math.abs(dy)) {
+                if (dy > 0) {
+                    this.owner.move(0, 1, this.owner._map);
+                }
+                else {
+                    this.owner.move(0, -1, this.owner._map);
+                }
+            }
+            else {
+                if (dx > 0) {
+                    this.owner.move(1, 0, this.owner._map);
+                }
+                else {
+                    this.owner.move(-1, 0, this.owner._map);
+                }
+            }
+            if (dist < 5) {
+                this.owner.kite(player);
+            }
             skilllist_1.snipe(this.owner, player, 1.2);
         }
         else {
@@ -6102,9 +6152,9 @@ class Entity {
     }
     kite(target) {
         let source = this;
-        target.x = this.x - (target.x - this.x);
-        target.y = this.y - (target.y - this.y);
-        var path = new lib_1.Path.AStar(target.x, target.y, function (x, y) {
+        let targetx = this.x - (target.x - this.x);
+        let targety = this.y - (target.y - this.y);
+        var path = new lib_1.Path.AStar(targetx, targety, function (x, y) {
             // If an entity is present at the tile, can't move there.
             let entity = source._map.getEntitiesAt(this.x1, this.x2, this.y1, this.y2);
             if (entity.length > 0) {
@@ -6115,8 +6165,8 @@ class Entity {
         var count = 0;
         path.compute(source.x, source.y, function (x, y) {
             if (count == 1) {
-                let dx = (x - source.x) * -1;
-                let dy = (y - source.y) * -1;
+                let dx = (x - source.x);
+                let dy = (y - source.y);
                 source.move(dx, dy, source._map);
             }
             if (count > 1) {
@@ -7800,7 +7850,7 @@ class Tile {
             case 'wall':
                 walkable = false;
                 diggable = false;
-                blockslight = false;
+                blockslight = true;
                 break;
             case 'floor':
                 walkable = true;
