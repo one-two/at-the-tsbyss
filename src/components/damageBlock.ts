@@ -5,14 +5,16 @@ export class DamageBlock {
     owner: Entity;
     name: string;
     expire: boolean = false;
+    timeout: number;
     multiplier: number;
 
-    constructor(multi: number) {
+    constructor(multi: number, timeout: number = 6) {
         this.multiplier = multi;
+        this.timeout = timeout;
     }
 
     startCountDown(){
-        var counter = 6;
+        var counter = this.timeout;
         var interval = setInterval(() => {
             counter--;
             if (counter == 2) {

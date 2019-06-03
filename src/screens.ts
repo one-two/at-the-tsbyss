@@ -187,10 +187,10 @@ export function debugScreen() {
 export function playScreen() {
     return {
         enter : (game : Game) => {
-            if (game.level < 2) {
+            if (game.level <= 2) {
                 createCave(game);
             }
-            if (game.level >= 2 && game.level <= 4) {
+            if (game.level > 2 && game.level <= 4) {
                 if( Math.random()*100 < 51 ) {
                     createCave(game);
                 } else {

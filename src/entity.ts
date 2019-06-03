@@ -258,6 +258,32 @@ export class Entity {
         this.move(dx, dy, this._map);
     }
 
+    kite(target: Entity) {
+        let source = this;
+        target.x = this.x - (target.x - this.x);
+        target.y = this.y - (target.y - this.y);
+        var path = new Path.AStar(target.x, target.y, function(x: number, y: number) {
+            // If an entity is present at the tile, can't move there.
+            let entity = source._map.getEntitiesAt(this.x1, this.x2, this.y1, this.y2);
+            if (entity.length > 0) {
+                return false;
+            }
+            return source._map.getTile(x, y)._isWalkable;
+        }, {topology: 8});
+        var count = 0;
+        path.compute(source.x, source.y, function(x: number, y: number) {
+            if (count == 1) {
+                let dx = (x - source.x)*-1;
+                let dy = (y - source.y)*-1;
+                source.move(dx, dy, source._map);
+            }
+            if (count > 1) {
+                return;
+            }
+            count++;
+        });
+    }
+
     // startCountDown(seconds: number){
     //     var counter = seconds;
     //     var interval = setInterval(() => {

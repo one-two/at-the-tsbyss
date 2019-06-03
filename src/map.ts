@@ -91,12 +91,12 @@ export class Map {
         let number_of_items = randint(0, max_items_per_room);
         
         let monster_chances = {
-            'fungi': from_dungeon_level([[200, 1]], this.dungeon_level),
-            'orc': from_dungeon_level([[200, 1], [60, 3], [40, 7]], this.dungeon_level),
-            'troll': from_dungeon_level([[50, 1], [10, 3], [30, 5], [60, 7]], this.dungeon_level),
+            'fungi': from_dungeon_level([[1, 1]], this.dungeon_level),
+            'orc': from_dungeon_level([[1, 1], [60, 3], [40, 7]], this.dungeon_level),
+            'troll': from_dungeon_level([[1, 1], [10, 3], [30, 5], [60, 7]], this.dungeon_level),
             'wyvern': from_dungeon_level([[1, 1], [50, 2], [50, 5]], this.dungeon_level),
             'dragon': from_dungeon_level([[1, 1], [10, 3], [20, 7]], this.dungeon_level),
-            'ranger': from_dungeon_level([[1, 1]], this.dungeon_level)
+            'ranger': from_dungeon_level([[200, 1]], this.dungeon_level)
         }
         console.log('monster chances');
         console.log(monster_chances);

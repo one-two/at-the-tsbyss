@@ -4,6 +4,7 @@ import { Orc } from "../content/monsters/orc";
 import { Troll } from "../content/monsters/troll";
 import { Glyph } from "../glyph";
 import { Fighter } from "../components/fighter";
+import { Ranger } from "../content/monsters/ranger";
 
 export function CreateMonster(monster_choice: string, x: number, y: number): Entity{
     if (monster_choice == 'fungi') {
@@ -32,7 +33,7 @@ export function CreateMonster(monster_choice: string, x: number, y: number): Ent
     }
     else if (monster_choice == 'ranger') {
         let fighter_component = new Fighter(40, 1, 7, 40)
-        let ai_component = new Orc()//Ranger()
+        let ai_component = new Ranger()//Ranger()
         let monster = new Entity(x,y, new Glyph('r', [0,0,0], [233, 150, 122]), 'ranger', 1, true, 5, 2, fighter_component, ai_component);
         return monster
     }
