@@ -31,7 +31,7 @@ export class Game {
 	_entities: Entity[] = [];
 	timer: boolean = true;
 	logo: any;
-	level: number = 5;
+	level: number = 1;
 
 	constructor() {
 		this._centerX = 0;

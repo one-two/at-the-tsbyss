@@ -32,8 +32,10 @@ export class Entity {
     // maxCooldown 
     damage: DamageBlock;
     // stairs
-    // level
+    level: number;
+    nextLevel: number;
     equipment: Equipment;
+    exp: {amount: number, readonly base: number, gain: number}
     // equippable
     owner: Entity;
     player: boolean;
@@ -65,6 +67,7 @@ export class Entity {
         if (this.player == true) {
             this.startMoveCountDown();
             this.startAttackCountDown();
+ 
         }
 
         if (this.ai != undefined) {
@@ -75,6 +78,22 @@ export class Entity {
 
         if (this.fighter != undefined) {
             this.fighter.owner = this;
+            this.level = 0;
+            this.nextLevel = 100;
+            this.exp = {
+                amount: 0,
+                get base() { 
+                  return this.amount;
+                },
+                set gain(x: number) {
+                  this.amount += x;
+                  while (this.amount >= this.nextLevel) {
+                      console.log("level up!")
+                      this.level += 1;
+                      this.nextLevel += 100;
+                  }
+                }
+              };
         }
 
         if (this.equipment != undefined) {

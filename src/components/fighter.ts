@@ -13,6 +13,8 @@ export class Fighter {
     xp: number;
     status: string;
 
+
+
     constructor(hp: number, def: number, atk: number, xp: number) {
         this.hp = hp;
         this.base_max_hp = hp;
@@ -20,6 +22,7 @@ export class Fighter {
         this.base_power = atk;
         this.xp = xp;
         this.status = 'normal'
+
     }
 
     power() {
@@ -53,7 +56,7 @@ export class Fighter {
         return this.base_max_hp + bonus
     }
 
-    takeDamage(amount: number){
+    takeDamage(amount: number): boolean{
         this.hp -= amount
         if (this.hp <= 0) {
             this.hp = 0
@@ -65,6 +68,7 @@ export class Fighter {
             };
             this.owner._map.messageLog.addMessage(msg);//"%c{"+ this.owner.glyph.foreground +"}" + this.owner.name + "%c{} morreu")
             deathFunction(this.owner)
+            return true;
         }
     }
 
@@ -89,7 +93,8 @@ export class Fighter {
             // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
-            target.fighter.takeDamage(damage)
+            let death = target.fighter.takeDamage(damage)
+            this.owner.exp.gain = target.fighter.xp;
             result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} com "+ damage + " de dano! (" +target.fighter.hp.toFixed(2) +")";
         } else {
             result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
