@@ -78,22 +78,6 @@ export class Entity {
 
         if (this.fighter != undefined) {
             this.fighter.owner = this;
-            this.level = 0;
-            this.nextLevel = 100;
-            this.exp = {
-                amount: 0,
-                get base() { 
-                  return this.amount;
-                },
-                set gain(x: number) {
-                  this.amount += x;
-                  while (this.amount >= this.nextLevel) {
-                      console.log("level up!")
-                      this.level += 1;
-                      this.nextLevel += 100;
-                  }
-                }
-              };
         }
 
         if (this.equipment != undefined) {

@@ -5292,6 +5292,10 @@ class Fighter {
         this.base_power = atk;
         this.xp = xp;
         this.status = 'normal';
+        this.current_exp = 0;
+        this.nextRank = 10;
+        this.unspentPoints = 0;
+        this.rank = 1;
     }
     power() {
         let bonus = 0;
@@ -5356,7 +5360,8 @@ class Fighter {
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
             let death = target.fighter.takeDamage(damage);
-            this.owner.exp.gain = target.fighter.xp;
+            if (death)
+                this.getExp(target.fighter.xp);
             result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} com " + damage + " de dano! (" + target.fighter.hp.toFixed(2) + ")";
         }
         else {
@@ -5377,13 +5382,24 @@ class Fighter {
             // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
-            target.fighter.takeDamage(damage);
+            let death = target.fighter.takeDamage(damage);
+            if (death)
+                this.getExp(target.fighter.xp);
             result.message = this.owner.name + " usou uma " + dmgBlock.name + " em um %c{0}" + target.name + "%c{1} com " + damage + " de dano! (" + target.fighter.hp.toFixed(2) + ")";
         }
         else {
             result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
         }
         return result;
+    }
+    getExp(amount) {
+        this.current_exp += amount;
+        while (this.current_exp >= this.nextRank) {
+            this.rank += 1;
+            this.nextRank += (this.nextRank + 10);
+            this.unspentPoints += 1;
+            console.log("rank up!");
+        }
     }
 }
 exports.Fighter = Fighter;
@@ -6085,22 +6101,6 @@ class Entity {
             this.sight = 12; //12
         if (this.fighter != undefined) {
             this.fighter.owner = this;
-            this.level = 0;
-            this.nextLevel = 100;
-            this.exp = {
-                amount: 0,
-                get base() {
-                    return this.amount;
-                },
-                set gain(x) {
-                    this.amount += x;
-                    while (this.amount >= this.nextLevel) {
-                        console.log("level up!");
-                        this.level += 1;
-                        this.nextLevel += 100;
-                    }
-                }
-            };
         }
         if (this.equipment != undefined) {
             this.equipment.owner = this;
@@ -6354,6 +6354,7 @@ class Game {
         this._entities = [];
         this.timer = true;
         this.level = 1;
+        this.blinkLevel = 0;
         this._centerX = 0;
         this._centerY = 0;
         this._display = null;
@@ -6379,7 +6380,7 @@ class Game {
             fontStyle: "bold",
             spacing: 0.75
         });
-        this._inventory = new index_1.Display({ width: 14, height: this._screenHeight * 0.75 });
+        this._inventory = new index_1.Display({ width: 20, height: this._screenHeight * 0.75 });
         this._messaging = new index_1.Display({ width: this._screenWidth * 1.5, height: this._messageBoxSize });
         this.messageLog = new messages_1.Messagelog(0, this._screenHeight, this._messageBoxSize);
         this.messageLog.messages = [{ message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
@@ -6445,10 +6446,31 @@ class Game {
     writeStats() {
         let hp = this._player.fighter.hp.toFixed(2);
         let max_hp = this._player.fighter.max_hp();
-        this._inventory.drawText(1, 1, "Stats: ");
+        this._inventory.drawText(0, 1, "Status: ");
         this._inventory.drawText(1, 3, "%c{rgb(255,0,0)}HP: %c{}" + hp + "/" + max_hp);
-        this._inventory.drawText(1, 5, "%c{blue}Atk: %c{}" + this._player.fighter.power());
-        this._inventory.drawText(1, 7, "%c{yellow}Def: %c{}" + this._player.fighter.defense());
+        this._inventory.drawText(1, 4, "%c{blue}Atk: %c{}" + this._player.fighter.power());
+        this._inventory.drawText(1, 5, "%c{yellow}Def: %c{}" + this._player.fighter.defense());
+        if (this._player.fighter.unspentPoints > 0) {
+            let blink = "";
+            if (this.blinkLevel < 10)
+                blink = "%c{rgb(40, 40, 40)}";
+            if (this.blinkLevel >= 10)
+                blink = "%c{rgb(140, 140, 140)}";
+            if (this.blinkLevel > 20)
+                this.blinkLevel = -1;
+            this.blinkLevel += 1;
+            this._inventory.drawText(1, 7, blink + " LEVEL UP! : " + this._player.fighter.unspentPoints);
+            this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}" + this._player.fighter.base_power + blink + " (A)");
+            this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Vitalidade: %c{}" + this._player.fighter.base_power + blink + " (S)");
+            this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}" + this._player.fighter.base_max_hp + blink + " (D)");
+        }
+        else {
+            this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}" + this._player.fighter.base_power);
+            this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Vitalidade: %c{}" + this._player.fighter.base_power);
+            this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}" + this._player.fighter.base_max_hp);
+        }
+        this._inventory.drawText(1, 12, "%c{rgb(40, 40, 60)}Rank: %c{}" + this._player.fighter.rank);
+        this._inventory.drawText(1, 13, "%c{rgb(40, 40, 60)}Exp: %c{}" + this._player.fighter.current_exp + "/" + this._player.fighter.nextRank);
     }
     switchScreen(screen) {
         // If we had a screen before, notify it that we exited
@@ -6557,7 +6579,7 @@ function createDamageBlock(creator, x, y, name, multi, glyph = '╳', timeout = 
     let dmg = new damageBlock_1.DamageBlock(multi, timeout);
     let attack = null;
     dmg.owner = creator;
-    console.log(creator);
+    //console.log(creator);
     if (creator.player)
         attack = new entity_1.Entity(x, y, new glyph_1.Glyph(glyph, [0, 0, 0], [creator.glyph.foreground[1] / 4, creator.glyph.foreground[1] / 4, creator.glyph.foreground[2] / 4]), name, 1, false, 0, 5, undefined, undefined, false, undefined, undefined, dmg);
     else
@@ -7775,7 +7797,7 @@ function playScreen() {
                     case constants_1.KEYS.VK_RETURN:
                         //game.switchScreen(game.Screen.winScreen);
                         let gnd = game._map.getItemAt(game._entities[0].x, game._entities[0].x2, game._entities[0].y, game._entities[0].y2);
-                        console.log(gnd);
+                        //console.log(gnd);
                         if (gnd.length > 0) {
                             game._entities[0].equip(gnd[0]);
                         }

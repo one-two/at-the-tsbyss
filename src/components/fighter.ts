@@ -12,6 +12,9 @@ export class Fighter {
     base_power: number
     xp: number;
     status: string;
+    current_exp: number;
+    nextRank: number;
+    unspentPoints: number;
 
 
 
@@ -22,7 +25,10 @@ export class Fighter {
         this.base_power = atk;
         this.xp = xp;
         this.status = 'normal'
-
+        this.current_exp = 0;
+        this.nextRank = 10;
+        this.unspentPoints = 0;
+        this.rank = 1;
     }
 
     power() {
@@ -94,7 +100,7 @@ export class Fighter {
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
             let death = target.fighter.takeDamage(damage)
-            this.owner.exp.gain = target.fighter.xp;
+            if (death) this.getExp(target.fighter.xp);
             result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} com "+ damage + " de dano! (" +target.fighter.hp.toFixed(2) +")";
         } else {
             result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
@@ -116,11 +122,22 @@ export class Fighter {
             // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
-            target.fighter.takeDamage(damage)
+            let death = target.fighter.takeDamage(damage)
+            if (death) this.getExp(target.fighter.xp);
             result.message = this.owner.name + " usou uma " + dmgBlock.name + " em um %c{0}" + target.name + "%c{1} com "+ damage + " de dano! (" +target.fighter.hp.toFixed(2) +")";
         } else {
             result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
         }
         return result
+    }
+
+    getExp(amount: number) {
+        this.current_exp += amount;
+        while (this.current_exp >= this.nextRank) {
+            this.rank += 1;
+            this.nextRank += (this.nextRank + 10)
+            this.unspentPoints += 1;
+            console.log("rank up!")
+        }
     }
 }

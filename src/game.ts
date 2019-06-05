@@ -32,6 +32,7 @@ export class Game {
 	timer: boolean = true;
 	logo: any;
 	level: number = 1;
+	blinkLevel: number = 0;
 
 	constructor() {
 		this._centerX = 0;
@@ -62,7 +63,7 @@ export class Game {
 			fontFamily: "Courier",
 			fontStyle: "bold", 
 			spacing : 0.75});
-		this._inventory = new Display({width: 14, height: this._screenHeight*0.75});
+		this._inventory = new Display({width: 20, height: this._screenHeight*0.75});
 		this._messaging = new Display({width: this._screenWidth*1.5, height: this._messageBoxSize});
 		this.messageLog = new Messagelog(0, this._screenHeight, this._messageBoxSize);
 		this.messageLog.messages = [{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"}, 
@@ -136,10 +137,30 @@ export class Game {
 	writeStats() {
 		let hp = this._player.fighter.hp.toFixed(2);
 		let max_hp = this._player.fighter.max_hp();
-		this._inventory.drawText(1, 1, "Stats: ")
+		this._inventory.drawText(0, 1, "Status: ")
 		this._inventory.drawText(1, 3, "%c{rgb(255,0,0)}HP: %c{}" +hp + "/" +max_hp);
-		this._inventory.drawText(1, 5, "%c{blue}Atk: %c{}"+this._player.fighter.power());
-		this._inventory.drawText(1, 7, "%c{yellow}Def: %c{}"+this._player.fighter.defense());
+		this._inventory.drawText(1, 4, "%c{blue}Atk: %c{}"+this._player.fighter.power());
+		this._inventory.drawText(1, 5, "%c{yellow}Def: %c{}"+this._player.fighter.defense());
+
+		if (this._player.fighter.unspentPoints > 0) {
+			let blink = "";
+			if (this.blinkLevel < 10) blink = "%c{rgb(140, 140, 140)}";
+			if (this.blinkLevel >= 10) blink = "%c{rgb(240, 240, 240)}";
+			if (this.blinkLevel > 20) this.blinkLevel = -1;
+			this.blinkLevel += 1;
+
+			this._inventory.drawText(1, 7, blink +" LEVEL UP! : "+this._player.fighter.unspentPoints);
+			this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}"+this._player.fighter.base_power + blink + " (A)");
+			this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Vitalidade: %c{}"+this._player.fighter.base_power + blink + " (S)");
+			this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}"+ this._player.fighter.base_max_hp + blink + " (D)");
+		} else {
+			this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}"+this._player.fighter.base_power);
+			this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Vitalidade: %c{}"+this._player.fighter.base_power);
+			this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}"+ this._player.fighter.base_max_hp);
+		}
+
+		this._inventory.drawText(1, 12, "%c{rgb(140, 140, 160)}Rank: %c{}"+ this._player.fighter.rank);
+		this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}"+ this._player.fighter.current_exp + "/" + this._player.fighter.nextRank);
 	}
 
 	switchScreen(screen : any) {
@@ -186,7 +207,6 @@ export class Game {
 	}
 
 }
-
 
 window.onload = function() {
 	let game = new Game();
