@@ -12,6 +12,7 @@ import { Fighter } from "./components/fighter";
 import { Knife } from "./content/itens/knife";
 import { Display } from "../lib";
 import { generateDunMaze } from "./helper/dungeonMaze";
+import { CreateItem } from "./helper/createItens";
 
 export function startScreen() {
     //Game.Screen.startScreen = {
@@ -207,7 +208,8 @@ export function playScreen() {
             // debug stuff
             let knife = new Knife();
             knife.owner = game._player;
-            game._player.equipment = knife;
+            game._player.equipment = CreateItem('knife', game._player.x, game._player.y).item;
+            game._player.equipment.owner = game._player;
             game._map._entities.push(game._player); //player always [0]
             game._player._map = game._map;  
             game._map._display = game._display;
@@ -322,6 +324,26 @@ export function playScreen() {
                         break;
                     default:
                         break;
+                }
+
+                if (game._player.fighter.unspentPoints > 0) {
+                    switch (inputData.keyCode) {
+                        case KEYS.VK_A:
+                            game._player.fighter.base_power += 1;
+                            game._player.fighter.unspentPoints -= 1;
+                            break;
+                        case KEYS.VK_S:
+                            game._player.fighter.base_defense += 0.8;
+                            game._player.fighter.unspentPoints -= 1;
+                            break;
+                        case KEYS.VK_D:
+                            game._player.fighter.base_max_hp += 10;
+                            game._player.fighter.unspentPoints -= 1;
+                            break;
+                        default:
+                            break;
+                    }
+                    if (game._player.fighter.unspentPoints < 0) game._player.fighter.unspentPoints = 0;
                 }
             }
             if (inputType === 'click') {

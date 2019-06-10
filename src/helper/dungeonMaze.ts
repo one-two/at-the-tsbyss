@@ -108,7 +108,6 @@ function digHere(here: path, map: number[][]) {
             }
             break;    
         default:
-            console.log('default');
             //map[x][y] = 2;
             break;
     }

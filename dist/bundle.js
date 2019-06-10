@@ -5594,7 +5594,7 @@ class Knife extends equipment_1.Equipment {
         this.skill_bonus = 1.5;
         this.defense_bonus = 0;
         this.hp_bonus = 0;
-        this.name = 'faca';
+        this.name = 'knife';
         this.cooldown = 10;
         this.startCountDown();
     }
@@ -5651,7 +5651,7 @@ class Sword extends equipment_1.Equipment {
         this.skill_bonus = 1.7;
         this.defense_bonus = 0;
         this.hp_bonus = 0;
-        this.name = 'espada';
+        this.name = 'sword';
         this.cooldown = 10;
         this.startCountDown();
     }
@@ -6067,6 +6067,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const lib_1 = __webpack_require__(/*! ../lib */ "./lib/index.js");
 const randint_1 = __webpack_require__(/*! ./helper/randint */ "./src/helper/randint.ts");
 const deathFunction_1 = __webpack_require__(/*! ./helper/deathFunction */ "./src/helper/deathFunction.ts");
+const createItens_1 = __webpack_require__(/*! ./helper/createItens */ "./src/helper/createItens.ts");
 class Entity {
     constructor(x, y, glyph, name, size = 0, blocks = false, maxStamina = 0, render_order = 99, fighter = undefined, ai = undefined, player = false, item = undefined, inventory = undefined, damage = undefined, stairs = undefined, level = undefined, equipment = undefined, equippable = undefined, _map = undefined, _entities = undefined) {
         this.x = x;
@@ -6201,24 +6202,37 @@ class Entity {
         }, 100);
     }
     equip(item) {
-        console.log(item);
-        let equip = {
-            message: this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
-            type: 'pickup',
-            color1: item.glyph.foreground,
-            color2: [255, 255, 255]
-        };
-        this._map.messageLog.addMessage(equip);
+        console.log('item: ');
+        console.log(item); //item do chao
+        console.log("this:");
+        console.log(this); //player
         if (this.equipment == undefined) {
             this.equipment = item.item;
             this.equipment.owner = this;
             item.item.expire = true;
+            let equip = {
+                message: this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
+                type: 'pickup',
+                color1: item.glyph.foreground,
+                color2: [255, 255, 255]
+            };
+            this._map.messageLog.addMessage(equip);
         }
         else {
             // colocar na backpack
+            let drop = createItens_1.CreateDropItem(this.equipment, this.x, this.y);
+            let droppedItem = new Entity(this.x, this.y, drop.glyph, drop.name, 1, false, 5, 2, undefined, undefined, false, drop.item);
+            this._map._entities.push(droppedItem);
             this.equipment = item.item;
             this.equipment.owner = this;
             item.item.expire = true;
+            let equip = {
+                message: this.name + " trocou uma %c{0}" + drop.name.toString() + "%c{1} por uma %c{0}" + this.equipment.name.toString() + " %c{1}!",
+                type: 'pickup',
+                color1: item.glyph.foreground,
+                color2: [255, 255, 255]
+            };
+            this._map.messageLog.addMessage(equip);
         }
     }
     attack(targets) {
@@ -6434,10 +6448,11 @@ class Game {
         for (let message of this.messageLog.messages) {
             alpha += 0.1;
             if (message.type == 'death' || message.type == 'fight' || message.type == 'skill' || message.type == 'pickup') {
+                console.log(message.message);
                 fading = "%c{rgb(" + Math.round(message.color1[0] * alpha).toString() + "," + Math.round(message.color1[1] * alpha).toString() + "," + Math.round(message.color1[2] * alpha).toString() + ")}";
                 fading2 = "%c{rgb(" + Math.round(message.color2[0] * alpha).toString() + "," + Math.round(message.color2[1] * alpha).toString() + "," + Math.round(message.color2[2] * alpha).toString() + ")}";
-                out = message.message.replace("%c{0}", fading);
-                out2 = out.replace("%c{1}", fading2);
+                out = message.message.replace(/%c\{0}/g, fading);
+                out2 = out.replace(/%c\{1}/g, fading2);
                 this._messaging.drawText(1, x, '' + fading2 + out2, this._screenWidth * 2);
             }
             x += 1;
@@ -6452,25 +6467,25 @@ class Game {
         this._inventory.drawText(1, 5, "%c{yellow}Def: %c{}" + this._player.fighter.defense());
         if (this._player.fighter.unspentPoints > 0) {
             let blink = "";
-            if (this.blinkLevel < 10)
-                blink = "%c{rgb(40, 40, 40)}";
-            if (this.blinkLevel >= 10)
+            if (this.blinkLevel < 2)
                 blink = "%c{rgb(140, 140, 140)}";
-            if (this.blinkLevel > 20)
-                this.blinkLevel = -1;
+            if (this.blinkLevel >= 2)
+                blink = "%c{rgb(240, 240, 240)}";
+            if (this.blinkLevel > 5)
+                this.blinkLevel = 0;
             this.blinkLevel += 1;
             this._inventory.drawText(1, 7, blink + " LEVEL UP! : " + this._player.fighter.unspentPoints);
-            this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}" + this._player.fighter.base_power + blink + " (A)");
-            this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Vitalidade: %c{}" + this._player.fighter.base_power + blink + " (S)");
-            this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}" + this._player.fighter.base_max_hp + blink + " (D)");
+            this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}" + this._player.fighter.base_power + blink + " (a)");
+            this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Vitalidade: %c{}" + this._player.fighter.base_defense + blink + " (s)");
+            this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}" + this._player.fighter.base_max_hp + blink + " (d)");
         }
         else {
             this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}" + this._player.fighter.base_power);
-            this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Vitalidade: %c{}" + this._player.fighter.base_power);
+            this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Vitalidade: %c{}" + this._player.fighter.base_defense);
             this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}" + this._player.fighter.base_max_hp);
         }
-        this._inventory.drawText(1, 12, "%c{rgb(40, 40, 60)}Rank: %c{}" + this._player.fighter.rank);
-        this._inventory.drawText(1, 13, "%c{rgb(40, 40, 60)}Exp: %c{}" + this._player.fighter.current_exp + "/" + this._player.fighter.nextRank);
+        this._inventory.drawText(1, 12, "%c{rgb(140, 140, 160)}Rank: %c{}" + this._player.fighter.rank);
+        this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}" + this._player.fighter.current_exp + "/" + this._player.fighter.nextRank);
     }
     switchScreen(screen) {
         // If we had a screen before, notify it that we exited
@@ -6519,6 +6534,7 @@ window.onload = function () {
     // Initialize the game
     let fighter = new fighter_1.Fighter(999, 1, 4, 0);
     let player = new entity_1.Entity(60, 45, new glyph_1.Glyph('@', [0, 0, 0], [0, 191, 255]), 'Player', 1, true, 1, 1, fighter, undefined, true);
+    player.fighter.unspentPoints = 10;
     game._player = player;
     game._entities = [game._player];
     game.init();
@@ -6608,29 +6624,90 @@ const entity_1 = __webpack_require__(/*! ../entity */ "./src/entity.ts");
 const knife_1 = __webpack_require__(/*! ../content/itens/knife */ "./src/content/itens/knife.ts");
 const glyph_1 = __webpack_require__(/*! ../glyph */ "./src/glyph.ts");
 const sword_1 = __webpack_require__(/*! ../content/itens/sword */ "./src/content/itens/sword.ts");
-function CreateItem(monster_choice, x, y) {
-    if (monster_choice == 'knife') {
+function CreateItem(item_choice, x, y) {
+    if (item_choice == 'knife') {
         let item_component = new knife_1.Knife();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('Ϯ', [0, 0, 0], [204, 200, 0]), 'knife', 1, false, 5, 2, undefined, undefined, false, item_component);
-        return monster;
+        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Ϯ', [0, 0, 0], [204, 200, 0]), 'knife', 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
     }
-    else if (monster_choice == 'sword') {
+    else if (item_choice == 'sword') {
         let item_component = new sword_1.Sword();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('ރ', [0, 0, 0], [200, 200, 0]), 'sword', 1, false, 5, 2, undefined, undefined, false, item_component);
-        return monster;
+        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('ރ', [0, 0, 0], [200, 200, 0]), 'sword', 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
     }
-    else if (monster_choice == 'spear') {
+    else if (item_choice == 'spear') {
         let item_component = new knife_1.Knife();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('Î', [0, 0, 0], [200, 200, 0]), 'spear', 1, false, 5, 2, undefined, undefined, false, item_component);
-        return monster;
+        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Î', [0, 0, 0], [200, 200, 0]), 'spear', 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
     }
-    else if (monster_choice == 'dagger') {
+    else if (item_choice == 'dagger') {
         let item_component = new knife_1.Knife();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('Ϯ', [0, 0, 0], [200, 200, 0]), 'dagger', 1, false, 5, 2, undefined, undefined, false, item_component);
-        return monster;
+        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Ϯ', [0, 0, 0], [200, 200, 0]), 'dagger', 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
     }
 }
 exports.CreateItem = CreateItem;
+function CreateSpecificItem(item_choice, x, y) {
+    if (item_choice == 'knife') {
+        let item_component = new knife_1.Knife();
+        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Ϯ', [0, 0, 0], [204, 200, 0]), 'knife', 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
+    }
+    else if (item_choice == 'sword') {
+        let item_component = new sword_1.Sword();
+        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('ރ', [0, 0, 0], [200, 200, 0]), 'sword', 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
+    }
+    else if (item_choice == 'spear') {
+        let item_component = new knife_1.Knife();
+        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Î', [0, 0, 0], [200, 200, 0]), 'spear', 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
+    }
+    else if (item_choice == 'dagger') {
+        let item_component = new knife_1.Knife();
+        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Ϯ', [0, 0, 0], [200, 200, 0]), 'dagger', 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
+    }
+}
+exports.CreateSpecificItem = CreateSpecificItem;
+function CreateDropItem(item, x, y) {
+    console.log('drop:');
+    console.log(item);
+    let item_choice = item.name;
+    if (item_choice == 'knife') {
+        let item_component = new knife_1.Knife();
+        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Ϯ', [0, 0, 0], [204, 200, 0]), 'knife', 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
+    }
+    else if (item_choice == 'sword') {
+        let item_component = new sword_1.Sword();
+        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('ރ', [0, 0, 0], [200, 200, 0]), 'sword', 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
+    }
+    else if (item_choice == 'spear') {
+        let item_component = new knife_1.Knife();
+        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Î', [0, 0, 0], [200, 200, 0]), 'spear', 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
+    }
+    else if (item_choice == 'dagger') {
+        let item_component = new knife_1.Knife();
+        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Ϯ', [0, 0, 0], [200, 200, 0]), 'dagger', 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
+    }
+}
+exports.CreateDropItem = CreateDropItem;
 
 
 /***/ }),
@@ -7389,7 +7466,7 @@ class Map {
     }
     addEntityToMap() {
         let max_monsters_per_room = randFromLevel_1.from_dungeon_level([[20, 1], [30, 4], [40, 6]], this.dungeon_level);
-        let max_items_per_room = randFromLevel_1.from_dungeon_level([[1, 1], [2, 4]], this.dungeon_level);
+        let max_items_per_room = randFromLevel_1.from_dungeon_level([[10, 1], [2, 4]], this.dungeon_level);
         let number_of_monsters = randint_1.randint(0, max_monsters_per_room);
         let number_of_items = randint_1.randint(0, max_items_per_room);
         let monster_chances = {
@@ -7398,7 +7475,7 @@ class Map {
             'troll': randFromLevel_1.from_dungeon_level([[1, 1], [10, 3], [30, 5], [60, 7]], this.dungeon_level),
             'wyvern': randFromLevel_1.from_dungeon_level([[1, 1], [50, 2], [50, 5]], this.dungeon_level),
             'dragon': randFromLevel_1.from_dungeon_level([[1, 1], [10, 3], [20, 7]], this.dungeon_level),
-            'ranger': randFromLevel_1.from_dungeon_level([[200, 1]], this.dungeon_level)
+            'ranger': randFromLevel_1.from_dungeon_level([[1, 1]], this.dungeon_level)
         };
         console.log('monster chances');
         console.log(monster_chances);
@@ -7447,7 +7524,11 @@ class Map {
             }
             if (emptyspace == true) {
                 let item_choice = randFromLevel_1.random_choice_from_dict(item_chances);
-                let q = createItens_1.CreateItem(item_choice, 61, 45);
+                let q;
+                if (index == 1)
+                    q = createItens_1.CreateItem(item_choice, 61, 45);
+                else
+                    q = createItens_1.CreateItem(item_choice, x, y);
                 console.log(item_choice + '- ' + x + ' ' + y);
                 q._map = this;
                 this._entities.push(q);
@@ -7559,6 +7640,7 @@ const maps = __webpack_require__(/*! ../lib/map */ "./lib/map/index.js");
 const randint_1 = __webpack_require__(/*! ./helper/randint */ "./src/helper/randint.ts");
 const knife_1 = __webpack_require__(/*! ./content/itens/knife */ "./src/content/itens/knife.ts");
 const dungeonMaze_1 = __webpack_require__(/*! ./helper/dungeonMaze */ "./src/helper/dungeonMaze.ts");
+const createItens_1 = __webpack_require__(/*! ./helper/createItens */ "./src/helper/createItens.ts");
 function startScreen() {
     //Game.Screen.startScreen = {
     return {
@@ -7733,7 +7815,8 @@ function playScreen() {
             // debug stuff
             let knife = new knife_1.Knife();
             knife.owner = game._player;
-            game._player.equipment = knife;
+            game._player.equipment = createItens_1.CreateSpecificItem('knife', game._player.x, game._player.y).item;
+            game._player.equipment.owner = game._player;
             game._map._entities.push(game._player); //player always [0]
             game._player._map = game._map;
             game._map._display = game._display;
@@ -7827,6 +7910,26 @@ function playScreen() {
                         break;
                     default:
                         break;
+                }
+                if (game._player.fighter.unspentPoints > 0) {
+                    switch (inputData.keyCode) {
+                        case constants_1.KEYS.VK_A:
+                            game._player.fighter.base_power += 1;
+                            game._player.fighter.unspentPoints -= 1;
+                            break;
+                        case constants_1.KEYS.VK_S:
+                            game._player.fighter.base_defense += 0.8;
+                            game._player.fighter.unspentPoints -= 1;
+                            break;
+                        case constants_1.KEYS.VK_D:
+                            game._player.fighter.base_max_hp += 10;
+                            game._player.fighter.unspentPoints -= 1;
+                            break;
+                        default:
+                            break;
+                    }
+                    if (game._player.fighter.unspentPoints < 0)
+                        game._player.fighter.unspentPoints = 0;
                 }
             }
             if (inputType === 'click') {

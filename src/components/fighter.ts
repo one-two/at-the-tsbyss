@@ -2,6 +2,8 @@ import { Entity } from "../entity";
 import { deathFunction } from "../helper/deathFunction";
 import { MessageType } from "../helper/messageType";
 import { Color } from "../../lib";
+import { Game } from "../game";
+import { KEYS } from "../../lib/constants"
 
 export class Fighter {
     owner: Entity;
@@ -140,4 +142,5 @@ export class Fighter {
             console.log("rank up!")
         }
     }
+
 }

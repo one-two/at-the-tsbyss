@@ -10,8 +10,9 @@ export class Knife extends Equipment {
     defense_bonus: number = 0;
     hp_bonus: number = 0;
     owner: Entity;
-    name: string = 'faca';
-    cooldown: number = 10
+    name: string = 'knife';
+    cooldown: number = 8
+    glyph: Glyph;
 
     constructor() {
         super();

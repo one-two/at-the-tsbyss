@@ -125,8 +125,8 @@ export class Game {
 			if (message.type == 'death' || message.type == 'fight' || message.type == 'skill' || message.type == 'pickup') {
 				fading = "%c{rgb(" + Math.round(message.color1[0]*alpha).toString() +","+Math.round(message.color1[1]*alpha).toString() +","+Math.round(message.color1[2]*alpha).toString() +")}";
 				fading2 = "%c{rgb(" + Math.round(message.color2[0]*alpha).toString() +","+Math.round(message.color2[1]*alpha).toString() +","+Math.round(message.color2[2]*alpha).toString() +")}";
-				out =  message.message.replace("%c{0}", fading);
-				out2 =  out.replace("%c{1}", fading2);
+				out =  message.message.replace(/%c\{0}/g, fading);
+				out2 =  out.replace(/%c\{1}/g, fading2);
 				this._messaging.drawText(1, x, ''+fading2+out2, this._screenWidth*2);
 
 			}
@@ -144,18 +144,18 @@ export class Game {
 
 		if (this._player.fighter.unspentPoints > 0) {
 			let blink = "";
-			if (this.blinkLevel < 10) blink = "%c{rgb(140, 140, 140)}";
-			if (this.blinkLevel >= 10) blink = "%c{rgb(240, 240, 240)}";
-			if (this.blinkLevel > 20) this.blinkLevel = -1;
+			if (this.blinkLevel < 2) blink = "%c{rgb(140, 140, 140)}";
+			if (this.blinkLevel >= 2) blink = "%c{rgb(240, 240, 240)}";
+			if (this.blinkLevel > 5) this.blinkLevel = 0;
 			this.blinkLevel += 1;
 
 			this._inventory.drawText(1, 7, blink +" LEVEL UP! : "+this._player.fighter.unspentPoints);
-			this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}"+this._player.fighter.base_power + blink + " (A)");
-			this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Vitalidade: %c{}"+this._player.fighter.base_power + blink + " (S)");
-			this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}"+ this._player.fighter.base_max_hp + blink + " (D)");
+			this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}"+this._player.fighter.base_power + blink + " (a)");
+			this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Vitalidade: %c{}"+this._player.fighter.base_defense + blink + " (s)");
+			this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}"+ this._player.fighter.base_max_hp + blink + " (d)");
 		} else {
 			this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}"+this._player.fighter.base_power);
-			this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Vitalidade: %c{}"+this._player.fighter.base_power);
+			this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Vitalidade: %c{}"+this._player.fighter.base_defense);
 			this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}"+ this._player.fighter.base_max_hp);
 		}
 
@@ -213,6 +213,7 @@ window.onload = function() {
 	// Initialize the game
 	let fighter = new Fighter(999, 1, 4, 0);
 	let player = new Entity(60, 45, new Glyph('@', [0,0,0], [0, 191, 255]), 'Player', 1, true, 1, 1, fighter, undefined, true);
+	player.fighter.unspentPoints = 10;
 	game._player = player
 	game._entities = [game._player];
 	game.init();

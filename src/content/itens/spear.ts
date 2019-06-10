@@ -4,14 +4,14 @@ import { DamageBlock } from "../../components/damageBlock";
 import { Glyph } from "../../glyph";
 import { createDamageBlock } from "../../helper/createDamageBlock";
 
-export class Sword extends Equipment {
+export class Spear extends Equipment {
     power_bonus: number = 4;
-    skill_bonus: number = 1.7;
+    skill_bonus: number = 2.1;
     defense_bonus: number = 0;
     hp_bonus: number = 0;
     owner: Entity;
-    name: string = 'sword';
-    cooldown: number = 10
+    name: string = 'spear';
+    cooldown: number = 13
 
     constructor() {
         super();
@@ -36,24 +36,32 @@ export class Sword extends Equipment {
                 createDamageBlock(this.owner, this.owner.x, this.owner.y+2, this.name, this.skill_bonus);
                 createDamageBlock(this.owner, this.owner.x, this.owner.y+3, this.name, this.skill_bonus);
                 createDamageBlock(this.owner, this.owner.x, this.owner.y+4, this.name, this.skill_bonus);
+                createDamageBlock(this.owner, this.owner.x+1, this.owner.y+3, this.name, this.skill_bonus);
+                createDamageBlock(this.owner, this.owner.x-1, this.owner.y+3, this.name, this.skill_bonus);
             }
             else if (this.owner.face == 'n') { 
                 createDamageBlock(this.owner, this.owner.x, this.owner.y-1, this.name, this.skill_bonus);
                 createDamageBlock(this.owner, this.owner.x, this.owner.y-2, this.name, this.skill_bonus);
                 createDamageBlock(this.owner, this.owner.x, this.owner.y-3, this.name, this.skill_bonus);
                 createDamageBlock(this.owner, this.owner.x, this.owner.y-4, this.name, this.skill_bonus);
+                createDamageBlock(this.owner, this.owner.x+1, this.owner.y-3, this.name, this.skill_bonus);
+                createDamageBlock(this.owner, this.owner.x-1, this.owner.y-3, this.name, this.skill_bonus);
             }
             else if (this.owner.face == 'w') { 
                 createDamageBlock(this.owner, this.owner.x-1, this.owner.y, this.name, this.skill_bonus);
                 createDamageBlock(this.owner, this.owner.x-2, this.owner.y, this.name, this.skill_bonus);
                 createDamageBlock(this.owner, this.owner.x-3, this.owner.y, this.name, this.skill_bonus);
                 createDamageBlock(this.owner, this.owner.x-4, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock(this.owner, this.owner.x-3, this.owner.y+1, this.name, this.skill_bonus);
+                createDamageBlock(this.owner, this.owner.x-3, this.owner.y-1, this.name, this.skill_bonus);
             }
             else if (this.owner.face == 'e') { 
                 createDamageBlock(this.owner, this.owner.x+1, this.owner.y, this.name, this.skill_bonus);
                 createDamageBlock(this.owner, this.owner.x+2, this.owner.y, this.name, this.skill_bonus);
                 createDamageBlock(this.owner, this.owner.x+3, this.owner.y, this.name, this.skill_bonus);
                 createDamageBlock(this.owner, this.owner.x+4, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock(this.owner, this.owner.x+3, this.owner.y+1, this.name, this.skill_bonus);
+                createDamageBlock(this.owner, this.owner.x+3, this.owner.y-1, this.name, this.skill_bonus);
             }
         }
     }

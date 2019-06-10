@@ -1,4 +1,5 @@
 import { Entity } from "../entity";
+import { Glyph } from "../glyph";
 
 export abstract class Equipment {
     owner: Entity;
@@ -8,6 +9,7 @@ export abstract class Equipment {
     hp_bonus: number;
     name: string;
     expire: boolean = false;
+    glyph: Glyph;
 
     constructor() {
     }

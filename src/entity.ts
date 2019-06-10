@@ -8,6 +8,7 @@ import { DamageBlock } from "./components/damageBlock";
 import { Enemy } from "./helper/enemy";
 import { deathFunction } from "./helper/deathFunction";
 import { MessageType } from "./helper/messageType";
+import { CreateDropItem } from "./helper/createItens";
 
 export class Entity {
     x: number;
@@ -175,23 +176,36 @@ export class Entity {
     }
 
     equip(item: Entity) {
-        console.log(item);
-        let equip: MessageType = {
-            message : this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
-            type : 'pickup',
-            color1 : item.glyph.foreground,
-            color2 : [255,255,255]
-        };
-        this._map.messageLog.addMessage(equip);
+        // console.log('item: ');
+        // console.log(item); //item do chao
+        // console.log("this:");
+        // console.log(this); //player
         if (this.equipment == undefined) {
             this.equipment = item.item;
             this.equipment.owner = this;
             item.item.expire = true;
+            let equip: MessageType = {
+                message : this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
+                type : 'pickup',
+                color1 : item.glyph.foreground,
+                color2 : [255,255,255]
+            };
+            this._map.messageLog.addMessage(equip);
         } else {
             // colocar na backpack
+            let drop = CreateDropItem(this.equipment, this.x, this.y);
+            let droppedItem = new Entity(this.x, this.y, drop.glyph, drop.name, 1, false, 5, 2, undefined, undefined, false, drop.item);
+            this._map._entities.push(droppedItem);
             this.equipment = item.item;
             this.equipment.owner = this;
             item.item.expire = true;
+            let equip: MessageType = {
+                message : this.name + " trocou uma %c{0}" + drop.name.toString() + "%c{1} por uma %c{0}"+ this.equipment.name.toString() +" %c{1}!",
+                type : 'pickup',
+                color1 : item.glyph.foreground,
+                color2 : [255,255,255]
+            };
+            this._map.messageLog.addMessage(equip);
         }
 
     }
