@@ -7,6 +7,8 @@ import { CreateMonster } from "./helper/createMonters"
 import { Color, FOV, Display } from "../lib";
 import { Messagelog } from "./messages";
 import { CreateItem } from "./helper/createItens";
+import { monsterProbabilities } from "./settings/monsterProbabilities";
+import { itemProbabilities } from "./settings/itemProbabilities";
 
 export class Map {
     _display: Display;
@@ -90,23 +92,9 @@ export class Map {
         let number_of_monsters = randint(0, max_monsters_per_room)
         let number_of_items = randint(0, max_items_per_room);
         
-        let monster_chances = {
-            'fungi': from_dungeon_level([[1, 1]], this.dungeon_level),
-            'orc': from_dungeon_level([[1, 1], [60, 3], [40, 7]], this.dungeon_level),
-            'troll': from_dungeon_level([[1, 1], [10, 3], [30, 5], [60, 7]], this.dungeon_level),
-            'wyvern': from_dungeon_level([[1, 1], [50, 2], [50, 5]], this.dungeon_level),
-            'dragon': from_dungeon_level([[1, 1], [10, 3], [20, 7]], this.dungeon_level),
-            'ranger': from_dungeon_level([[1, 1]], this.dungeon_level),
-        }
+        let monster_chances = monsterProbabilities(this.dungeon_level);
 
-        let item_chances = {
-            //'healing_potion': 35,
-            'knife': from_dungeon_level([[10, 1]], this.dungeon_level),
-            'dagger': from_dungeon_level([[10, 1]], this.dungeon_level),
-            'sword': from_dungeon_level([[10, 0], [10, 2]], this.dungeon_level),
-            'spear': from_dungeon_level([[5, 1], [10, 3]], this.dungeon_level),
-            'shield': from_dungeon_level([[15, 0]], this.dungeon_level),
-        }
+        let item_chances = itemProbabilities(this.dungeon_level);
 
         for (let index = 0; index < number_of_monsters; index++) {
             let x = randint(0, this._width - 1)
@@ -165,6 +153,8 @@ export class Map {
 
         return null;
     }
+
+
 
     lightPasses(x: number,y: number) {
         return this._tiles[x][y]._blocksLight;
