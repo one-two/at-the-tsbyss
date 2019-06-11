@@ -6,15 +6,24 @@ import { createDamageBlock } from "../../helper/createDamageBlock";
 
 export class Spear extends Equipment {
     power_bonus: number = 4;
-    skill_bonus: number = 2.1;
+    skill_bonus: number = 1.1;
     defense_bonus: number = 0;
     hp_bonus: number = 0;
     owner: Entity;
     name: string = 'spear';
+    max_cooldown: number = 8
     cooldown: number = 13
 
-    constructor() {
-        super();
+    constructor(drop: Equipment = undefined) {
+        super("main");
+        if (drop != undefined) {
+            this.power_bonus = drop.power_bonus;
+            this.skill_bonus = drop.skill_bonus;
+            this.defense_bonus = drop.defense_bonus;
+            this.hp_bonus = drop.hp_bonus;
+            this.name = drop.name;
+            this.max_cooldown = drop.max_cooldown;
+        }
         this.startCountDown();
     }
 
@@ -26,7 +35,7 @@ export class Spear extends Equipment {
 
     strike() {
         if ( this.cooldown == 0) {
-            this.cooldown = 10;
+            this.cooldown = this.max_cooldown;
             let dir =this.owner.face;
             let dmg = new DamageBlock(this.skill_bonus)
             let attack:Entity = null;

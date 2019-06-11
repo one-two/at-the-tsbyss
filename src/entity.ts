@@ -36,6 +36,7 @@ export class Entity {
     level: number;
     nextLevel: number;
     equipment: Equipment;
+    subequipment: Equipment;
     exp: {amount: number, readonly base: number, gain: number}
     // equippable
     owner: Entity;
@@ -43,7 +44,7 @@ export class Entity {
 
     constructor(x:number, y:number, glyph: Glyph, name: string, size:number = 0, blocks: boolean = false, maxStamina:number=0,
                 render_order:number = 99, fighter: Fighter = undefined, ai: any = undefined, player: boolean = false,
-                item: any = undefined, inventory: any = undefined, damage: DamageBlock = undefined, stairs: any = undefined, level: any = undefined, 
+                item: Equipment = undefined, inventory: any = undefined, damage: DamageBlock = undefined, stairs: any = undefined, level: any = undefined, 
                 equipment: Equipment = undefined, equippable: any = undefined, _map: Map = undefined, _entities: Entity[] = undefined) {
         this.x = x;
         this.y = y;
@@ -59,6 +60,7 @@ export class Entity {
         this.ai = ai;
         this.fighter = fighter;
         this.equipment = equipment;
+        this.subequipment = undefined;
         this.cooldown = 0;
         this.face = 'n';
         this.damage = damage;
@@ -176,36 +178,68 @@ export class Entity {
     }
 
     equip(item: Entity) {
-        // console.log('item: ');
-        // console.log(item); //item do chao
+        console.log('item: ');
+        console.log(item); //item do chao
         // console.log("this:");
         // console.log(this); //player
-        if (this.equipment == undefined) {
-            this.equipment = item.item;
-            this.equipment.owner = this;
-            item.item.expire = true;
-            let equip: MessageType = {
-                message : this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
-                type : 'pickup',
-                color1 : item.glyph.foreground,
-                color2 : [255,255,255]
-            };
-            this._map.messageLog.addMessage(equip);
-        } else {
-            // colocar na backpack
-            let drop = CreateDropItem(this.equipment, this.x, this.y);
-            let droppedItem = new Entity(this.x, this.y, drop.glyph, drop.name, 1, false, 5, 2, undefined, undefined, false, drop.item);
-            this._map._entities.push(droppedItem);
-            this.equipment = item.item;
-            this.equipment.owner = this;
-            item.item.expire = true;
-            let equip: MessageType = {
-                message : this.name + " trocou uma %c{0}" + drop.name.toString() + "%c{1} por uma %c{0}"+ this.equipment.name.toString() +" %c{1}!",
-                type : 'pickup',
-                color1 : item.glyph.foreground,
-                color2 : [255,255,255]
-            };
-            this._map.messageLog.addMessage(equip);
+        if (item.item.type == "main") {
+            if (this.equipment == undefined) {
+                this.equipment = item.item;
+                this.equipment.owner = this;
+                item.item.expire = true;
+                let equip: MessageType = {
+                    message : this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
+                    type : 'pickup',
+                    color1 : item.glyph.foreground,
+                    color2 : [255,255,255]
+                };
+                this._map.messageLog.addMessage(equip);
+            } else {
+                // colocar na backpack
+                let drop = CreateDropItem(this.equipment, this.x, this.y);
+                let droppedItem = new Entity(this.x, this.y, drop.glyph, drop.name, 1, false, 5, 2, undefined, undefined, false, drop.item); //cria entidade para dropar
+                this._map._entities.push(droppedItem);
+                this.equipment = item.item;
+                this.equipment.owner = this;
+                item.item.expire = true;
+                let equip: MessageType = {
+                    message : this.name + " trocou uma %c{0}" + drop.name.toString() + "%c{1} por uma %c{0}"+ this.equipment.name.toString() +" %c{1}!",
+                    type : 'pickup',
+                    color1 : item.glyph.foreground,
+                    color2 : [255,255,255]
+                };
+                this._map.messageLog.addMessage(equip);
+            }
+            console.log(this)
+        }
+        else if (item.item.type == "sub") {
+            if (this.subequipment == undefined) {
+                this.subequipment = item.item;
+                this.subequipment.owner = this;
+                item.item.expire = true;
+                let equip: MessageType = {
+                    message : this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
+                    type : 'pickup',
+                    color1 : item.glyph.foreground,
+                    color2 : [255,255,255]
+                };
+                this._map.messageLog.addMessage(equip);
+            } else {
+                // colocar na backpack
+                let drop = CreateDropItem(this.subequipment, this.x, this.y);
+                let droppedItem = new Entity(this.x, this.y, drop.glyph, drop.name, 1, false, 5, 2, undefined, undefined, false, drop.item); //cria entidade para dropar
+                this._map._entities.push(droppedItem);
+                this.subequipment = item.item;
+                this.subequipment.owner = this;
+                item.item.expire = true;
+                let equip: MessageType = {
+                    message : this.name + " trocou uma %c{0}" + drop.name.toString() + "%c{1} por uma %c{0}"+ this.subequipment.name.toString() +" %c{1}!",
+                    type : 'pickup',
+                    color1 : item.glyph.foreground,
+                    color2 : [255,255,255]
+                };
+                this._map.messageLog.addMessage(equip);
+            }
         }
 
     }

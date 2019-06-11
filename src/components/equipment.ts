@@ -8,10 +8,14 @@ export abstract class Equipment {
     defense_bonus: number;
     hp_bonus: number;
     name: string;
+    type: string;
     expire: boolean = false;
+    cooldown: number;
+    max_cooldown: number
     glyph: Glyph;
 
-    constructor() {
+    constructor(type: string) {
+        this.type = type;
     }
 
     strike() {

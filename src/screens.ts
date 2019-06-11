@@ -4,11 +4,8 @@ import { KEYS } from "../lib/constants"
 import * as Color from "../lib/color"
 import { Tile } from "./tiles";
 import * as maps from "../lib/map"
-import { Glyph } from "./glyph";
 import { Entity } from "./entity";
-import { Fungi } from "./content/monsters/fungi";
 import { randint } from "./helper/randint";
-import { Fighter } from "./components/fighter";
 import { Knife } from "./content/itens/knife";
 import { Display } from "../lib";
 import { generateDunMaze } from "./helper/dungeonMaze";
@@ -329,7 +326,7 @@ export function playScreen() {
                 if (game._player.fighter.unspentPoints > 0) {
                     switch (inputData.keyCode) {
                         case KEYS.VK_A:
-                            game._player.fighter.base_power += 1;
+                            game._player.fighter.base_power += 0.8;
                             game._player.fighter.unspentPoints -= 1;
                             break;
                         case KEYS.VK_S:

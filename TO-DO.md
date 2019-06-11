@@ -9,14 +9,14 @@ Todo list to fill the void of our souls (but i really want to make it web)
 - [X] NPC
 - [X] Collision with NPC
 - [X] Basic monster ai (chase and 'hit')
-- [ ] Lateral movement when within range
+- [X] Lateral movement when within range
 - [X] trade damages (push targets)
 - [X] basic UI
 - [X] Message logging
 - [ ] Use itens (basic potions)
 - [ ] Backpack
 - [X] Press space for AoE
-- [ ] Leveling/xp system
+- [X] Leveling/xp system
 - [ ] Equipments/spell/stuff for progress (change parameters with pickups)
 - [X] decide on how player will attack
 - [X] State machines? sorta

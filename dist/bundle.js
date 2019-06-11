@@ -5260,8 +5260,9 @@ exports.DamageBlock = DamageBlock;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class Equipment {
-    constructor() {
+    constructor(type) {
         this.expire = false;
+        this.type = type;
     }
     strike() {
     }
@@ -5299,29 +5300,41 @@ class Fighter {
     }
     power() {
         let bonus = 0;
-        if (this.owner != undefined && this.owner.equipment != undefined) {
-            bonus = this.owner.equipment.power_bonus;
+        if (this.owner != undefined) {
+            if (this.owner.equipment != undefined)
+                bonus += this.owner.equipment.power_bonus;
+            if (this.owner.subequipment != undefined)
+                bonus += this.owner.subequipment.power_bonus;
         }
         return this.base_power + bonus;
     }
     skill_power() {
+        let bonus = 1;
         if (this.owner.ai != undefined)
             return this.power() * this.owner.ai.skill_bonus;
-        if (this.owner.equipment != undefined) {
-            return this.power() * this.owner.equipment.skill_bonus;
-        }
+        if (this.owner.equipment != undefined)
+            bonus += this.owner.equipment.skill_bonus;
+        if (this.owner.subequipment != undefined)
+            bonus += this.owner.equipment.skill_bonus;
+        return this.power() * bonus;
     }
     defense() {
         let bonus = 0;
-        if (this.owner != undefined && this.owner.equipment != undefined) {
-            bonus = this.owner.equipment.defense_bonus;
+        if (this.owner != undefined) {
+            if (this.owner.equipment != undefined)
+                bonus += this.owner.equipment.defense_bonus;
+            if (this.owner.subequipment != undefined)
+                bonus += this.owner.equipment.defense_bonus;
         }
         return this.base_defense + bonus;
     }
     max_hp() {
         let bonus = 0;
-        if (this.owner != undefined && this.owner.equipment != undefined) {
-            bonus = this.owner.equipment.hp_bonus;
+        if (this.owner != undefined) {
+            if (this.owner.equipment != undefined)
+                bonus += this.owner.equipment.hp_bonus;
+            if (this.owner.subequipment != undefined)
+                bonus += this.owner.subequipment.hp_bonus;
         }
         return this.base_max_hp + bonus;
     }
@@ -5588,14 +5601,23 @@ const equipment_1 = __webpack_require__(/*! ../../components/equipment */ "./src
 const damageBlock_1 = __webpack_require__(/*! ../../components/damageBlock */ "./src/components/damageBlock.ts");
 const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
 class Knife extends equipment_1.Equipment {
-    constructor() {
-        super();
+    constructor(drop = undefined) {
+        super("main");
         this.power_bonus = 2;
-        this.skill_bonus = 1.5;
+        this.skill_bonus = 0.5;
         this.defense_bonus = 0;
         this.hp_bonus = 0;
         this.name = 'knife';
-        this.cooldown = 10;
+        this.cooldown = 8;
+        this.max_cooldown = 8;
+        if (drop != undefined) {
+            this.power_bonus = drop.power_bonus;
+            this.skill_bonus = drop.skill_bonus;
+            this.defense_bonus = drop.defense_bonus;
+            this.hp_bonus = drop.hp_bonus;
+            this.name = drop.name;
+            this.max_cooldown = drop.max_cooldown;
+        }
         this.startCountDown();
     }
     startCountDown() {
@@ -5606,7 +5628,7 @@ class Knife extends equipment_1.Equipment {
     }
     strike() {
         if (this.cooldown == 0) {
-            this.cooldown = 10;
+            this.cooldown = this.max_cooldown;
             let dir = this.owner.face;
             let dmg = new damageBlock_1.DamageBlock(this.skill_bonus);
             let attack = null;
@@ -5631,6 +5653,135 @@ exports.Knife = Knife;
 
 /***/ }),
 
+/***/ "./src/content/itens/shield.ts":
+/*!*************************************!*\
+  !*** ./src/content/itens/shield.ts ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const equipment_1 = __webpack_require__(/*! ../../components/equipment */ "./src/components/equipment.ts");
+class Shield extends equipment_1.Equipment {
+    constructor(drop = undefined) {
+        super("sub");
+        this.power_bonus = 0;
+        this.skill_bonus = 1;
+        this.defense_bonus = 2;
+        this.hp_bonus = 10;
+        this.name = 'shield';
+        this.cooldown = 8;
+        this.max_cooldown = 8;
+        if (drop != undefined) {
+            this.power_bonus = drop.power_bonus;
+            this.skill_bonus = drop.skill_bonus;
+            this.defense_bonus = drop.defense_bonus;
+            this.hp_bonus = drop.hp_bonus;
+            this.name = drop.name;
+            this.max_cooldown = drop.max_cooldown;
+        }
+        this.startCountDown();
+    }
+    startCountDown() {
+        var interval = setInterval(() => {
+            if (this.cooldown > 0)
+                this.cooldown--;
+        }, 100);
+    }
+}
+exports.Shield = Shield;
+
+
+/***/ }),
+
+/***/ "./src/content/itens/spear.ts":
+/*!************************************!*\
+  !*** ./src/content/itens/spear.ts ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const equipment_1 = __webpack_require__(/*! ../../components/equipment */ "./src/components/equipment.ts");
+const damageBlock_1 = __webpack_require__(/*! ../../components/damageBlock */ "./src/components/damageBlock.ts");
+const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
+class Spear extends equipment_1.Equipment {
+    constructor(drop = undefined) {
+        super("main");
+        this.power_bonus = 4;
+        this.skill_bonus = 1.1;
+        this.defense_bonus = 0;
+        this.hp_bonus = 0;
+        this.name = 'spear';
+        this.max_cooldown = 8;
+        this.cooldown = 13;
+        if (drop != undefined) {
+            this.power_bonus = drop.power_bonus;
+            this.skill_bonus = drop.skill_bonus;
+            this.defense_bonus = drop.defense_bonus;
+            this.hp_bonus = drop.hp_bonus;
+            this.name = drop.name;
+            this.max_cooldown = drop.max_cooldown;
+        }
+        this.startCountDown();
+    }
+    startCountDown() {
+        var interval = setInterval(() => {
+            if (this.cooldown > 0)
+                this.cooldown--;
+        }, 100);
+    }
+    strike() {
+        if (this.cooldown == 0) {
+            this.cooldown = this.max_cooldown;
+            let dir = this.owner.face;
+            let dmg = new damageBlock_1.DamageBlock(this.skill_bonus);
+            let attack = null;
+            dmg.owner = this.owner;
+            if (this.owner.face == 's') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 1, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 2, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 3, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 4, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y + 3, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y + 3, this.name, this.skill_bonus);
+            }
+            else if (this.owner.face == 'n') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 1, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 2, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 3, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 4, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y - 3, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y - 3, this.name, this.skill_bonus);
+            }
+            else if (this.owner.face == 'w') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 2, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 3, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 4, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 3, this.owner.y + 1, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 3, this.owner.y - 1, this.name, this.skill_bonus);
+            }
+            else if (this.owner.face == 'e') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 2, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 3, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 4, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 3, this.owner.y + 1, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 3, this.owner.y - 1, this.name, this.skill_bonus);
+            }
+        }
+    }
+}
+exports.Spear = Spear;
+
+
+/***/ }),
+
 /***/ "./src/content/itens/sword.ts":
 /*!************************************!*\
   !*** ./src/content/itens/sword.ts ***!
@@ -5645,14 +5796,23 @@ const equipment_1 = __webpack_require__(/*! ../../components/equipment */ "./src
 const damageBlock_1 = __webpack_require__(/*! ../../components/damageBlock */ "./src/components/damageBlock.ts");
 const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
 class Sword extends equipment_1.Equipment {
-    constructor() {
-        super();
+    constructor(drop = undefined) {
+        super("main");
         this.power_bonus = 4;
-        this.skill_bonus = 1.7;
+        this.skill_bonus = 0.7;
         this.defense_bonus = 0;
         this.hp_bonus = 0;
         this.name = 'sword';
         this.cooldown = 10;
+        this.max_cooldown = 10;
+        if (drop != undefined) {
+            this.power_bonus = drop.power_bonus;
+            this.skill_bonus = drop.skill_bonus;
+            this.defense_bonus = drop.defense_bonus;
+            this.hp_bonus = drop.hp_bonus;
+            this.name = drop.name;
+            this.max_cooldown = drop.max_cooldown;
+        }
         this.startCountDown();
     }
     startCountDown() {
@@ -5663,7 +5823,7 @@ class Sword extends equipment_1.Equipment {
     }
     strike() {
         if (this.cooldown == 0) {
-            this.cooldown = 10;
+            this.cooldown = this.max_cooldown;
             let dir = this.owner.face;
             let dmg = new damageBlock_1.DamageBlock(this.skill_bonus);
             let attack = null;
@@ -6084,6 +6244,7 @@ class Entity {
         this.ai = ai;
         this.fighter = fighter;
         this.equipment = equipment;
+        this.subequipment = undefined;
         this.cooldown = 0;
         this.face = 'n';
         this.damage = damage;
@@ -6204,35 +6365,68 @@ class Entity {
     equip(item) {
         console.log('item: ');
         console.log(item); //item do chao
-        console.log("this:");
-        console.log(this); //player
-        if (this.equipment == undefined) {
-            this.equipment = item.item;
-            this.equipment.owner = this;
-            item.item.expire = true;
-            let equip = {
-                message: this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
-                type: 'pickup',
-                color1: item.glyph.foreground,
-                color2: [255, 255, 255]
-            };
-            this._map.messageLog.addMessage(equip);
+        // console.log("this:");
+        // console.log(this); //player
+        if (item.item.type == "main") {
+            if (this.equipment == undefined) {
+                this.equipment = item.item;
+                this.equipment.owner = this;
+                item.item.expire = true;
+                let equip = {
+                    message: this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
+                    type: 'pickup',
+                    color1: item.glyph.foreground,
+                    color2: [255, 255, 255]
+                };
+                this._map.messageLog.addMessage(equip);
+            }
+            else {
+                // colocar na backpack
+                let drop = createItens_1.CreateDropItem(this.equipment, this.x, this.y);
+                let droppedItem = new Entity(this.x, this.y, drop.glyph, drop.name, 1, false, 5, 2, undefined, undefined, false, drop.item); //cria entidade para dropar
+                this._map._entities.push(droppedItem);
+                this.equipment = item.item;
+                this.equipment.owner = this;
+                item.item.expire = true;
+                let equip = {
+                    message: this.name + " trocou uma %c{0}" + drop.name.toString() + "%c{1} por uma %c{0}" + this.equipment.name.toString() + " %c{1}!",
+                    type: 'pickup',
+                    color1: item.glyph.foreground,
+                    color2: [255, 255, 255]
+                };
+                this._map.messageLog.addMessage(equip);
+            }
+            console.log(this);
         }
-        else {
-            // colocar na backpack
-            let drop = createItens_1.CreateDropItem(this.equipment, this.x, this.y);
-            let droppedItem = new Entity(this.x, this.y, drop.glyph, drop.name, 1, false, 5, 2, undefined, undefined, false, drop.item);
-            this._map._entities.push(droppedItem);
-            this.equipment = item.item;
-            this.equipment.owner = this;
-            item.item.expire = true;
-            let equip = {
-                message: this.name + " trocou uma %c{0}" + drop.name.toString() + "%c{1} por uma %c{0}" + this.equipment.name.toString() + " %c{1}!",
-                type: 'pickup',
-                color1: item.glyph.foreground,
-                color2: [255, 255, 255]
-            };
-            this._map.messageLog.addMessage(equip);
+        else if (item.item.type == "sub") {
+            if (this.subequipment == undefined) {
+                this.subequipment = item.item;
+                this.subequipment.owner = this;
+                item.item.expire = true;
+                let equip = {
+                    message: this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
+                    type: 'pickup',
+                    color1: item.glyph.foreground,
+                    color2: [255, 255, 255]
+                };
+                this._map.messageLog.addMessage(equip);
+            }
+            else {
+                // colocar na backpack
+                let drop = createItens_1.CreateDropItem(this.subequipment, this.x, this.y);
+                let droppedItem = new Entity(this.x, this.y, drop.glyph, drop.name, 1, false, 5, 2, undefined, undefined, false, drop.item); //cria entidade para dropar
+                this._map._entities.push(droppedItem);
+                this.subequipment = item.item;
+                this.subequipment.owner = this;
+                item.item.expire = true;
+                let equip = {
+                    message: this.name + " trocou uma %c{0}" + drop.name.toString() + "%c{1} por uma %c{0}" + this.subequipment.name.toString() + " %c{1}!",
+                    type: 'pickup',
+                    color1: item.glyph.foreground,
+                    color2: [255, 255, 255]
+                };
+                this._map.messageLog.addMessage(equip);
+            }
         }
     }
     attack(targets) {
@@ -6448,7 +6642,6 @@ class Game {
         for (let message of this.messageLog.messages) {
             alpha += 0.1;
             if (message.type == 'death' || message.type == 'fight' || message.type == 'skill' || message.type == 'pickup') {
-                console.log(message.message);
                 fading = "%c{rgb(" + Math.round(message.color1[0] * alpha).toString() + "," + Math.round(message.color1[1] * alpha).toString() + "," + Math.round(message.color1[2] * alpha).toString() + ")}";
                 fading2 = "%c{rgb(" + Math.round(message.color2[0] * alpha).toString() + "," + Math.round(message.color2[1] * alpha).toString() + "," + Math.round(message.color2[2] * alpha).toString() + ")}";
                 out = message.message.replace(/%c\{0}/g, fading);
@@ -6486,6 +6679,22 @@ class Game {
         }
         this._inventory.drawText(1, 12, "%c{rgb(140, 140, 160)}Rank: %c{}" + this._player.fighter.rank);
         this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}" + this._player.fighter.current_exp + "/" + this._player.fighter.nextRank);
+        if (this._player.equipment != undefined) {
+            this._inventory.drawText(1, 15, "%c{rgb(140, 140, 160)}Main: %c{}" + this._player.equipment.name);
+            this._inventory.drawText(3, 16, "%c{rgb(140, 140, 160)}atk: %c{}" + this._player.equipment.power_bonus.toFixed(2));
+            this._inventory.drawText(3, 17, "%c{rgb(140, 140, 160)}atk: %c{}" + this._player.equipment.skill_bonus.toFixed(2));
+            this._inventory.drawText(3, 18, "%c{rgb(140, 140, 160)}def: %c{}" + this._player.equipment.defense_bonus.toFixed(2));
+            this._inventory.drawText(3, 19, "%c{rgb(140, 140, 160)}hp: %c{}" + this._player.equipment.hp_bonus.toFixed(2));
+            this._inventory.drawText(3, 20, "%c{rgb(140, 140, 160)}cd: %c{}" + (this._player.equipment.max_cooldown - this._player.equipment.cooldown).toFixed(0) + "/" + this._player.equipment.max_cooldown.toFixed(0));
+        }
+        if (this._player.subequipment != undefined) {
+            this._inventory.drawText(1, 22, "%c{rgb(140, 140, 160)}Sub: %c{}" + this._player.subequipment.name);
+            this._inventory.drawText(3, 23, "%c{rgb(140, 140, 160)}atk: %c{}" + this._player.subequipment.power_bonus.toFixed(2));
+            this._inventory.drawText(3, 23, "%c{rgb(140, 140, 160)}atk: %c{}" + this._player.subequipment.skill_bonus.toFixed(2));
+            this._inventory.drawText(3, 25, "%c{rgb(140, 140, 160)}def: %c{}" + this._player.subequipment.defense_bonus.toFixed(2));
+            this._inventory.drawText(3, 26, "%c{rgb(140, 140, 160)}hp: %c{}" + this._player.subequipment.hp_bonus.toFixed(2));
+            this._inventory.drawText(3, 27, "%c{rgb(140, 140, 160)}cd: %c{}" + (this._player.subequipment.max_cooldown - this._player.subequipment.cooldown).toFixed(0) + "/" + this._player.subequipment.max_cooldown.toFixed(0));
+        }
     }
     switchScreen(screen) {
         // If we had a screen before, notify it that we exited
@@ -6624,6 +6833,11 @@ const entity_1 = __webpack_require__(/*! ../entity */ "./src/entity.ts");
 const knife_1 = __webpack_require__(/*! ../content/itens/knife */ "./src/content/itens/knife.ts");
 const glyph_1 = __webpack_require__(/*! ../glyph */ "./src/glyph.ts");
 const sword_1 = __webpack_require__(/*! ../content/itens/sword */ "./src/content/itens/sword.ts");
+const spear_1 = __webpack_require__(/*! ../content/itens/spear */ "./src/content/itens/spear.ts");
+const shield_1 = __webpack_require__(/*! ../content/itens/shield */ "./src/content/itens/shield.ts");
+// function ItemFactory(name: string, x: number, y): Entity{
+//     return new Entity(x, y, new Glyph('Ϯ', [0,0,0], [204, 200, 0]), 'knife', 1, false, 5, 2, undefined, undefined, false, item_component);
+// }
 function CreateItem(item_choice, x, y) {
     if (item_choice == 'knife') {
         let item_component = new knife_1.Knife();
@@ -6638,73 +6852,57 @@ function CreateItem(item_choice, x, y) {
         return item;
     }
     else if (item_choice == 'spear') {
-        let item_component = new knife_1.Knife();
-        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Î', [0, 0, 0], [200, 200, 0]), 'spear', 1, false, 5, 2, undefined, undefined, false, item_component);
+        let item_component = new spear_1.Spear();
+        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('ﴽ', [0, 0, 0], [200, 200, 0]), 'spear', 1, false, 5, 2, undefined, undefined, false, item_component);
         item.item.glyph = item.glyph;
         return item;
     }
     else if (item_choice == 'dagger') {
         let item_component = new knife_1.Knife();
         let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Ϯ', [0, 0, 0], [200, 200, 0]), 'dagger', 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
+    }
+    else if (item_choice == 'shield') {
+        let item_component = new shield_1.Shield();
+        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('ꂷ', [0, 0, 0], [200, 200, 0]), 'shield', 1, false, 5, 2, undefined, undefined, false, item_component);
         item.item.glyph = item.glyph;
         return item;
     }
 }
 exports.CreateItem = CreateItem;
-function CreateSpecificItem(item_choice, x, y) {
-    if (item_choice == 'knife') {
-        let item_component = new knife_1.Knife();
-        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Ϯ', [0, 0, 0], [204, 200, 0]), 'knife', 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
-    }
-    else if (item_choice == 'sword') {
-        let item_component = new sword_1.Sword();
-        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('ރ', [0, 0, 0], [200, 200, 0]), 'sword', 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
-    }
-    else if (item_choice == 'spear') {
-        let item_component = new knife_1.Knife();
-        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Î', [0, 0, 0], [200, 200, 0]), 'spear', 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
-    }
-    else if (item_choice == 'dagger') {
-        let item_component = new knife_1.Knife();
-        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Ϯ', [0, 0, 0], [200, 200, 0]), 'dagger', 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
-    }
-}
-exports.CreateSpecificItem = CreateSpecificItem;
 function CreateDropItem(item, x, y) {
-    console.log('drop:');
     console.log(item);
     let item_choice = item.name;
     if (item_choice == 'knife') {
-        let item_component = new knife_1.Knife();
-        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Ϯ', [0, 0, 0], [204, 200, 0]), 'knife', 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        let item_component = new knife_1.Knife(item);
+        let itemDrop = new entity_1.Entity(x, y, new glyph_1.Glyph('Ϯ', [0, 0, 0], [204, 200, 0]), 'knife', 1, false, 5, 2, undefined, undefined, false, item_component);
+        itemDrop.item.glyph = item.glyph;
+        return itemDrop;
     }
     else if (item_choice == 'sword') {
-        let item_component = new sword_1.Sword();
-        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('ރ', [0, 0, 0], [200, 200, 0]), 'sword', 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        let item_component = new sword_1.Sword(item);
+        let itemDrop = new entity_1.Entity(x, y, new glyph_1.Glyph('ރ', [0, 0, 0], [200, 200, 0]), 'sword', 1, false, 5, 2, undefined, undefined, false, item_component);
+        itemDrop.item.glyph = item.glyph;
+        return itemDrop;
     }
     else if (item_choice == 'spear') {
-        let item_component = new knife_1.Knife();
-        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Î', [0, 0, 0], [200, 200, 0]), 'spear', 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        let item_component = new spear_1.Spear(item);
+        let itemDrop = new entity_1.Entity(x, y, new glyph_1.Glyph('ﴽ', [0, 0, 0], [200, 200, 0]), 'spear', 1, false, 5, 2, undefined, undefined, false, item_component);
+        itemDrop.item.glyph = item.glyph;
+        return itemDrop;
     }
     else if (item_choice == 'dagger') {
-        let item_component = new knife_1.Knife();
-        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Ϯ', [0, 0, 0], [200, 200, 0]), 'dagger', 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        let item_component = new knife_1.Knife(item);
+        let itemDrop = new entity_1.Entity(x, y, new glyph_1.Glyph('Ϯ', [0, 0, 0], [200, 200, 0]), 'dagger', 1, false, 5, 2, undefined, undefined, false, item_component);
+        itemDrop.item.glyph = item.glyph;
+        return itemDrop;
+    }
+    else if (item_choice == 'shield') {
+        let item_component = new shield_1.Shield(item);
+        let itemDrop = new entity_1.Entity(x, y, new glyph_1.Glyph('ꂷ', [0, 0, 0], [200, 200, 0]), 'shield', 1, false, 5, 2, undefined, undefined, false, item_component);
+        itemDrop.item.glyph = item.glyph;
+        return itemDrop;
     }
 }
 exports.CreateDropItem = CreateDropItem;
@@ -6900,7 +7098,6 @@ function digHere(here, map) {
             }
             break;
         default:
-            console.log('default');
             //map[x][y] = 2;
             break;
     }
@@ -7448,7 +7645,7 @@ class Map {
         for (let index = 0; index < this._entities.length; index++) {
             for (let i = x; i <= x2; i++) {
                 for (let j = y; j <= y2; j++) {
-                    if (this._entities[index].x == i && this._entities[index].y == j && this._entities[index].item != undefined) {
+                    if (this._entities[index].x == i && this._entities[index].y == j && this._entities[index].item != undefined && this._entities[index].item.expire == false) {
                         targets.push(this._entities[index]);
                     }
                 }
@@ -7475,17 +7672,15 @@ class Map {
             'troll': randFromLevel_1.from_dungeon_level([[1, 1], [10, 3], [30, 5], [60, 7]], this.dungeon_level),
             'wyvern': randFromLevel_1.from_dungeon_level([[1, 1], [50, 2], [50, 5]], this.dungeon_level),
             'dragon': randFromLevel_1.from_dungeon_level([[1, 1], [10, 3], [20, 7]], this.dungeon_level),
-            'ranger': randFromLevel_1.from_dungeon_level([[1, 1]], this.dungeon_level)
+            'ranger': randFromLevel_1.from_dungeon_level([[1, 1]], this.dungeon_level),
         };
-        console.log('monster chances');
-        console.log(monster_chances);
         let item_chances = {
             //'healing_potion': 35,
             'knife': randFromLevel_1.from_dungeon_level([[10, 1]], this.dungeon_level),
             'dagger': randFromLevel_1.from_dungeon_level([[10, 1]], this.dungeon_level),
-            'sword': randFromLevel_1.from_dungeon_level([[500, 0], [500, 2]], this.dungeon_level),
-            'spear': randFromLevel_1.from_dungeon_level([[5, 1], [10, 3]], this.dungeon_level)
-            //'shield': from_dungeon_level([[5, 0]], this.dungeon_level)
+            'sword': randFromLevel_1.from_dungeon_level([[10, 0], [10, 2]], this.dungeon_level),
+            'spear': randFromLevel_1.from_dungeon_level([[5, 1], [10, 3]], this.dungeon_level),
+            'shield': randFromLevel_1.from_dungeon_level([[15, 0]], this.dungeon_level),
         };
         for (let index = 0; index < number_of_monsters; index++) {
             let x = randint_1.randint(0, this._width - 1);
@@ -7526,7 +7721,7 @@ class Map {
                 let item_choice = randFromLevel_1.random_choice_from_dict(item_chances);
                 let q;
                 if (index == 1)
-                    q = createItens_1.CreateItem(item_choice, 61, 45);
+                    q = createItens_1.CreateItem("shield", 61, 45);
                 else
                     q = createItens_1.CreateItem(item_choice, x, y);
                 console.log(item_choice + '- ' + x + ' ' + y);
@@ -7815,7 +8010,7 @@ function playScreen() {
             // debug stuff
             let knife = new knife_1.Knife();
             knife.owner = game._player;
-            game._player.equipment = createItens_1.CreateSpecificItem('knife', game._player.x, game._player.y).item;
+            game._player.equipment = createItens_1.CreateItem('knife', game._player.x, game._player.y).item;
             game._player.equipment.owner = game._player;
             game._map._entities.push(game._player); //player always [0]
             game._player._map = game._map;
@@ -7914,7 +8109,7 @@ function playScreen() {
                 if (game._player.fighter.unspentPoints > 0) {
                     switch (inputData.keyCode) {
                         case constants_1.KEYS.VK_A:
-                            game._player.fighter.base_power += 1;
+                            game._player.fighter.base_power += 0.8;
                             game._player.fighter.unspentPoints -= 1;
                             break;
                         case constants_1.KEYS.VK_S:

@@ -66,7 +66,7 @@ export class Map {
         for (let index = 0; index < this._entities.length; index++) {
             for (let i = x; i <= x2; i++) {
                 for (let j = y; j <= y2; j++) {
-                    if (this._entities[index].x == i && this._entities[index].y == j && this._entities[index].item != undefined) {
+                    if (this._entities[index].x == i && this._entities[index].y == j && this._entities[index].item != undefined && this._entities[index].item.expire == false) {
                         targets.push(this._entities[index]);
                     }
                 }
@@ -96,16 +96,16 @@ export class Map {
             'troll': from_dungeon_level([[1, 1], [10, 3], [30, 5], [60, 7]], this.dungeon_level),
             'wyvern': from_dungeon_level([[1, 1], [50, 2], [50, 5]], this.dungeon_level),
             'dragon': from_dungeon_level([[1, 1], [10, 3], [20, 7]], this.dungeon_level),
-            'ranger': from_dungeon_level([[1, 1]], this.dungeon_level)
+            'ranger': from_dungeon_level([[1, 1]], this.dungeon_level),
         }
 
         let item_chances = {
             //'healing_potion': 35,
             'knife': from_dungeon_level([[10, 1]], this.dungeon_level),
             'dagger': from_dungeon_level([[10, 1]], this.dungeon_level),
-            'sword': from_dungeon_level([[500, 0], [500, 2]], this.dungeon_level),
-            'spear': from_dungeon_level([[5, 1], [10, 3]], this.dungeon_level)
-            //'shield': from_dungeon_level([[5, 0]], this.dungeon_level)
+            'sword': from_dungeon_level([[10, 0], [10, 2]], this.dungeon_level),
+            'spear': from_dungeon_level([[5, 1], [10, 3]], this.dungeon_level),
+            'shield': from_dungeon_level([[15, 0]], this.dungeon_level),
         }
 
         for (let index = 0; index < number_of_monsters; index++) {
@@ -152,7 +152,7 @@ export class Map {
             if (emptyspace == true) {
                 let item_choice = random_choice_from_dict(item_chances);
                 let q;
-                if (index == 1 ) q = CreateItem(item_choice, 61, 45);
+                if (index == 1 ) q = CreateItem("shield", 61, 45);
                 else q = CreateItem(item_choice, x, y);
                 console.log(item_choice + '- '+ x + ' ' + y);
                 q._map = this;

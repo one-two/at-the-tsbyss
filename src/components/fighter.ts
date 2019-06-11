@@ -1,9 +1,6 @@
 import { Entity } from "../entity";
 import { deathFunction } from "../helper/deathFunction";
 import { MessageType } from "../helper/messageType";
-import { Color } from "../../lib";
-import { Game } from "../game";
-import { KEYS } from "../../lib/constants"
 
 export class Fighter {
     owner: Entity;
@@ -17,8 +14,6 @@ export class Fighter {
     current_exp: number;
     nextRank: number;
     unspentPoints: number;
-
-
 
     constructor(hp: number, def: number, atk: number, xp: number) {
         this.hp = hp;
@@ -35,32 +30,36 @@ export class Fighter {
 
     power() {
         let bonus = 0;
-        if (this.owner != undefined && this.owner.equipment != undefined) {
-            bonus = this.owner.equipment.power_bonus;
-        }
+        if (this.owner != undefined){
+            if (this.owner.equipment != undefined) bonus += this.owner.equipment.power_bonus;
+            if (this.owner.subequipment != undefined) bonus += this.owner.subequipment.power_bonus;
+        } 
         return this.base_power + bonus
     }
 
     skill_power() {
-        if (this.owner.ai != undefined) return this.power() * this.owner.ai.skill_bonus
-        if (this.owner.equipment != undefined) {
-            return this.power() * this.owner.equipment.skill_bonus;
-        }
+        let bonus = 1;
+        if (this.owner.ai != undefined) return this.power() * this.owner.ai.skill_bonus;
+        if (this.owner.equipment != undefined)  bonus += this.owner.equipment.skill_bonus;
+        if (this.owner.subequipment != undefined) bonus += this.owner.equipment.skill_bonus;
+        return this.power() * bonus;
     }
 
     defense() {
         let bonus = 0;
-        if (this.owner != undefined && this.owner.equipment != undefined) {
-            bonus = this.owner.equipment.defense_bonus;
-        }
+        if (this.owner != undefined){
+            if(this.owner.equipment != undefined) bonus += this.owner.equipment.defense_bonus;
+            if(this.owner.subequipment != undefined) bonus += this.owner.equipment.defense_bonus;
+        } 
         return this.base_defense + bonus
     }
 
     max_hp() {
         let bonus = 0;
-        if (this.owner != undefined && this.owner.equipment != undefined) {
-            bonus = this.owner.equipment.hp_bonus;
-        }
+        if (this.owner != undefined){
+            if (this.owner.equipment != undefined) bonus += this.owner.equipment.hp_bonus;
+            if (this.owner.subequipment != undefined) bonus += this.owner.subequipment.hp_bonus;
+        } 
         return this.base_max_hp + bonus
     }
 
@@ -142,5 +141,4 @@ export class Fighter {
             console.log("rank up!")
         }
     }
-
 }

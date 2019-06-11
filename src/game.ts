@@ -161,6 +161,26 @@ export class Game {
 
 		this._inventory.drawText(1, 12, "%c{rgb(140, 140, 160)}Rank: %c{}"+ this._player.fighter.rank);
 		this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}"+ this._player.fighter.current_exp + "/" + this._player.fighter.nextRank);
+
+		if ( this._player.equipment != undefined) {
+			this._inventory.drawText(1, 15, "%c{rgb(140, 140, 160)}Main: %c{}"+ this._player.equipment.name);
+			this._inventory.drawText(3, 16, "%c{rgb(140, 140, 160)}atk: %c{}"+ this._player.equipment.power_bonus.toFixed(2));
+			this._inventory.drawText(3, 17, "%c{rgb(140, 140, 160)}skl: %c{}"+ this._player.equipment.skill_bonus.toFixed(2));
+			this._inventory.drawText(3, 18, "%c{rgb(140, 140, 160)}def: %c{}"+ this._player.equipment.defense_bonus.toFixed(2));
+			this._inventory.drawText(3, 19, "%c{rgb(140, 140, 160)}hp: %c{}"+ this._player.equipment.hp_bonus.toFixed(2));
+			this._inventory.drawText(3, 20, "%c{rgb(140, 140, 160)}cd: %c{}"+ (this._player.equipment.max_cooldown-this._player.equipment.cooldown).toFixed(0) + "/" + this._player.equipment.max_cooldown.toFixed(0));
+			
+		}
+
+		if ( this._player.subequipment != undefined) {
+			this._inventory.drawText(1, 22, "%c{rgb(140, 140, 160)}Sub: %c{}"+ this._player.subequipment.name);
+			this._inventory.drawText(3, 23, "%c{rgb(140, 140, 160)}atk: %c{}"+ this._player.subequipment.power_bonus.toFixed(2));
+			this._inventory.drawText(3, 24, "%c{rgb(140, 140, 160)}skl: %c{}"+ this._player.subequipment.skill_bonus.toFixed(2));
+			this._inventory.drawText(3, 25, "%c{rgb(140, 140, 160)}def: %c{}"+ this._player.subequipment.defense_bonus.toFixed(2));
+			this._inventory.drawText(3, 26, "%c{rgb(140, 140, 160)}hp: %c{}"+ this._player.subequipment.hp_bonus.toFixed(2));
+			this._inventory.drawText(3, 27, "%c{rgb(140, 140, 160)}cd: %c{}"+ (this._player.subequipment.max_cooldown-this._player.subequipment.cooldown).toFixed(0) + "/" + this._player.subequipment.max_cooldown.toFixed(0));
+			
+		}
 	}
 
 	switchScreen(screen : any) {
@@ -213,7 +233,7 @@ window.onload = function() {
 	// Initialize the game
 	let fighter = new Fighter(999, 1, 4, 0);
 	let player = new Entity(60, 45, new Glyph('@', [0,0,0], [0, 191, 255]), 'Player', 1, true, 1, 1, fighter, undefined, true);
-	player.fighter.unspentPoints = 10;
+	player.fighter.unspentPoints = 0;
 	game._player = player
 	game._entities = [game._player];
 	game.init();
