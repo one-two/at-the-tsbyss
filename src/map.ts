@@ -89,8 +89,8 @@ export class Map {
         let max_monsters_per_room = from_dungeon_level([[20, 1], [30, 4], [40, 6]], this.dungeon_level)
         let max_items_per_room = from_dungeon_level([[10, 1], [2, 4]], this.dungeon_level)
 
-        let number_of_monsters = randint(0, max_monsters_per_room)
-        let number_of_items = randint(0, max_items_per_room);
+        let number_of_monsters = randint(3, max_monsters_per_room)
+        let number_of_items = randint(1, max_items_per_room);
         
         let monster_chances = monsterProbabilities(this.dungeon_level);
 

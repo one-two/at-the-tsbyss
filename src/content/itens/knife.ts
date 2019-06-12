@@ -27,7 +27,7 @@ export class Knife extends Equipment {
             this.max_cooldown = drop.max_cooldown;
             this.glyph = drop.glyph;
         } else {
-            this.glyph = new Glyph('Ϯ', [0,0,0], [204, 200, 0]);
+            this.glyph = new Glyph('🗡', [0,0,0], [204, 200, 0]);
         }
         this.startCountDown();
     }

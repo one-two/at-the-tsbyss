@@ -13,7 +13,7 @@ import { Shield } from "../content/itens/shield";
 export function CreateItem(item_choice: string, x: number, y: number): Entity{
     if (item_choice == 'knife') {
         let item_component = new Knife()
-        let item = new Entity(x, y, new Glyph('Ϯ', [0,0,0], [204, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
+        let item = new Entity(x, y, new Glyph('🗡', [0,0,0], [204, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
         item.item.glyph= item.glyph;
         return item;
     }
@@ -31,7 +31,7 @@ export function CreateItem(item_choice: string, x: number, y: number): Entity{
     }
     else if (item_choice == 'dagger') {
         let item_component = new Knife()
-        let item = new Entity(x, y, new Glyph('Ϯ', [0,0,0], [200, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
+        let item = new Entity(x, y, new Glyph('🗡', [0,0,0], [200, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
         item.item.glyph = item.glyph;
         return item;
     }
@@ -48,7 +48,7 @@ export function CreateDropItem(item: Equipment, x: number, y: number): Entity{
     let item_choice = item.name;
     if (item_choice == 'knife') {
         let item_component = new Knife(item);
-        let itemDrop = new Entity(x, y, new Glyph('Ϯ', [0,0,0], [204, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
+        let itemDrop = new Entity(x, y, new Glyph('🗡', [0,0,0], [204, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
         itemDrop.item.glyph= item.glyph;
         return itemDrop;
     }
@@ -66,7 +66,7 @@ export function CreateDropItem(item: Equipment, x: number, y: number): Entity{
     }
     else if (item_choice == 'dagger') {
         let item_component = new Knife(item);
-        let itemDrop = new Entity(x, y, new Glyph('Ϯ', [0,0,0], [200, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
+        let itemDrop = new Entity(x, y, new Glyph('🗡', [0,0,0], [200, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
         itemDrop.item.glyph = item.glyph;
         return itemDrop;
     }
