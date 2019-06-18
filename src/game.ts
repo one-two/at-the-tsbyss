@@ -33,6 +33,8 @@ export class Game {
 	logo: any;
 	level: number = 1;
 	blinkLevel: number = 0;
+	lang: string = "En";
+	mainmenuOpt:number = 0;
 
 	constructor() {
 		this._centerX = 0;
@@ -65,15 +67,15 @@ export class Game {
 			spacing : 0.75});
 		this._inventory = new Display({width: 20, height: this._screenHeight*0.75});
 		this._messaging = new Display({width: this._screenWidth*1.5, height: this._messageBoxSize});
-		this.messageLog = new Messagelog(0, this._screenHeight, this._messageBoxSize);
-		this.messageLog.messages = [{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"}, 
-			{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"}, 
-			{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"},
-			{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"},
-			{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"},
-			{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"},
-			{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"},
-			{message: '', color1 : [0,0,0], color2 : [0,0,0], type : "empty"}]
+		this.messageLog = new Messagelog(0, this._screenHeight, this._messageBoxSize, this);
+		this.messageLog.messages = [{message: '', color0 : [0,0,0], color1 : [0,0,0], color2 : [0,0,0], type : "empty"}, 
+			{message: '', color0 : [0,0,0], color1 : [0,0,0], color2 : [0,0,0], type : "empty"}, 
+			{message: '', color0 : [0,0,0], color1 : [0,0,0], color2 : [0,0,0], type : "empty"},
+			{message: '', color0 : [0,0,0], color1 : [0,0,0], color2 : [0,0,0], type : "empty"},
+			{message: '', color0 : [0,0,0], color1 : [0,0,0], color2 : [0,0,0], type : "empty"},
+			{message: '', color0 : [0,0,0], color1 : [0,0,0], color2 : [0,0,0], type : "empty"},
+			{message: '', color0 : [0,0,0], color1 : [0,0,0], color2 : [0,0,0], type : "empty"},
+			{message: '', color0 : [0,0,0], color1 : [0,0,0], color2 : [0,0,0], type : "empty"}]
 		//let game = this; // So that we don't lose this
 		let event = "keydown";
 
@@ -94,11 +96,6 @@ export class Game {
 			this._display.clear();
 			this._currentScreen.render(this._display, this);
 		});
-
-		//this.messageLog.addMessage("teste1");
-		//this.messageLog.addMessage("teste%c{red}2%c{} !");
-		//this.messageLog.addMessage("teste%c{#00cc00}3%c{} welcome");
-		//this.writeMessages();
 	}
 
 	getDisplay() {
@@ -118,16 +115,24 @@ export class Game {
 		let alpha = 0;
 		let fading = '';
 		let fading2 = '';
+		let fading3 = '';
 		let out = '';
 		let out2 = '';
+		let out3 = '';
+		let outf = '';
+		let base = 255;
 		for (let message of this.messageLog.messages) {
 			alpha += 0.1;
 			if (message.type == 'death' || message.type == 'fight' || message.type == 'skill' || message.type == 'pickup') {
-				fading = "%c{rgb(" + Math.round(message.color1[0]*alpha).toString() +","+Math.round(message.color1[1]*alpha).toString() +","+Math.round(message.color1[2]*alpha).toString() +")}";
-				fading2 = "%c{rgb(" + Math.round(message.color2[0]*alpha).toString() +","+Math.round(message.color2[1]*alpha).toString() +","+Math.round(message.color2[2]*alpha).toString() +")}";
+				let basefading = "%c{rgb(" + (base*alpha).toString() +","+ (base*alpha).toString() +","+ (base*alpha).toString() +")}";
+				fading = "%c{rgb(" + Math.round(message.color0[0]*alpha).toString() +","+Math.round(message.color0[1]*alpha).toString() +","+Math.round(message.color0[2]*alpha).toString() +")}";
+				fading2 = "%c{rgb(" + Math.round(message.color1[0]*alpha).toString() +","+Math.round(message.color1[1]*alpha).toString() +","+Math.round(message.color1[2]*alpha).toString() +")}";
+				fading3 = "%c{rgb(" + Math.round(message.color2[0]*alpha).toString() +","+Math.round(message.color2[1]*alpha).toString() +","+Math.round(message.color2[2]*alpha).toString() +")}";
 				out =  message.message.replace(/%c\{0}/g, fading);
 				out2 =  out.replace(/%c\{1}/g, fading2);
-				this._messaging.drawText(1, x, ''+fading2+out2, this._screenWidth*2);
+				out3 =  out2.replace(/%c\{2}/g, fading3);
+				outf = out3.replace(/%c\{base}/g, basefading);
+				this._messaging.drawText(1, x, ''+outf, this._screenWidth*2);
 
 			}
 			x += 1

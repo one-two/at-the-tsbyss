@@ -9,6 +9,7 @@ import { Messagelog } from "./messages";
 import { CreateItem } from "./helper/createItens";
 import { monsterProbabilities } from "./settings/monsterProbabilities";
 import { itemProbabilities } from "./settings/itemProbabilities";
+import { Game } from "./game";
 
 export class Map {
     _display: Display;
@@ -19,6 +20,7 @@ export class Map {
     _entities: Entity[];
     _tiles: Tile[][];
     _fov: any[];
+    owner: Game;
 
     constructor(width : number, height : number) {
         this._width = width;

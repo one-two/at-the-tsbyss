@@ -5345,7 +5345,8 @@ class Fighter {
             let msg = {
                 message: "%c{0}" + this.owner.name + "%c{1} morreu",
                 type: 'death',
-                color1: this.owner.glyph.foreground,
+                color0: this.owner.glyph.foreground,
+                color1: [255, 255, 255],
                 color2: [255, 255, 255]
             };
             this.owner._map.messageLog.addMessage(msg); //"%c{"+ this.owner.glyph.foreground +"}" + this.owner.name + "%c{} morreu")
@@ -5363,7 +5364,8 @@ class Fighter {
         let result = {
             message: '',
             type: 'fight',
-            color1: target.glyph.foreground,
+            color0: target.glyph.foreground,
+            color1: [255, 255, 255],
             color2: [255, 255, 255]
         };
         let damage = this.power() * (1 - (target.fighter.defense() / (10 + target.fighter.defense())));
@@ -5375,10 +5377,12 @@ class Fighter {
             let death = target.fighter.takeDamage(damage);
             if (death)
                 this.getExp(target.fighter.xp);
-            result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} com " + damage + " de dano! (" + target.fighter.hp.toFixed(2) + ")";
+            this.owner._map.messageLog.newMessage(this.owner, 'fight', target, undefined, damage.toString());
+            //result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} com "+ damage + " de dano! (" +target.fighter.hp.toFixed(2) +")";
         }
         else {
-            result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
+            this.owner._map.messageLog.newMessage(this.owner, 'fightZeroDamage', target, undefined, damage.toString());
+            //result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
         }
         return result;
     }
@@ -5386,7 +5390,8 @@ class Fighter {
         let result = {
             message: '',
             type: 'skill',
-            color1: target.glyph.foreground,
+            color0: target.glyph.foreground,
+            color1: [255, 255, 255],
             color2: [255, 255, 255]
         };
         let damage = this.skill_power() * dmgBlock.damage.multiplier * (1 - (target.fighter.defense() / (10 + target.fighter.defense())));
@@ -5398,10 +5403,12 @@ class Fighter {
             let death = target.fighter.takeDamage(damage);
             if (death)
                 this.getExp(target.fighter.xp);
-            result.message = this.owner.name + " usou uma " + dmgBlock.name + " em um %c{0}" + target.name + "%c{1} com " + damage + " de dano! (" + target.fighter.hp.toFixed(2) + ")";
+            this.owner._map.messageLog.newMessage(this.owner, 'skill', target, dmgBlock, damage.toString());
+            //result.message = this.owner.name + " usou uma " + dmgBlock.name + " em um %c{0}" + target.name + "%c{1} com "+ damage + " de dano! (" +target.fighter.hp.toFixed(2) +")";
         }
         else {
-            result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
+            this.owner._map.messageLog.newMessage(this.owner, 'skillZeroDamage', target, dmgBlock, damage.toString());
+            //result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
         }
         return result;
     }
@@ -6314,8 +6321,6 @@ class Entity {
             }
         }
         else {
-            // if (this.glyph.char == '@') this._map.messageLog.addMessage("this is a %c{goldenrod}wall%c{}!");
-            // else this._map.messageLog.addMessage("hey fungi, this is a %c{goldenrod}wall%c{}!");
         }
     }
     changeFace(dx, dy) {
@@ -6381,7 +6386,8 @@ class Entity {
                 let equip = {
                     message: this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
                     type: 'pickup',
-                    color1: item.glyph.foreground,
+                    color0: item.glyph.foreground,
+                    color1: [255, 255, 255],
                     color2: [255, 255, 255]
                 };
                 this._map.messageLog.addMessage(equip);
@@ -6397,7 +6403,8 @@ class Entity {
                 let equip = {
                     message: this.name + " trocou uma %c{0}" + drop.name.toString() + "%c{1} por uma %c{0}" + this.equipment.name.toString() + " %c{1}!",
                     type: 'pickup',
-                    color1: item.glyph.foreground,
+                    color0: item.glyph.foreground,
+                    color1: [255, 255, 255],
                     color2: [255, 255, 255]
                 };
                 this._map.messageLog.addMessage(equip);
@@ -6409,13 +6416,14 @@ class Entity {
                 this.subequipment = item.item;
                 this.subequipment.owner = this;
                 item.item.expire = true;
-                let equip = {
-                    message: this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
-                    type: 'pickup',
-                    color1: item.glyph.foreground,
-                    color2: [255, 255, 255]
-                };
-                this._map.messageLog.addMessage(equip);
+                // let equip: MessageType = {
+                //     message : this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
+                //     type : 'pickup',
+                //     color1 : item.glyph.foreground,
+                //     color2 : [255,255,255]
+                // };
+                //this._map.messageLog.addMessage(equip);
+                this._map.messageLog.newMessage(this, 'pickup', item);
             }
             else {
                 // colocar na backpack
@@ -6428,10 +6436,12 @@ class Entity {
                 let equip = {
                     message: this.name + " trocou uma %c{0}" + drop.name.toString() + "%c{1} por uma %c{0}" + this.subequipment.name.toString() + " %c{1}!",
                     type: 'pickup',
-                    color1: item.glyph.foreground,
+                    color0: item.glyph.foreground,
+                    color1: [255, 255, 255],
                     color2: [255, 255, 255]
                 };
-                this._map.messageLog.addMessage(equip);
+                //this._map.messageLog.addMessage(equip);
+                this._map.messageLog.newMessage(this, 'switchEquip', item, this);
             }
         }
     }
@@ -6439,7 +6449,7 @@ class Entity {
         if (this.fighter != undefined) {
             if (this.glyph.char == '@') {
                 let result = this.fighter.attack(targets[0]);
-                this._map.messageLog.addMessage(result);
+                //this._map.messageLog.addMessage(result);
             }
             else {
                 let player = undefined;
@@ -6450,7 +6460,7 @@ class Entity {
                 });
                 if (player != undefined) {
                     let result = this.fighter.attack(player);
-                    this._map.messageLog.addMessage(result);
+                    //this._map.messageLog.addMessage(result);
                 }
                 else {
                 }
@@ -6460,8 +6470,10 @@ class Entity {
     skill(targets) {
         targets.forEach((entity, i) => {
             if (entity != this.owner) {
-                if (entity.fighter != undefined)
-                    this._map.messageLog.addMessage(this.owner.fighter.equipment_skill(entity, this));
+                if (entity.fighter != undefined) {
+                    let res = this.owner.fighter.equipment_skill(entity, this);
+                    //this._map.messageLog.addMessage(res);
+                }
             }
         });
     }
@@ -6569,6 +6581,8 @@ class Game {
         this.timer = true;
         this.level = 1;
         this.blinkLevel = 0;
+        this.lang = "En";
+        this.mainmenuOpt = 0;
         this._centerX = 0;
         this._centerY = 0;
         this._display = null;
@@ -6596,15 +6610,15 @@ class Game {
         });
         this._inventory = new index_1.Display({ width: 20, height: this._screenHeight * 0.75 });
         this._messaging = new index_1.Display({ width: this._screenWidth * 1.5, height: this._messageBoxSize });
-        this.messageLog = new messages_1.Messagelog(0, this._screenHeight, this._messageBoxSize);
-        this.messageLog.messages = [{ message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
-            { message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
-            { message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
-            { message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
-            { message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
-            { message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
-            { message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
-            { message: '', color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" }];
+        this.messageLog = new messages_1.Messagelog(0, this._screenHeight, this._messageBoxSize, this);
+        this.messageLog.messages = [{ message: '', color0: [0, 0, 0], color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
+            { message: '', color0: [0, 0, 0], color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
+            { message: '', color0: [0, 0, 0], color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
+            { message: '', color0: [0, 0, 0], color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
+            { message: '', color0: [0, 0, 0], color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
+            { message: '', color0: [0, 0, 0], color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
+            { message: '', color0: [0, 0, 0], color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
+            { message: '', color0: [0, 0, 0], color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" }];
         //let game = this; // So that we don't lose this
         let event = "keydown";
         let menu = document.getElementById("menu");
@@ -6624,10 +6638,6 @@ class Game {
             this._display.clear();
             this._currentScreen.render(this._display, this);
         });
-        //this.messageLog.addMessage("teste1");
-        //this.messageLog.addMessage("teste%c{red}2%c{} !");
-        //this.messageLog.addMessage("teste%c{#00cc00}3%c{} welcome");
-        //this.writeMessages();
     }
     getDisplay() {
         return this._display;
@@ -6643,16 +6653,24 @@ class Game {
         let alpha = 0;
         let fading = '';
         let fading2 = '';
+        let fading3 = '';
         let out = '';
         let out2 = '';
+        let out3 = '';
+        let outf = '';
+        let base = 255;
         for (let message of this.messageLog.messages) {
             alpha += 0.1;
             if (message.type == 'death' || message.type == 'fight' || message.type == 'skill' || message.type == 'pickup') {
-                fading = "%c{rgb(" + Math.round(message.color1[0] * alpha).toString() + "," + Math.round(message.color1[1] * alpha).toString() + "," + Math.round(message.color1[2] * alpha).toString() + ")}";
-                fading2 = "%c{rgb(" + Math.round(message.color2[0] * alpha).toString() + "," + Math.round(message.color2[1] * alpha).toString() + "," + Math.round(message.color2[2] * alpha).toString() + ")}";
+                let basefading = "%c{rgb(" + (base * alpha).toString() + "," + (base * alpha).toString() + "," + (base * alpha).toString() + ")}";
+                fading = "%c{rgb(" + Math.round(message.color0[0] * alpha).toString() + "," + Math.round(message.color0[1] * alpha).toString() + "," + Math.round(message.color0[2] * alpha).toString() + ")}";
+                fading2 = "%c{rgb(" + Math.round(message.color1[0] * alpha).toString() + "," + Math.round(message.color1[1] * alpha).toString() + "," + Math.round(message.color1[2] * alpha).toString() + ")}";
+                fading3 = "%c{rgb(" + Math.round(message.color2[0] * alpha).toString() + "," + Math.round(message.color2[1] * alpha).toString() + "," + Math.round(message.color2[2] * alpha).toString() + ")}";
                 out = message.message.replace(/%c\{0}/g, fading);
                 out2 = out.replace(/%c\{1}/g, fading2);
-                this._messaging.drawText(1, x, '' + fading2 + out2, this._screenWidth * 2);
+                out3 = out2.replace(/%c\{2}/g, fading3);
+                outf = out3.replace(/%c\{base}/g, basefading);
+                this._messaging.drawText(1, x, '' + outf, this._screenWidth * 2);
             }
             x += 1;
         }
@@ -6847,7 +6865,7 @@ const shield_1 = __webpack_require__(/*! ../content/itens/shield */ "./src/conte
 function CreateItem(item_choice, x, y) {
     if (item_choice == 'knife') {
         let item_component = new knife_1.Knife();
-        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Ϯ', [0, 0, 0], [204, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
+        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('🗡', [0, 0, 0], [204, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
         item.item.glyph = item.glyph;
         return item;
     }
@@ -6865,7 +6883,7 @@ function CreateItem(item_choice, x, y) {
     }
     else if (item_choice == 'dagger') {
         let item_component = new knife_1.Knife();
-        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('Ϯ', [0, 0, 0], [200, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
+        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('🗡', [0, 0, 0], [200, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
         item.item.glyph = item.glyph;
         return item;
     }
@@ -7793,17 +7811,76 @@ exports.Map = Map;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class Messagelog {
-    constructor(x, width, height) {
+    constructor(x, width, height, game) {
         this.messages = [];
         this.x = x;
         this.width = width;
         this.height = height;
+        this.game = game;
     }
     addMessage(message) {
         if (this.messages.length == this.height) {
             this.messages.shift();
         }
         this.messages.push(message);
+    }
+    newMessage(actor, type, target1, target2 = undefined, extrainfo = '') {
+        let newMessage = {
+            message: '',
+            type: type,
+            color0: actor.glyph.foreground,
+            color1: target1 == undefined ? [255, 255, 255] : target1.glyph.foreground,
+            color2: target2 == undefined ? [255, 255, 255] : target2.glyph.foreground,
+        };
+        switch (this.game.lang) {
+            case "En":
+                if (type == 'pickup') {
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} equipped a %c{1}" + target1.name + "%c{base} !";
+                }
+                if (type == 'switchEquip') {
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} switched a %c{1}" + target1.name.toString() + "%c{base} for a %c{2}" + actor.subequipment.name.toString() + " %c{base}!";
+                }
+                if (type == 'fight') {
+                    let damage = extrainfo;
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} hit a %c{0}" + target1.name + "%c{base} and dealt " + damage + " damage! (" + target1.fighter.hp.toFixed(2) + ")";
+                }
+                if (type == 'fightZeroDamage') {
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} hit a %c{0}" + target1.name + "%c{base} but it was ineffective!";
+                }
+                if (type == 'skill') {
+                    let damage = extrainfo;
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} used a %c{2}" + target2.name + "%c{base} in a %c{1}" + target1.name + "%c{base} and caused " + damage + " damage! (" + target1.fighter.hp.toFixed(2) + ")";
+                }
+                if (type == 'skillZeroDamage') {
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} hit a %c{2}" + target2.name + "%c{base} but it was ineffective!";
+                }
+                break;
+            case "Pt":
+                if (type == 'pickup') {
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} empunhou uma %c{1}" + target1.name + "%c{base} !";
+                }
+                if (type == 'switchEquip') {
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} trocou uma %c{1}" + target1.name.toString() + "%c{base} por uma %c{2}" + actor.subequipment.name.toString() + " %c{base}!";
+                }
+                if (type == 'fight') {
+                    let damage = extrainfo;
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} bateu em um %c{0}" + target1.name + "%c{base} com " + damage + " de dano! (" + target1.fighter.hp.toFixed(2) + ")";
+                }
+                if (type == 'fightZeroDamage') {
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} bateu em um %c{0}" + target1.name + "%c{base} mas não causou dano!";
+                }
+                if (type == 'skill') {
+                    let damage = extrainfo;
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} usou uma %c{2}" + target2.name + "%c{base} em um %c{1}" + target1.name + "%c{base} com " + damage + " de dano! (" + target1.fighter.hp.toFixed(2) + ")";
+                }
+                if (type == 'skillZeroDamage') {
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} bateu em um %c{2}" + target2.name + "%c{base} mas não causou dano!";
+                }
+                break;
+            default:
+                break;
+        }
+        this.addMessage(newMessage);
     }
 }
 exports.Messagelog = Messagelog;
@@ -7846,17 +7923,43 @@ function startScreen() {
                 y += 1;
             }
             // Render our prompt to the screen
-            display.drawText((game._screenWidth / 2) + 6, game._screenHeight - 5, "%c{yellow}tfw no rl1");
-            display.drawText((game._screenWidth / 2), game._screenHeight - 3, "Press [Enter] to start");
+            display.drawText((game._screenWidth / 2), game._screenHeight - 5, "%c{rgb(0, 191, 255)}where are you?");
+            display.drawText((game._screenWidth / 2), game._screenHeight - 3, "Press to start:");
+            if (game.mainmenuOpt == 0)
+                display.drawText((game._screenWidth / 2) - 1, game._screenHeight - 1, "%c{yellow}>[E]ng%c{}      [P]ort");
+            if (game.mainmenuOpt == 1)
+                display.drawText((game._screenWidth / 2), game._screenHeight - 1, "[E]ng     %c{yellow}>[P]ort%c{}");
         },
         handleInput: (inputType, inputData, game) => {
             // When [Enter] is pressed, go to the play screen
             if (inputType === "keydown") {
-                if (inputData.keyCode === constants_1.KEYS.VK_RETURN) {
+                if (inputData.keyCode === constants_1.KEYS.VK_E) {
+                    game.lang = "En";
+                    game.switchScreen(game.Screen.playScreen);
+                }
+                if (inputData.keyCode === constants_1.KEYS.VK_P) {
+                    game.lang = "Pt";
+                    game.switchScreen(game.Screen.playScreen);
+                }
+                if (inputData.keyCode === constants_1.KEYS.VK_RETURN || inputData.keyCode === constants_1.KEYS.VK_ENTER) {
+                    if (game.mainmenuOpt == 0)
+                        game.lang = "En";
+                    if (game.mainmenuOpt == 1)
+                        game.lang = "Pt";
                     game.switchScreen(game.Screen.playScreen);
                 }
                 if (inputData.keyCode === constants_1.KEYS.VK_COMMA) {
                     game.switchScreen(game.Screen.debugScreen);
+                }
+                if (inputData.keyCode === constants_1.KEYS.VK_LEFT) {
+                    game.mainmenuOpt -= 1;
+                    if (game.mainmenuOpt < 0)
+                        game.mainmenuOpt = 0;
+                }
+                if (inputData.keyCode === constants_1.KEYS.VK_RIGHT) {
+                    game.mainmenuOpt += 1;
+                    if (game.mainmenuOpt > 1)
+                        game.mainmenuOpt = 1;
                 }
             }
         }
@@ -8134,6 +8237,7 @@ function createCave(game) {
     let mapWidth = 120;
     let mapHeight = 90;
     game._map = new map_1.Map(mapWidth, mapHeight);
+    game._map.owner = game;
     let emptyTile = new tiles_1.Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
     console.log("Entered play screen.");
     for (let x = 0; x < mapWidth; x++) {
@@ -8165,6 +8269,7 @@ function createDungeon(game) {
     let mapWidth = 120;
     let mapHeight = 88;
     game._map = new map_1.Map(mapWidth, mapHeight);
+    game._map.owner = game;
     let emptyTile = new tiles_1.Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
     console.log("Entered debug screen.");
     for (let x = 0; x < mapWidth; x++) {

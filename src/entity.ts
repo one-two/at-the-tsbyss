@@ -124,8 +124,6 @@ export class Entity {
                 }
             }
         } else {
-            // if (this.glyph.char == '@') this._map.messageLog.addMessage("this is a %c{goldenrod}wall%c{}!");
-            // else this._map.messageLog.addMessage("hey fungi, this is a %c{goldenrod}wall%c{}!");
         }
     }
 
@@ -190,7 +188,8 @@ export class Entity {
                 let equip: MessageType = {
                     message : this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
                     type : 'pickup',
-                    color1 : item.glyph.foreground,
+                    color0 : item.glyph.foreground,
+                    color1 : [255,255,255],
                     color2 : [255,255,255]
                 };
                 this._map.messageLog.addMessage(equip);
@@ -205,7 +204,8 @@ export class Entity {
                 let equip: MessageType = {
                     message : this.name + " trocou uma %c{0}" + drop.name.toString() + "%c{1} por uma %c{0}"+ this.equipment.name.toString() +" %c{1}!",
                     type : 'pickup',
-                    color1 : item.glyph.foreground,
+                    color0 : item.glyph.foreground,
+                    color1 : [255,255,255],
                     color2 : [255,255,255]
                 };
                 this._map.messageLog.addMessage(equip);
@@ -217,13 +217,14 @@ export class Entity {
                 this.subequipment = item.item;
                 this.subequipment.owner = this;
                 item.item.expire = true;
-                let equip: MessageType = {
-                    message : this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
-                    type : 'pickup',
-                    color1 : item.glyph.foreground,
-                    color2 : [255,255,255]
-                };
-                this._map.messageLog.addMessage(equip);
+                // let equip: MessageType = {
+                //     message : this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
+                //     type : 'pickup',
+                //     color1 : item.glyph.foreground,
+                //     color2 : [255,255,255]
+                // };
+                //this._map.messageLog.addMessage(equip);
+                this._map.messageLog.newMessage(this, 'pickup', item)
             } else {
                 // colocar na backpack
                 let drop = CreateDropItem(this.subequipment, this.x, this.y);
@@ -235,10 +236,12 @@ export class Entity {
                 let equip: MessageType = {
                     message : this.name + " trocou uma %c{0}" + drop.name.toString() + "%c{1} por uma %c{0}"+ this.subequipment.name.toString() +" %c{1}!",
                     type : 'pickup',
-                    color1 : item.glyph.foreground,
+                    color0 : item.glyph.foreground,
+                    color1 : [255,255,255],
                     color2 : [255,255,255]
                 };
-                this._map.messageLog.addMessage(equip);
+                //this._map.messageLog.addMessage(equip);
+                this._map.messageLog.newMessage(this, 'switchEquip', item, this);
             }
         }
 
@@ -248,7 +251,7 @@ export class Entity {
         if (this.fighter != undefined) {
             if (this.glyph.char == '@') {
                 let result = this.fighter.attack(targets[0])
-                this._map.messageLog.addMessage(result);
+                //this._map.messageLog.addMessage(result);
             } else {
                 let player: any = undefined;
                 targets.forEach(element => {
@@ -258,7 +261,7 @@ export class Entity {
                 });
                 if (player != undefined) { 
                     let result = this.fighter.attack(player)
-                    this._map.messageLog.addMessage(result);
+                    //this._map.messageLog.addMessage(result);
                 } else {
                     
                 }
@@ -269,7 +272,10 @@ export class Entity {
     skill(targets: Entity[]) {
         targets.forEach((entity, i) => {
             if (entity != this.owner) {
-                if (entity.fighter != undefined) this._map.messageLog.addMessage(this.owner.fighter.equipment_skill(entity, this));
+                if (entity.fighter != undefined) {
+                    let res = this.owner.fighter.equipment_skill(entity, this);
+                    //this._map.messageLog.addMessage(res);
+                }
             }
         })
     }

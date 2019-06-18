@@ -28,17 +28,39 @@ export function startScreen() {
             }
 
              // Render our prompt to the screen
-            display.drawText((game._screenWidth/2)+6,game._screenHeight-5, "%c{yellow}tfw no rl1");
-            display.drawText((game._screenWidth/2),game._screenHeight-3, "Press [Enter] to start");
+            display.drawText((game._screenWidth/2),game._screenHeight-5, "%c{rgb(0, 191, 255)}where are you?");
+            display.drawText((game._screenWidth/2),game._screenHeight-3, "Press to start:");
+            if (game.mainmenuOpt == 0) display.drawText((game._screenWidth/2)-1,game._screenHeight-1, "%c{yellow}>[E]ng%c{}      [P]ort");
+            if (game.mainmenuOpt == 1) display.drawText((game._screenWidth/2),game._screenHeight-1, "[E]ng     %c{yellow}>[P]ort%c{}"); 
+            
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {
             // When [Enter] is pressed, go to the play screen
             if (inputType === "keydown") {
-                if (inputData.keyCode === KEYS.VK_RETURN) {
+                if (inputData.keyCode === KEYS.VK_E) {
+                    game.lang = "En";
+                    game.switchScreen(game.Screen.playScreen);
+                }
+                if (inputData.keyCode === KEYS.VK_P) {
+                    game.lang = "Pt";
+                    game.switchScreen(game.Screen.playScreen);
+                }
+                if (inputData.keyCode === KEYS.VK_RETURN || inputData.keyCode === KEYS.VK_ENTER) {
+                    if (game.mainmenuOpt == 0) game.lang = "En";
+                    if (game.mainmenuOpt == 1) game.lang = "Pt";
                     game.switchScreen(game.Screen.playScreen);
                 }
                 if (inputData.keyCode === KEYS.VK_COMMA) {
                     game.switchScreen(game.Screen.debugScreen);
+                }
+
+                if (inputData.keyCode === KEYS.VK_LEFT) {
+                    game.mainmenuOpt -= 1;
+                    if (game.mainmenuOpt < 0) game.mainmenuOpt = 0;
+                }
+                if (inputData.keyCode === KEYS.VK_RIGHT) {
+                    game.mainmenuOpt += 1;
+                    if (game.mainmenuOpt > 1) game.mainmenuOpt = 1;
                 }
             }
         }
@@ -356,6 +378,7 @@ function createCave(game: Game) {
     let mapWidth = 120;
     let mapHeight = 90;
     game._map = new Map(mapWidth, mapHeight);
+    game._map.owner = game;
     let emptyTile = new Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
     console.log("Entered play screen.");
     for (let x = 0; x < mapWidth; x++) {
@@ -388,6 +411,7 @@ function createDungeon(game: Game) {
     let mapWidth = 120;
     let mapHeight = 88;
     game._map = new Map(mapWidth, mapHeight);
+    game._map.owner = game;
     let emptyTile = new Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
     console.log("Entered debug screen.");
     for (let x = 0; x < mapWidth; x++) {
@@ -407,10 +431,10 @@ function createDungeon(game: Game) {
             //     game._map._tiles[x][y] = new Tile('Floor', '.', [0,0,0] , [84, 54, 11], true, false); //floor
             // }
             if (generator[x][y] == 1) {
-                game._map._tiles[x][y] = new Tile('wall', '#', [0, 0, 0], [218, 165, 32]); // false, true, true
+                game._map._tiles[x][y] = new Tile('wall', '#', [0, 0, 0], [128, 128, 128]); // false, true, true
             }
             if (generator[x][y] == 0) {
-                game._map._tiles[x][y] = new Tile('floor', '·', [0, 0, 0], [84, 54, 11]); //floor
+                game._map._tiles[x][y] = new Tile('floor', '·', [0, 0, 0], [60, 60, 60]); //floor
             }
             if (generator[x][y] == 2) {
                 game._map._tiles[x][y] = new Tile('floor', 'E', [0, 0, 0], [200, 0, 0]);

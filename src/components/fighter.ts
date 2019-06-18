@@ -70,7 +70,8 @@ export class Fighter {
             let msg: MessageType = {
                 message: "%c{0}" +this.owner.name + "%c{1} morreu",
                 type: 'death',
-                color1: this.owner.glyph.foreground,
+                color0: this.owner.glyph.foreground,
+                color1: [255,255,255],
                 color2: [255,255,255]
             };
             this.owner._map.messageLog.addMessage(msg);//"%c{"+ this.owner.glyph.foreground +"}" + this.owner.name + "%c{} morreu")
@@ -90,7 +91,8 @@ export class Fighter {
         let result: MessageType = {
             message : '',
             type : 'fight',
-            color1 : target.glyph.foreground,
+            color0 : target.glyph.foreground,
+            color1 : [255,255,255],
             color2 : [255,255,255]
         };
         let damage = this.power() * (1 - (target.fighter.defense()/(10 + target.fighter.defense())));
@@ -102,9 +104,11 @@ export class Fighter {
             // results.extend(target.fighter.take_damage(damage))
             let death = target.fighter.takeDamage(damage)
             if (death) this.getExp(target.fighter.xp);
-            result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} com "+ damage + " de dano! (" +target.fighter.hp.toFixed(2) +")";
+            this.owner._map.messageLog.newMessage(this.owner, 'fight', target, undefined, damage.toString());
+            //result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} com "+ damage + " de dano! (" +target.fighter.hp.toFixed(2) +")";
         } else {
-            result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
+            this.owner._map.messageLog.newMessage(this.owner, 'fightZeroDamage', target, undefined, damage.toString());
+            //result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
         }
         return result
     }
@@ -113,7 +117,8 @@ export class Fighter {
         let result: MessageType = {
             message : '',
             type : 'skill',
-            color1 : target.glyph.foreground,
+            color0 : target.glyph.foreground,
+            color1 : [255,255,255],
             color2 : [255,255,255]
         };
         let damage = this.skill_power()*dmgBlock.damage.multiplier * (1 - (target.fighter.defense()/(10 + target.fighter.defense())));
@@ -125,9 +130,11 @@ export class Fighter {
             // results.extend(target.fighter.take_damage(damage))
             let death = target.fighter.takeDamage(damage)
             if (death) this.getExp(target.fighter.xp);
-            result.message = this.owner.name + " usou uma " + dmgBlock.name + " em um %c{0}" + target.name + "%c{1} com "+ damage + " de dano! (" +target.fighter.hp.toFixed(2) +")";
+            this.owner._map.messageLog.newMessage(this.owner, 'skill', target, dmgBlock, damage.toString());
+            //result.message = this.owner.name + " usou uma " + dmgBlock.name + " em um %c{0}" + target.name + "%c{1} com "+ damage + " de dano! (" +target.fighter.hp.toFixed(2) +")";
         } else {
-            result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
+            this.owner._map.messageLog.newMessage(this.owner, 'skillZeroDamage', target, dmgBlock, damage.toString());
+            //result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} mas não causou dano!";
         }
         return result
     }
