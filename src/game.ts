@@ -9,6 +9,8 @@ import { Fighter } from "./components/fighter";
 import { Messagelog } from "./messages";
 import { Map } from "./map";
 import { Logo } from "../logo/logo";
+import { CreateItem } from "./helper/createItens";
+import { Knife } from "./content/itens/knife";
 
 
 
@@ -31,7 +33,7 @@ export class Game {
 	_entities: Entity[] = [];
 	timer: boolean = true;
 	logo: any;
-	level: number = 1;
+	level: number = 5;
 	blinkLevel: number = 0;
 	lang: string = "En";
 	mainmenuOpt:number = 0;
@@ -83,6 +85,7 @@ export class Game {
 		window.addEventListener(event, e => {
 			// When an event is received, send it to the
 			// screen if there is one
+			
 			if (this._currentScreen !== null) {
 				// Send the event type and data to the screen
 				this._currentScreen.handleInput(event, e, this);
@@ -90,6 +93,11 @@ export class Game {
 				this._currentScreen.render(this._display, this);
 			}
 		});
+
+		window.onkeydown = ((e) => {
+			if (e.keyCode == 8 && e.target == document.body)
+			e.preventDefault();
+		})
 		//add event listener to inv
 		menu.addEventListener("click", e => {
 			this._currentScreen.handleInput("click", e, this);
@@ -123,7 +131,7 @@ export class Game {
 		let base = 255;
 		for (let message of this.messageLog.messages) {
 			alpha += 0.1;
-			if (message.type == 'death' || message.type == 'fight' || message.type == 'skill' || message.type == 'pickup') {
+			//if (message.type.startsWith('death') || message.type.startsWith('fight') || message.type.startsWith('skill') || message.type.startsWith('pickup') || message.type.startsWith('potion')) {
 				let basefading = "%c{rgb(" + (base*alpha).toString() +","+ (base*alpha).toString() +","+ (base*alpha).toString() +")}";
 				fading = "%c{rgb(" + Math.round(message.color0[0]*alpha).toString() +","+Math.round(message.color0[1]*alpha).toString() +","+Math.round(message.color0[2]*alpha).toString() +")}";
 				fading2 = "%c{rgb(" + Math.round(message.color1[0]*alpha).toString() +","+Math.round(message.color1[1]*alpha).toString() +","+Math.round(message.color1[2]*alpha).toString() +")}";
@@ -134,7 +142,7 @@ export class Game {
 				outf = out3.replace(/%c\{base}/g, basefading);
 				this._messaging.drawText(1, x, ''+outf, this._screenWidth*2);
 
-			}
+			//}
 			x += 1
 		}
 	}
@@ -185,6 +193,9 @@ export class Game {
 			this._inventory.drawText(3, 26, "%c{rgb(140, 140, 160)}hp: %c{}"+ this._player.subequipment.hp_bonus.toFixed(2));
 			this._inventory.drawText(3, 27, "%c{rgb(140, 140, 160)}cd: %c{}"+ (this._player.subequipment.max_cooldown-this._player.subequipment.cooldown).toFixed(0) + "/" + this._player.subequipment.max_cooldown.toFixed(0));
 			
+			this._inventory.drawText(1, 29, "%c{rgb(0, 255, 102)}Potions: %c{}"+ this._player.inventory + " [p]");
+		} else {
+			this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Potions: %c{}"+ this._player.inventory + " [p]");
 		}
 	}
 
@@ -237,10 +248,14 @@ window.onload = function() {
 	let game = new Game();
 	// Initialize the game
 	let fighter = new Fighter(999, 1, 4, 0);
-	let player = new Entity(60, 45, new Glyph('@', [0,0,0], [0, 191, 255]), 'Player', 1, true, 1, 1, fighter, undefined, true);
+	let player = new Entity(60, 45, new Glyph('@', [0,0,0], [0, 191, 255]), 'The Princess', 1, true, 1, 1, fighter, undefined, true);
 	player.fighter.unspentPoints = 0;
 	game._player = player
 	game._entities = [game._player];
+	let knife = new Knife();
+	knife.owner = game._player;
+	game._player.equipment = CreateItem('knife', game._player.x, game._player.y).item;
+	game._player.equipment.owner = game._player;
 	game.init();
 	// Add the container to our HTML page
 	let doc = document.getElementById("game");
@@ -251,6 +266,7 @@ window.onload = function() {
 	msg.appendChild(game.getMessaging().getContainer());
 
 	// Load the start screen
+	game.startCountDown();
 	game.switchScreen(game.Screen.startScreen);
 }
 

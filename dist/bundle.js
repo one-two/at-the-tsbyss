@@ -5228,7 +5228,7 @@ class DamageBlock {
             counter--;
             if (counter == 2) {
                 let newColor = this.owner.glyph.foreground.map(element => {
-                    element = element * 4.3 > 250 ? 250 : element * 4.3;
+                    element = element * 4 > 250 ? 250 : element * 4;
                     return element;
                 });
                 this.owner.glyph.foreground = [250, newColor[1], newColor[2]]; //[216, 112, 147] //
@@ -5662,6 +5662,60 @@ class Knife extends equipment_1.Equipment {
     }
 }
 exports.Knife = Knife;
+
+
+/***/ }),
+
+/***/ "./src/content/itens/potion.ts":
+/*!*************************************!*\
+  !*** ./src/content/itens/potion.ts ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const equipment_1 = __webpack_require__(/*! ../../components/equipment */ "./src/components/equipment.ts");
+const damageBlock_1 = __webpack_require__(/*! ../../components/damageBlock */ "./src/components/damageBlock.ts");
+const glyph_1 = __webpack_require__(/*! ../../glyph */ "./src/glyph.ts");
+const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
+class Potion extends equipment_1.Equipment {
+    constructor(drop = undefined) {
+        super("bag");
+        this.power_bonus = 2;
+        this.skill_bonus = 0.5;
+        this.defense_bonus = 0;
+        this.hp_bonus = 0;
+        this.prefix = '';
+        this.name = 'potion';
+        this.cooldown = 8;
+        this.max_cooldown = 8;
+        this.glyph = new glyph_1.Glyph('ზ', [0, 0, 0], [204, 200, 0]);
+    }
+    strike() {
+        if (this.cooldown == 0) {
+            this.cooldown = this.max_cooldown;
+            let dir = this.owner.face;
+            let dmg = new damageBlock_1.DamageBlock(this.skill_bonus);
+            let attack = null;
+            dmg.owner = this.owner;
+            if (this.owner.face == 's') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 1, this.name, this.skill_bonus);
+            }
+            else if (this.owner.face == 'n') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 1, this.name, this.skill_bonus);
+            }
+            else if (this.owner.face == 'w') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y, this.name, this.skill_bonus);
+            }
+            else if (this.owner.face == 'e') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y, this.name, this.skill_bonus);
+            }
+        }
+    }
+}
+exports.Potion = Potion;
 
 
 /***/ }),
@@ -6243,6 +6297,8 @@ const deathFunction_1 = __webpack_require__(/*! ./helper/deathFunction */ "./src
 const createItens_1 = __webpack_require__(/*! ./helper/createItens */ "./src/helper/createItens.ts");
 class Entity {
     constructor(x, y, glyph, name, size = 0, blocks = false, maxStamina = 0, render_order = 99, fighter = undefined, ai = undefined, player = false, item = undefined, inventory = undefined, damage = undefined, stairs = undefined, level = undefined, equipment = undefined, equippable = undefined, _map = undefined, _entities = undefined) {
+        this.regen = undefined;
+        this.regenMax = 10;
         this.x = x;
         this.y = y;
         this.x2 = x + size - 1;
@@ -6263,6 +6319,7 @@ class Entity {
         this.damage = damage;
         this.player = player;
         this.item = item;
+        this.inventory = 10;
         if (this.player == true) {
             this.startMoveCountDown();
             this.startAttackCountDown();
@@ -6285,6 +6342,9 @@ class Entity {
         }
         if (this.item != undefined) {
             this.item.owner = this;
+        }
+        if (this.inventory != undefined) {
+            this.inventory = 10;
         }
     }
     move(dx, dy, map) {
@@ -6383,14 +6443,7 @@ class Entity {
                 this.equipment = item.item;
                 this.equipment.owner = this;
                 item.item.expire = true;
-                let equip = {
-                    message: this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
-                    type: 'pickup',
-                    color0: item.glyph.foreground,
-                    color1: [255, 255, 255],
-                    color2: [255, 255, 255]
-                };
-                this._map.messageLog.addMessage(equip);
+                this._map.messageLog.newMessage(this, 'pickup', item);
             }
             else {
                 // colocar na backpack
@@ -6400,14 +6453,7 @@ class Entity {
                 this.equipment = item.item;
                 this.equipment.owner = this;
                 item.item.expire = true;
-                let equip = {
-                    message: this.name + " trocou uma %c{0}" + drop.name.toString() + "%c{1} por uma %c{0}" + this.equipment.name.toString() + " %c{1}!",
-                    type: 'pickup',
-                    color0: item.glyph.foreground,
-                    color1: [255, 255, 255],
-                    color2: [255, 255, 255]
-                };
-                this._map.messageLog.addMessage(equip);
+                this._map.messageLog.newMessage(this, 'switchEquip', item, this);
             }
             console.log(this);
         }
@@ -6416,13 +6462,6 @@ class Entity {
                 this.subequipment = item.item;
                 this.subequipment.owner = this;
                 item.item.expire = true;
-                // let equip: MessageType = {
-                //     message : this.name + " empunhou uma %c{0}" + item.name.toString() + "%c{1} !",
-                //     type : 'pickup',
-                //     color1 : item.glyph.foreground,
-                //     color2 : [255,255,255]
-                // };
-                //this._map.messageLog.addMessage(equip);
                 this._map.messageLog.newMessage(this, 'pickup', item);
             }
             else {
@@ -6433,23 +6472,42 @@ class Entity {
                 this.subequipment = item.item;
                 this.subequipment.owner = this;
                 item.item.expire = true;
-                let equip = {
-                    message: this.name + " trocou uma %c{0}" + drop.name.toString() + "%c{1} por uma %c{0}" + this.subequipment.name.toString() + " %c{1}!",
-                    type: 'pickup',
-                    color0: item.glyph.foreground,
-                    color1: [255, 255, 255],
-                    color2: [255, 255, 255]
-                };
-                //this._map.messageLog.addMessage(equip);
                 this._map.messageLog.newMessage(this, 'switchEquip', item, this);
             }
+        }
+        else if (item.item.type == "bag") {
+            if (item.item.expire == false) {
+                this.inventory += 1;
+                this._map.messageLog.newMessage(this, 'pickup', item);
+            }
+            item.item.expire = true;
+        }
+    }
+    usePotion() {
+        if (this.inventory == 0) {
+            this._map.messageLog.newMessage(this, 'potionZero');
+            return;
+        }
+        this._map.messageLog.newMessage(this, 'potion');
+        this.inventory -= 1;
+        if (this.regen == undefined) {
+            this.regen = setInterval(() => {
+                if (this.regenMax > 0) {
+                    this.fighter.heal(this.fighter.max_hp() * 0.035);
+                    this.regenMax -= 1;
+                }
+                if (this.regenMax == 0) {
+                    this.regenMax = 10;
+                    clearInterval(this.regen);
+                    this.regen = undefined;
+                }
+            }, 500);
         }
     }
     attack(targets) {
         if (this.fighter != undefined) {
             if (this.glyph.char == '@') {
-                let result = this.fighter.attack(targets[0]);
-                //this._map.messageLog.addMessage(result);
+                this.fighter.attack(targets[0]);
             }
             else {
                 let player = undefined;
@@ -6459,8 +6517,7 @@ class Entity {
                     }
                 });
                 if (player != undefined) {
-                    let result = this.fighter.attack(player);
-                    //this._map.messageLog.addMessage(result);
+                    this.fighter.attack(player);
                 }
                 else {
                 }
@@ -6471,8 +6528,7 @@ class Entity {
         targets.forEach((entity, i) => {
             if (entity != this.owner) {
                 if (entity.fighter != undefined) {
-                    let res = this.owner.fighter.equipment_skill(entity, this);
-                    //this._map.messageLog.addMessage(res);
+                    this.owner.fighter.equipment_skill(entity, this);
                 }
             }
         });
@@ -6572,6 +6628,8 @@ const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
 const fighter_1 = __webpack_require__(/*! ./components/fighter */ "./src/components/fighter.ts");
 const messages_1 = __webpack_require__(/*! ./messages */ "./src/messages.ts");
 const logo_1 = __webpack_require__(/*! ../logo/logo */ "./logo/logo.ts");
+const createItens_1 = __webpack_require__(/*! ./helper/createItens */ "./src/helper/createItens.ts");
+const knife_1 = __webpack_require__(/*! ./content/itens/knife */ "./src/content/itens/knife.ts");
 class Game {
     constructor() {
         this._messageBoxSize = 10;
@@ -6579,7 +6637,7 @@ class Game {
         this._screenHeight = 40;
         this._entities = [];
         this.timer = true;
-        this.level = 1;
+        this.level = 5;
         this.blinkLevel = 0;
         this.lang = "En";
         this.mainmenuOpt = 0;
@@ -6632,6 +6690,10 @@ class Game {
                 this._currentScreen.render(this._display, this);
             }
         });
+        window.onkeydown = ((e) => {
+            if (e.keyCode == 8 && e.target == document.body)
+                e.preventDefault();
+        });
         //add event listener to inv
         menu.addEventListener("click", e => {
             this._currentScreen.handleInput("click", e, this);
@@ -6661,17 +6723,17 @@ class Game {
         let base = 255;
         for (let message of this.messageLog.messages) {
             alpha += 0.1;
-            if (message.type == 'death' || message.type == 'fight' || message.type == 'skill' || message.type == 'pickup') {
-                let basefading = "%c{rgb(" + (base * alpha).toString() + "," + (base * alpha).toString() + "," + (base * alpha).toString() + ")}";
-                fading = "%c{rgb(" + Math.round(message.color0[0] * alpha).toString() + "," + Math.round(message.color0[1] * alpha).toString() + "," + Math.round(message.color0[2] * alpha).toString() + ")}";
-                fading2 = "%c{rgb(" + Math.round(message.color1[0] * alpha).toString() + "," + Math.round(message.color1[1] * alpha).toString() + "," + Math.round(message.color1[2] * alpha).toString() + ")}";
-                fading3 = "%c{rgb(" + Math.round(message.color2[0] * alpha).toString() + "," + Math.round(message.color2[1] * alpha).toString() + "," + Math.round(message.color2[2] * alpha).toString() + ")}";
-                out = message.message.replace(/%c\{0}/g, fading);
-                out2 = out.replace(/%c\{1}/g, fading2);
-                out3 = out2.replace(/%c\{2}/g, fading3);
-                outf = out3.replace(/%c\{base}/g, basefading);
-                this._messaging.drawText(1, x, '' + outf, this._screenWidth * 2);
-            }
+            //if (message.type.startsWith('death') || message.type.startsWith('fight') || message.type.startsWith('skill') || message.type.startsWith('pickup') || message.type.startsWith('potion')) {
+            let basefading = "%c{rgb(" + (base * alpha).toString() + "," + (base * alpha).toString() + "," + (base * alpha).toString() + ")}";
+            fading = "%c{rgb(" + Math.round(message.color0[0] * alpha).toString() + "," + Math.round(message.color0[1] * alpha).toString() + "," + Math.round(message.color0[2] * alpha).toString() + ")}";
+            fading2 = "%c{rgb(" + Math.round(message.color1[0] * alpha).toString() + "," + Math.round(message.color1[1] * alpha).toString() + "," + Math.round(message.color1[2] * alpha).toString() + ")}";
+            fading3 = "%c{rgb(" + Math.round(message.color2[0] * alpha).toString() + "," + Math.round(message.color2[1] * alpha).toString() + "," + Math.round(message.color2[2] * alpha).toString() + ")}";
+            out = message.message.replace(/%c\{0}/g, fading);
+            out2 = out.replace(/%c\{1}/g, fading2);
+            out3 = out2.replace(/%c\{2}/g, fading3);
+            outf = out3.replace(/%c\{base}/g, basefading);
+            this._messaging.drawText(1, x, '' + outf, this._screenWidth * 2);
+            //}
             x += 1;
         }
     }
@@ -6718,6 +6780,10 @@ class Game {
             this._inventory.drawText(3, 25, "%c{rgb(140, 140, 160)}def: %c{}" + this._player.subequipment.defense_bonus.toFixed(2));
             this._inventory.drawText(3, 26, "%c{rgb(140, 140, 160)}hp: %c{}" + this._player.subequipment.hp_bonus.toFixed(2));
             this._inventory.drawText(3, 27, "%c{rgb(140, 140, 160)}cd: %c{}" + (this._player.subequipment.max_cooldown - this._player.subequipment.cooldown).toFixed(0) + "/" + this._player.subequipment.max_cooldown.toFixed(0));
+            this._inventory.drawText(1, 29, "%c{rgb(0, 255, 102)}Potions: %c{}" + this._player.inventory + " [p]");
+        }
+        else {
+            this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Potions: %c{}" + this._player.inventory + " [p]");
         }
     }
     switchScreen(screen) {
@@ -6766,10 +6832,14 @@ window.onload = function () {
     let game = new Game();
     // Initialize the game
     let fighter = new fighter_1.Fighter(999, 1, 4, 0);
-    let player = new entity_1.Entity(60, 45, new glyph_1.Glyph('@', [0, 0, 0], [0, 191, 255]), 'Player', 1, true, 1, 1, fighter, undefined, true);
+    let player = new entity_1.Entity(60, 45, new glyph_1.Glyph('@', [0, 0, 0], [0, 191, 255]), 'The Princess', 1, true, 1, 1, fighter, undefined, true);
     player.fighter.unspentPoints = 0;
     game._player = player;
     game._entities = [game._player];
+    let knife = new knife_1.Knife();
+    knife.owner = game._player;
+    game._player.equipment = createItens_1.CreateItem('knife', game._player.x, game._player.y).item;
+    game._player.equipment.owner = game._player;
     game.init();
     // Add the container to our HTML page
     let doc = document.getElementById("game");
@@ -6779,6 +6849,7 @@ window.onload = function () {
     let msg = document.getElementById("info");
     msg.appendChild(game.getMessaging().getContainer());
     // Load the start screen
+    game.startCountDown();
     game.switchScreen(game.Screen.startScreen);
 };
 
@@ -6830,9 +6901,9 @@ function createDamageBlock(creator, x, y, name, multi, glyph = '╳', timeout = 
     dmg.owner = creator;
     //console.log(creator);
     if (creator.player)
-        attack = new entity_1.Entity(x, y, new glyph_1.Glyph(glyph, [0, 0, 0], [creator.glyph.foreground[1] / 4, creator.glyph.foreground[1] / 4, creator.glyph.foreground[2] / 4]), name, 1, false, 0, 5, undefined, undefined, false, undefined, undefined, dmg);
+        attack = new entity_1.Entity(x, y, new glyph_1.Glyph(glyph, [0, 0, 0], [creator.glyph.foreground[1], creator.glyph.foreground[1] / 3, creator.glyph.foreground[2] / 3]), name, 1, false, 0, 5, undefined, undefined, false, undefined, undefined, dmg);
     else
-        attack = new entity_1.Entity(x, y, new glyph_1.Glyph(glyph, [0, 0, 0], [150, creator.glyph.foreground[1] / 4, creator.glyph.foreground[2] / 4]), name, 1, false, 0, 5, undefined, undefined, false, undefined, undefined, dmg);
+        attack = new entity_1.Entity(x, y, new glyph_1.Glyph(glyph, [0, 0, 0], [150, creator.glyph.foreground[1] / 3, creator.glyph.foreground[2] / 3]), name, 1, false, 0, 5, undefined, undefined, false, undefined, undefined, dmg);
     attack._map = creator._map;
     attack.damage.startCountDown();
     attack.owner = creator;
@@ -6859,10 +6930,17 @@ const glyph_1 = __webpack_require__(/*! ../glyph */ "./src/glyph.ts");
 const sword_1 = __webpack_require__(/*! ../content/itens/sword */ "./src/content/itens/sword.ts");
 const spear_1 = __webpack_require__(/*! ../content/itens/spear */ "./src/content/itens/spear.ts");
 const shield_1 = __webpack_require__(/*! ../content/itens/shield */ "./src/content/itens/shield.ts");
+const potion_1 = __webpack_require__(/*! ../content/itens/potion */ "./src/content/itens/potion.ts");
 // function ItemFactory(name: string, x: number, y): Entity{
 //     return new Entity(x, y, new Glyph('Ϯ', [0,0,0], [204, 200, 0]), 'knife', 1, false, 5, 2, undefined, undefined, false, item_component);
 // }
 function CreateItem(item_choice, x, y) {
+    if (item_choice == 'potion') {
+        let item_component = new potion_1.Potion();
+        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('ზ', [0, 0, 0], [50, 200, 50]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
+    }
     if (item_choice == 'knife') {
         let item_component = new knife_1.Knife();
         let item = new entity_1.Entity(x, y, new glyph_1.Glyph('🗡', [0, 0, 0], [204, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
@@ -7688,9 +7766,9 @@ class Map {
         return player;
     }
     addEntityToMap() {
-        let max_monsters_per_room = randFromLevel_1.from_dungeon_level([[20, 1], [30, 4], [40, 6]], this.dungeon_level);
-        let max_items_per_room = randFromLevel_1.from_dungeon_level([[10, 1], [2, 4]], this.dungeon_level);
-        let number_of_monsters = randint_1.randint(3, max_monsters_per_room);
+        let max_monsters_per_room = randFromLevel_1.from_dungeon_level([[30, 1], [40, 4], [40, 6]], this.dungeon_level);
+        let max_items_per_room = randFromLevel_1.from_dungeon_level([[2, 1], [2, 4]], this.dungeon_level);
+        let number_of_monsters = randint_1.randint(Math.ceil(max_monsters_per_room / 2), max_monsters_per_room);
         let number_of_items = randint_1.randint(1, max_items_per_room);
         let monster_chances = monsterProbabilities_1.monsterProbabilities(this.dungeon_level);
         let item_chances = itemProbabilities_1.itemProbabilities(this.dungeon_level);
@@ -7733,7 +7811,7 @@ class Map {
                 let item_choice = randFromLevel_1.random_choice_from_dict(item_chances);
                 let q;
                 if (index == 1)
-                    q = createItens_1.CreateItem("shield", 61, 45);
+                    q = createItens_1.CreateItem("potion", 61, 45);
                 else
                     q = createItens_1.CreateItem(item_choice, x, y);
                 console.log(item_choice + '- ' + x + ' ' + y);
@@ -7824,7 +7902,7 @@ class Messagelog {
         }
         this.messages.push(message);
     }
-    newMessage(actor, type, target1, target2 = undefined, extrainfo = '') {
+    newMessage(actor, type, target1 = undefined, target2 = undefined, extrainfo = '') {
         let newMessage = {
             message: '',
             type: type,
@@ -7835,46 +7913,62 @@ class Messagelog {
         switch (this.game.lang) {
             case "En":
                 if (type == 'pickup') {
-                    newMessage.message = "%c{0}" + actor.name + "%c{base} equipped a %c{1}" + target1.name + "%c{base} !";
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} equipped: %c{1}" + target1.name + "%c{base} !";
                 }
                 if (type == 'switchEquip') {
-                    newMessage.message = "%c{0}" + actor.name + "%c{base} switched a %c{1}" + target1.name.toString() + "%c{base} for a %c{2}" + actor.subequipment.name.toString() + " %c{base}!";
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} switched: %c{1}" + target1.name.toString() + "%c{base} for: %c{2}" + actor.subequipment.name.toString() + " %c{base}!";
                 }
                 if (type == 'fight') {
                     let damage = extrainfo;
-                    newMessage.message = "%c{0}" + actor.name + "%c{base} hit a %c{0}" + target1.name + "%c{base} and dealt " + damage + " damage! (" + target1.fighter.hp.toFixed(2) + ")";
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} hit %c{1}" + target1.name + "%c{base} and dealt " + damage + " damage! (" + target1.fighter.hp.toFixed(2) + ")";
                 }
                 if (type == 'fightZeroDamage') {
-                    newMessage.message = "%c{0}" + actor.name + "%c{base} hit a %c{0}" + target1.name + "%c{base} but it was ineffective!";
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} hit %c{1}" + target1.name + "%c{base}, but it was ineffective!";
                 }
                 if (type == 'skill') {
                     let damage = extrainfo;
-                    newMessage.message = "%c{0}" + actor.name + "%c{base} used a %c{2}" + target2.name + "%c{base} in a %c{1}" + target1.name + "%c{base} and caused " + damage + " damage! (" + target1.fighter.hp.toFixed(2) + ")";
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} used %c{2}" + target2.name + "%c{base}, on %c{1}" + target1.name + "%c{base} and caused " + damage + " damage! (" + target1.fighter.hp.toFixed(2) + ")";
                 }
                 if (type == 'skillZeroDamage') {
-                    newMessage.message = "%c{0}" + actor.name + "%c{base} hit a %c{2}" + target2.name + "%c{base} but it was ineffective!";
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} hit %c{2}" + target2.name + "%c{base}, but it was ineffective!";
+                }
+                if (type == 'potion') {
+                    newMessage.color1 = [0, 255, 120];
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} used a %c{1}Potion%c{base}, regenerating " + (actor.fighter.max_hp() * 0.35).toFixed(0) + " of hp!";
+                }
+                if (type == 'potionZero') {
+                    newMessage.color1 = [0, 255, 120];
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} have no %c{1}Potion%c{base} to use!";
                 }
                 break;
             case "Pt":
                 if (type == 'pickup') {
-                    newMessage.message = "%c{0}" + actor.name + "%c{base} empunhou uma %c{1}" + target1.name + "%c{base} !";
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} empunhou: %c{1}" + target1.name + "%c{base} !";
                 }
                 if (type == 'switchEquip') {
-                    newMessage.message = "%c{0}" + actor.name + "%c{base} trocou uma %c{1}" + target1.name.toString() + "%c{base} por uma %c{2}" + actor.subequipment.name.toString() + " %c{base}!";
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} trocou: %c{1}" + target1.name.toString() + "%c{base} por: %c{2}" + actor.subequipment.name.toString() + " %c{base}!";
                 }
                 if (type == 'fight') {
                     let damage = extrainfo;
-                    newMessage.message = "%c{0}" + actor.name + "%c{base} bateu em um %c{0}" + target1.name + "%c{base} com " + damage + " de dano! (" + target1.fighter.hp.toFixed(2) + ")";
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} bateu em %c{1}" + target1.name + "%c{base} com " + damage + " de dano! (" + target1.fighter.hp.toFixed(2) + ")";
                 }
                 if (type == 'fightZeroDamage') {
-                    newMessage.message = "%c{0}" + actor.name + "%c{base} bateu em um %c{0}" + target1.name + "%c{base} mas não causou dano!";
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} bateu em %c{1}" + target1.name + "%c{base}, mas não causou dano!";
                 }
                 if (type == 'skill') {
                     let damage = extrainfo;
-                    newMessage.message = "%c{0}" + actor.name + "%c{base} usou uma %c{2}" + target2.name + "%c{base} em um %c{1}" + target1.name + "%c{base} com " + damage + " de dano! (" + target1.fighter.hp.toFixed(2) + ")";
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} usou %c{2}" + target2.name + "%c{base} em %c{1}" + target1.name + "%c{base} com " + damage + " de dano! (" + target1.fighter.hp.toFixed(2) + ")";
                 }
                 if (type == 'skillZeroDamage') {
-                    newMessage.message = "%c{0}" + actor.name + "%c{base} bateu em um %c{2}" + target2.name + "%c{base} mas não causou dano!";
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} bateu em %c{2}" + target2.name + "%c{base}, mas não causou dano!";
+                }
+                if (type == 'potion') {
+                    newMessage.color1 = [0, 255, 120];
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} usou uma %c{1}Poção%c{base}, regenerando " + (actor.fighter.max_hp() * 0.35).toFixed(0) + " de vida!";
+                }
+                if (type == 'potionZero') {
+                    newMessage.color1 = [0, 255, 120];
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} não tem %c{1}Poção%c{base} pra usar!";
                 }
                 break;
             default:
@@ -7906,7 +8000,6 @@ const maps = __webpack_require__(/*! ../lib/map */ "./lib/map/index.js");
 const randint_1 = __webpack_require__(/*! ./helper/randint */ "./src/helper/randint.ts");
 const knife_1 = __webpack_require__(/*! ./content/itens/knife */ "./src/content/itens/knife.ts");
 const dungeonMaze_1 = __webpack_require__(/*! ./helper/dungeonMaze */ "./src/helper/dungeonMaze.ts");
-const createItens_1 = __webpack_require__(/*! ./helper/createItens */ "./src/helper/createItens.ts");
 function startScreen() {
     //Game.Screen.startScreen = {
     return {
@@ -7922,30 +8015,43 @@ function startScreen() {
                 display.drawText(20, y, line);
                 y += 1;
             }
+            let blink = "";
+            if (game.blinkLevel < 2)
+                blink = "%c{rgb(140, 140, 140)}";
+            if (game.blinkLevel >= 2)
+                blink = "%c{rgb(240, 240, 240)}";
+            if (game.blinkLevel > 5)
+                game.blinkLevel = 0;
+            game.blinkLevel += 1;
+            console.log(game.blinkLevel);
             // Render our prompt to the screen
-            display.drawText((game._screenWidth / 2), game._screenHeight - 5, "%c{rgb(0, 191, 255)}where are you?");
-            display.drawText((game._screenWidth / 2), game._screenHeight - 3, "Press to start:");
+            display.drawText((game._screenWidth / 2), game._screenHeight - 5, "%c{rgb(0, 191, 255)}We are lost...");
+            display.drawText((game._screenWidth / 2) - 5, game._screenHeight - 3, "%c{rgb(0, 191, 255)}Who are you? %c{}" + game._entities[0].name + blink + "_");
             if (game.mainmenuOpt == 0)
-                display.drawText((game._screenWidth / 2) - 1, game._screenHeight - 1, "%c{yellow}>[E]ng%c{}      [P]ort");
+                display.drawText((game._screenWidth / 2) - 1, game._screenHeight - 1, "%c{yellow}>Eng%c{}      Port");
             if (game.mainmenuOpt == 1)
-                display.drawText((game._screenWidth / 2), game._screenHeight - 1, "[E]ng     %c{yellow}>[P]ort%c{}");
+                display.drawText((game._screenWidth / 2), game._screenHeight - 1, "Eng     %c{yellow}>Port%c{}");
         },
         handleInput: (inputType, inputData, game) => {
             // When [Enter] is pressed, go to the play screen
             if (inputType === "keydown") {
-                if (inputData.keyCode === constants_1.KEYS.VK_E) {
-                    game.lang = "En";
-                    game.switchScreen(game.Screen.playScreen);
-                }
-                if (inputData.keyCode === constants_1.KEYS.VK_P) {
-                    game.lang = "Pt";
-                    game.switchScreen(game.Screen.playScreen);
-                }
+                // if (inputData.keyCode === KEYS.VK_E) {
+                //     game.lang = "En";
+                //     game.switchScreen(game.Screen.playScreen);
+                // }
+                // if (inputData.keyCode === KEYS.VK_P) {
+                //     game.lang = "Pt";
+                //     game.switchScreen(game.Screen.playScreen);
+                // }
                 if (inputData.keyCode === constants_1.KEYS.VK_RETURN || inputData.keyCode === constants_1.KEYS.VK_ENTER) {
                     if (game.mainmenuOpt == 0)
                         game.lang = "En";
                     if (game.mainmenuOpt == 1)
                         game.lang = "Pt";
+                    let hash = hashStringToColor(game._entities[0].name);
+                    game._entities[0].glyph.foreground[0] = Color.fromString(hash)[0];
+                    game._entities[0].glyph.foreground[1] = Color.fromString(hash)[1];
+                    game._entities[0].glyph.foreground[2] = Color.fromString(hash)[2];
                     game.switchScreen(game.Screen.playScreen);
                 }
                 if (inputData.keyCode === constants_1.KEYS.VK_COMMA) {
@@ -7961,6 +8067,13 @@ function startScreen() {
                     if (game.mainmenuOpt > 1)
                         game.mainmenuOpt = 1;
                 }
+                if (inputData.keyCode >= 65 && inputData.keyCode <= 90)
+                    game._entities[0].name = game._entities[0].name + inputData.key;
+                if (inputData.keyCode == 8 && game._entities[0].name.length > 0) {
+                    game._entities[0].name = game._entities[0].name.slice(0, -1);
+                }
+                if (inputData.keyCode == 32 && game._entities[0].name.length > 0)
+                    game._entities[0].name = game._entities[0].name + " ";
             }
         }
     };
@@ -7988,7 +8101,7 @@ function debugScreen() {
             //game._map._entities.push(monster);
             //let knifeItem = new Entity()
             game.timer = true;
-            game.startCountDown();
+            //game.startCountDown();
             game._map.addEntityToMap();
             game._entities = game._map._entities;
         },
@@ -8104,23 +8217,12 @@ function playScreen() {
             }
             // Sync map and game variables
             game._map._entities = [];
-            // debug stuff
-            let knife = new knife_1.Knife();
-            knife.owner = game._player;
-            game._player.equipment = createItens_1.CreateItem('knife', game._player.x, game._player.y).item;
-            game._player.equipment.owner = game._player;
             game._map._entities.push(game._player); //player always [0]
             game._player._map = game._map;
             game._map._display = game._display;
             game._map.messageLog = game.messageLog;
-            //let ai_component = new Fungi();
-            //let fighter_component = new Fighter(20, 0, 3, 35);
-            //let monster = new Entity(60, 47, new Glyph('f', 'black', '#0000aa'), 'fungi', 1, true, 2, 2, fighter_component, ai_component, false);
-            //monster._map = game._map;
-            //game._map._entities.push(monster);
-            //let knifeItem = new Entity()
             game.timer = true;
-            game.startCountDown();
+            //game.startCountDown();
             game._map.dungeon_level = game.level;
             game._map.addEntityToMap();
             game._entities = game._map._entities;
@@ -8200,6 +8302,8 @@ function playScreen() {
                     case constants_1.KEYS.VK_RIGHT:
                         game._entities[0].move(1, 0, game._map);
                         break;
+                    case constants_1.KEYS.VK_P:
+                        game._entities[0].usePotion();
                     default:
                         break;
                 }
@@ -8289,10 +8393,10 @@ function createDungeon(game) {
             //     game._map._tiles[x][y] = new Tile('Floor', '.', [0,0,0] , [84, 54, 11], true, false); //floor
             // }
             if (generator[x][y] == 1) {
-                game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [218, 165, 32]); // false, true, true
+                game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [128, 128, 128]); // false, true, true
             }
             if (generator[x][y] == 0) {
-                game._map._tiles[x][y] = new tiles_1.Tile('floor', '·', [0, 0, 0], [84, 54, 11]); //floor
+                game._map._tiles[x][y] = new tiles_1.Tile('floor', '·', [0, 0, 0], [60, 60, 60]); //floor
             }
             if (generator[x][y] == 2) {
                 game._map._tiles[x][y] = new tiles_1.Tile('floor', 'E', [0, 0, 0], [200, 0, 0]);
@@ -8375,6 +8479,20 @@ function removeExpiredDamage(entities) {
     }
 }
 exports.removeExpiredDamage = removeExpiredDamage;
+function djb2(str) {
+    var hash = 5381;
+    for (var i = 0; i < str.length; i++) {
+        hash = ((hash << 5) + hash) + str.charCodeAt(i); /* hash * 33 + c */
+    }
+    return hash;
+}
+function hashStringToColor(str) {
+    var hash = djb2(str);
+    var r = (hash & 0xFF0000) >> 16;
+    var g = (hash & 0x00FF00) >> 8;
+    var b = hash & 0x0000FF;
+    return "#" + ("0" + r.toString(16)).substr(-2) + ("0" + g.toString(16)).substr(-2) + ("0" + b.toString(16)).substr(-2);
+}
 
 
 /***/ }),
@@ -8392,7 +8510,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const randFromLevel_1 = __webpack_require__(/*! ../helper/randFromLevel */ "./src/helper/randFromLevel.ts");
 function itemProbabilities(dungeon_level) {
     return {
-        //'healing_potion': 35,
+        'potion': 35,
         'knife': randFromLevel_1.from_dungeon_level([[10, 1]], this.dungeon_level),
         'dagger': randFromLevel_1.from_dungeon_level([[10, 1]], this.dungeon_level),
         'sword': randFromLevel_1.from_dungeon_level([[10, 0], [10, 2]], this.dungeon_level),

@@ -20,7 +20,7 @@ export class DamageBlock {
             counter--;
             if (counter == 2) {
                 let newColor = this.owner.glyph.foreground.map(element => {
-                    element = element*4.3 > 250 ? 250 : element*4.3;
+                    element = element*4 > 250 ? 250 : element*4;
                     return element
                 });
                 this.owner.glyph.foreground = [250, newColor[1], newColor[2]]//[216, 112, 147] //

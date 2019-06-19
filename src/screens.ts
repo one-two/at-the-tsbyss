@@ -27,27 +27,38 @@ export function startScreen() {
                 y+=1;
             }
 
+            let blink = "";
+			if (game.blinkLevel < 2) blink = "%c{rgb(140, 140, 140)}";
+			if (game.blinkLevel >= 2) blink = "%c{rgb(240, 240, 240)}";
+			if (game.blinkLevel > 5) game.blinkLevel = 0;
+            game.blinkLevel += 1;
+            console.log(game.blinkLevel);
+
              // Render our prompt to the screen
-            display.drawText((game._screenWidth/2),game._screenHeight-5, "%c{rgb(0, 191, 255)}where are you?");
-            display.drawText((game._screenWidth/2),game._screenHeight-3, "Press to start:");
-            if (game.mainmenuOpt == 0) display.drawText((game._screenWidth/2)-1,game._screenHeight-1, "%c{yellow}>[E]ng%c{}      [P]ort");
-            if (game.mainmenuOpt == 1) display.drawText((game._screenWidth/2),game._screenHeight-1, "[E]ng     %c{yellow}>[P]ort%c{}"); 
+            display.drawText((game._screenWidth/2),game._screenHeight-5, "%c{rgb(0, 191, 255)}We are lost...");
+            display.drawText((game._screenWidth/2)-5,game._screenHeight-3, "%c{rgb(0, 191, 255)}Who are you? %c{}"+ game._entities[0].name + blink +"_");
+            if (game.mainmenuOpt == 0) display.drawText((game._screenWidth/2)-1,game._screenHeight-1, "%c{yellow}>Eng%c{}      Port");
+            if (game.mainmenuOpt == 1) display.drawText((game._screenWidth/2),game._screenHeight-1, "Eng     %c{yellow}>Port%c{}"); 
             
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {
             // When [Enter] is pressed, go to the play screen
             if (inputType === "keydown") {
-                if (inputData.keyCode === KEYS.VK_E) {
-                    game.lang = "En";
-                    game.switchScreen(game.Screen.playScreen);
-                }
-                if (inputData.keyCode === KEYS.VK_P) {
-                    game.lang = "Pt";
-                    game.switchScreen(game.Screen.playScreen);
-                }
+                // if (inputData.keyCode === KEYS.VK_E) {
+                //     game.lang = "En";
+                //     game.switchScreen(game.Screen.playScreen);
+                // }
+                // if (inputData.keyCode === KEYS.VK_P) {
+                //     game.lang = "Pt";
+                //     game.switchScreen(game.Screen.playScreen);
+                // }
                 if (inputData.keyCode === KEYS.VK_RETURN || inputData.keyCode === KEYS.VK_ENTER) {
                     if (game.mainmenuOpt == 0) game.lang = "En";
                     if (game.mainmenuOpt == 1) game.lang = "Pt";
+                    let hash = hashStringToColor(game._entities[0].name);
+                    game._entities[0].glyph.foreground[0] = Color.fromString(hash)[0];
+                    game._entities[0].glyph.foreground[1] = Color.fromString(hash)[1];
+                    game._entities[0].glyph.foreground[2] = Color.fromString(hash)[2];
                     game.switchScreen(game.Screen.playScreen);
                 }
                 if (inputData.keyCode === KEYS.VK_COMMA) {
@@ -62,6 +73,12 @@ export function startScreen() {
                     game.mainmenuOpt += 1;
                     if (game.mainmenuOpt > 1) game.mainmenuOpt = 1;
                 }
+
+                if (inputData.keyCode >= 65 && inputData.keyCode <= 90) game._entities[0].name = game._entities[0].name + inputData.key;
+                if (inputData.keyCode == 8 && game._entities[0].name.length > 0) {
+                    game._entities[0].name = game._entities[0].name.slice(0,-1);
+                }
+                if (inputData.keyCode == 32 && game._entities[0].name.length > 0) game._entities[0].name = game._entities[0].name + " ";
             }
         }
     }
@@ -94,7 +111,7 @@ export function debugScreen() {
             //let knifeItem = new Entity()
 
             game.timer = true;
-            game.startCountDown();
+            //game.startCountDown();
             game._map.addEntityToMap();
             
             game._entities = game._map._entities;
@@ -223,28 +240,15 @@ export function playScreen() {
             
             // Sync map and game variables
             game._map._entities = [];
-
-            // debug stuff
-            let knife = new Knife();
-            knife.owner = game._player;
-            game._player.equipment = CreateItem('knife', game._player.x, game._player.y).item;
-            game._player.equipment.owner = game._player;
             game._map._entities.push(game._player); //player always [0]
             game._player._map = game._map;  
             game._map._display = game._display;
             game._map.messageLog = game.messageLog;
 
-            
-            //let ai_component = new Fungi();
-            //let fighter_component = new Fighter(20, 0, 3, 35);
-            //let monster = new Entity(60, 47, new Glyph('f', 'black', '#0000aa'), 'fungi', 1, true, 2, 2, fighter_component, ai_component, false);
-            //monster._map = game._map;
-            //game._map._entities.push(monster);
 
-            //let knifeItem = new Entity()
 
             game.timer = true;
-            game.startCountDown();
+            //game.startCountDown();
             game._map.dungeon_level = game.level;
             game._map.addEntityToMap();
             
@@ -341,6 +345,8 @@ export function playScreen() {
                     case KEYS.VK_RIGHT:
                         game._entities[0].move(1, 0, game._map);
                         break;
+                    case KEYS.VK_P:
+                        game._entities[0].usePotion();
                     default:
                         break;
                 }
@@ -515,3 +521,19 @@ export function removeExpiredDamage(entities: Entity[]) {
         }
     }
 }
+
+function djb2(str :string){
+    var hash = 5381;
+    for (var i = 0; i < str.length; i++) {
+      hash = ((hash << 5) + hash) + str.charCodeAt(i); /* hash * 33 + c */
+    }
+    return hash;
+  }
+  
+  function hashStringToColor(str :string) {
+    var hash = djb2(str);
+    var r = (hash & 0xFF0000) >> 16;
+    var g = (hash & 0x00FF00) >> 8;
+    var b = hash & 0x0000FF;
+    return "#" + ("0" + r.toString(16)).substr(-2) + ("0" + g.toString(16)).substr(-2) + ("0" + b.toString(16)).substr(-2);
+  }

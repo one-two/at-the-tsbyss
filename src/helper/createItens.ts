@@ -5,12 +5,19 @@ import { Glyph } from "../glyph";
 import { Sword } from "../content/itens/sword";
 import { Spear } from "../content/itens/spear";
 import { Shield } from "../content/itens/shield";
+import { Potion } from "../content/itens/potion";
 
 // function ItemFactory(name: string, x: number, y): Entity{
 //     return new Entity(x, y, new Glyph('Ϯ', [0,0,0], [204, 200, 0]), 'knife', 1, false, 5, 2, undefined, undefined, false, item_component);
 // }
 
 export function CreateItem(item_choice: string, x: number, y: number): Entity{
+    if (item_choice == 'potion') {
+        let item_component = new Potion()
+        let item = new Entity(x, y, new Glyph('ზ', [0,0,0], [50, 200, 50]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph= item.glyph;
+        return item;
+    }
     if (item_choice == 'knife') {
         let item_component = new Knife()
         let item = new Entity(x, y, new Glyph('🗡', [0,0,0], [204, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
