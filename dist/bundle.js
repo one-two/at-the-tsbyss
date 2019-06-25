@@ -86,6 +86,201 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "../../../AppData/Roaming/npm/node_modules/webpack/node_modules/process/browser.js":
+/*!*************************************************!*\
+  !*** (webpack)/node_modules/process/browser.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+
+/***/ }),
+
 /***/ "./lib/color.js":
 /*!**********************!*\
   !*** ./lib/color.js ***!
@@ -1219,7 +1414,7 @@ class Term extends _backend_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     computeSize() { return [process.stdout.columns, process.stdout.rows]; }
 }
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../node_modules/process/browser.js */ "./node_modules/process/browser.js")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../AppData/Roaming/npm/node_modules/webpack/node_modules/process/browser.js */ "../../../AppData/Roaming/npm/node_modules/webpack/node_modules/process/browser.js")))
 
 /***/ }),
 
@@ -5010,201 +5205,6 @@ exports.Logo = Logo;
 
 /***/ }),
 
-/***/ "./node_modules/process/browser.js":
-/*!*****************************************!*\
-  !*** ./node_modules/process/browser.js ***!
-  \*****************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-
-/***/ }),
-
 /***/ "./src/components/damageBlock.ts":
 /*!***************************************!*\
   !*** ./src/components/damageBlock.ts ***!
@@ -5590,6 +5590,36 @@ function snipe(owner, target, damageMultiplier) {
     }
 }
 exports.snipe = snipe;
+
+
+/***/ }),
+
+/***/ "./src/content/itens/exit.ts":
+/*!***********************************!*\
+  !*** ./src/content/itens/exit.ts ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Exit {
+    constructor(map) {
+        this._map = map;
+    }
+    climb() {
+        console.log("climb!");
+        this._map.owner.level += 1;
+        for (let i = 0; i < this._map._entities.length; i++) {
+            let element = this._map._entities[i];
+            if (element.fighter != undefined && element.player == false)
+                element.fighter.hp = 0;
+        }
+        this._map.owner.switchScreen(this._map.owner.Screen.playScreen);
+    }
+}
+exports.Exit = Exit;
 
 
 /***/ }),
@@ -6320,6 +6350,7 @@ class Entity {
         this.player = player;
         this.item = item;
         this.inventory = 10;
+        this.stairs = stairs;
         if (this.player == true) {
             this.startMoveCountDown();
             this.startAttackCountDown();
@@ -6742,8 +6773,8 @@ class Game {
         let max_hp = this._player.fighter.max_hp();
         this._inventory.drawText(0, 1, "Status: ");
         this._inventory.drawText(1, 3, "%c{rgb(255,0,0)}HP: %c{}" + hp + "/" + max_hp);
-        this._inventory.drawText(1, 4, "%c{blue}Atk: %c{}" + this._player.fighter.power());
-        this._inventory.drawText(1, 5, "%c{yellow}Def: %c{}" + this._player.fighter.defense());
+        this._inventory.drawText(1, 4, "%c{blue}Atk: %c{}" + this._player.fighter.power().toFixed(2));
+        this._inventory.drawText(1, 5, "%c{yellow}Def: %c{}" + this._player.fighter.defense().toFixed(2));
         if (this._player.fighter.unspentPoints > 0) {
             let blink = "";
             if (this.blinkLevel < 2)
@@ -6754,14 +6785,14 @@ class Game {
                 this.blinkLevel = 0;
             this.blinkLevel += 1;
             this._inventory.drawText(1, 7, blink + " LEVEL UP! : " + this._player.fighter.unspentPoints);
-            this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}" + this._player.fighter.base_power + blink + " (a)");
-            this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Vitalidade: %c{}" + this._player.fighter.base_defense + blink + " (s)");
-            this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}" + this._player.fighter.base_max_hp + blink + " (d)");
+            this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}" + this._player.fighter.base_power.toFixed(2) + blink + " (a)");
+            this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Resist: %c{}" + this._player.fighter.base_defense.toFixed(2) + blink + " (s)");
+            this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}" + this._player.fighter.base_max_hp.toFixed(2) + blink + " (d)");
         }
         else {
-            this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}" + this._player.fighter.base_power);
-            this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Vitalidade: %c{}" + this._player.fighter.base_defense);
-            this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}" + this._player.fighter.base_max_hp);
+            this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}" + this._player.fighter.base_power.toFixed(2));
+            this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Resist: %c{}" + this._player.fighter.base_defense.toFixed(2));
+            this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}" + this._player.fighter.base_max_hp.toFixed(2));
         }
         this._inventory.drawText(1, 12, "%c{rgb(140, 140, 160)}Rank: %c{}" + this._player.fighter.rank);
         this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}" + this._player.fighter.current_exp + "/" + this._player.fighter.nextRank);
@@ -6785,6 +6816,13 @@ class Game {
         else {
             this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Potions: %c{}" + this._player.inventory + " [p]");
         }
+        this._inventory.drawText(1, 29, "%c{rgb(140, 140, 160)}29: %c{}" + this._player.x + " " + this._player.y);
+        this._inventory.drawText(1, 30, "%c{rgb(140, 140, 160)}30: %c{}" + this._map.dungeon_level);
+        this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}31: %c{}" + this._map.dungeon_level);
+        this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}32: %c{}" + this._map.dungeon_level);
+        this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
+        this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
+        this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
     }
     switchScreen(screen) {
         // If we had a screen before, notify it that we exited
@@ -6833,7 +6871,7 @@ window.onload = function () {
     // Initialize the game
     let fighter = new fighter_1.Fighter(999, 1, 4, 0);
     let player = new entity_1.Entity(60, 45, new glyph_1.Glyph('@', [0, 0, 0], [0, 191, 255]), 'The Princess', 1, true, 1, 1, fighter, undefined, true);
-    player.fighter.unspentPoints = 0;
+    player.fighter.unspentPoints = 10;
     game._player = player;
     game._entities = [game._player];
     let knife = new knife_1.Knife();
@@ -7696,6 +7734,8 @@ exports.randint = randint;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const tiles_1 = __webpack_require__(/*! ./tiles */ "./src/tiles.ts");
+const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
+const entity_1 = __webpack_require__(/*! ./entity */ "./src/entity.ts");
 const randFromLevel_1 = __webpack_require__(/*! ./helper/randFromLevel */ "./src/helper/randFromLevel.ts");
 const randint_1 = __webpack_require__(/*! ./helper/randint */ "./src/helper/randint.ts");
 const createMonters_1 = __webpack_require__(/*! ./helper/createMonters */ "./src/helper/createMonters.ts");
@@ -7703,6 +7743,7 @@ const lib_1 = __webpack_require__(/*! ../lib */ "./lib/index.js");
 const createItens_1 = __webpack_require__(/*! ./helper/createItens */ "./src/helper/createItens.ts");
 const monsterProbabilities_1 = __webpack_require__(/*! ./settings/monsterProbabilities */ "./src/settings/monsterProbabilities.ts");
 const itemProbabilities_1 = __webpack_require__(/*! ./settings/itemProbabilities */ "./src/settings/itemProbabilities.ts");
+const exit_1 = __webpack_require__(/*! ./content/itens/exit */ "./src/content/itens/exit.ts");
 class Map {
     constructor(width, height) {
         this._width = width;
@@ -7749,7 +7790,13 @@ class Map {
         for (let index = 0; index < this._entities.length; index++) {
             for (let i = x; i <= x2; i++) {
                 for (let j = y; j <= y2; j++) {
-                    if (this._entities[index].x == i && this._entities[index].y == j && this._entities[index].item != undefined && this._entities[index].item.expire == false) {
+                    if (this._entities[index].x == i && this._entities[index].y == j
+                        && this._entities[index].item != undefined
+                        && this._entities[index].item.expire == false) {
+                        targets.push(this._entities[index]);
+                    }
+                    if (this._entities[index].x == i && this._entities[index].y == j
+                        && this._entities[index].stairs != undefined) {
                         targets.push(this._entities[index]);
                     }
                 }
@@ -7787,7 +7834,7 @@ class Map {
             if (emptyspace == true) {
                 let monster_choice = randFromLevel_1.random_choice_from_dict(monster_chances);
                 let q = createMonters_1.CreateMonster(monster_choice, x, y);
-                console.log(q);
+                //console.log(q);
                 q._map = this;
                 this._entities.push(q);
             }
@@ -7822,6 +7869,23 @@ class Map {
                 index -= 1;
             }
         }
+        let xexit = randint_1.randint(0, this._width - 1);
+        let yexit = randint_1.randint(0, this._height - 1);
+        let emptyspace = true;
+        while (emptyspace) {
+            console.log(xexit);
+            console.log(yexit);
+            let dist = Math.sqrt(Math.pow((this._entities[0].x - xexit), 2) + Math.pow((this._entities[0].y - yexit), 2));
+            if (dist > 30 && this.getTile(xexit, yexit)._isWalkable)
+                emptyspace = false;
+            else {
+                xexit = randint_1.randint(0, this._width - 1);
+                yexit = randint_1.randint(0, this._height - 1);
+            }
+        }
+        let exit = new exit_1.Exit(this);
+        let newex = new entity_1.Entity(xexit, yexit, new glyph_1.Glyph("E", [0, 0, 0], [20, 150, 200]), "saida", 1, false, -1, 2, undefined, undefined, false, undefined, undefined, undefined, exit);
+        this._entities.push(newex);
         return null;
     }
     lightPasses(x, y) {
@@ -8023,7 +8087,6 @@ function startScreen() {
             if (game.blinkLevel > 5)
                 game.blinkLevel = 0;
             game.blinkLevel += 1;
-            console.log(game.blinkLevel);
             // Render our prompt to the screen
             display.drawText((game._screenWidth / 2), game._screenHeight - 5, "%c{rgb(0, 191, 255)}We are lost...");
             display.drawText((game._screenWidth / 2) - 5, game._screenHeight - 3, "%c{rgb(0, 191, 255)}Who are you? %c{}" + game._entities[0].name + blink + "_");
@@ -8226,6 +8289,7 @@ function playScreen() {
             game._map.dungeon_level = game.level;
             game._map.addEntityToMap();
             game._entities = game._map._entities;
+            console.log("entites:" + game._entities.length);
         },
         exit: () => {
             console.log("Exited play screen.");
@@ -8272,13 +8336,19 @@ function playScreen() {
             if (inputType === 'keydown') {
                 switch (inputData.keyCode) {
                     case constants_1.KEYS.VK_RETURN:
-                        //game.switchScreen(game.Screen.winScreen);
                         let gnd = game._map.getItemAt(game._entities[0].x, game._entities[0].x2, game._entities[0].y, game._entities[0].y2);
                         //console.log(gnd);
                         if (gnd.length > 0) {
-                            game._entities[0].equip(gnd[0]);
+                            console.log(gnd);
+                            if (gnd[0].stairs == undefined) {
+                                game._entities[0].equip(gnd[0]);
+                            }
+                            else {
+                                gnd[0].stairs.climb();
+                            }
                         }
                         else {
+                            console.log("nada");
                         }
                         break;
                     case constants_1.KEYS.VK_ESCAPE:

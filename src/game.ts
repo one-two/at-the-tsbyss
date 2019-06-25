@@ -152,8 +152,8 @@ export class Game {
 		let max_hp = this._player.fighter.max_hp();
 		this._inventory.drawText(0, 1, "Status: ")
 		this._inventory.drawText(1, 3, "%c{rgb(255,0,0)}HP: %c{}" +hp + "/" +max_hp);
-		this._inventory.drawText(1, 4, "%c{blue}Atk: %c{}"+this._player.fighter.power());
-		this._inventory.drawText(1, 5, "%c{yellow}Def: %c{}"+this._player.fighter.defense());
+		this._inventory.drawText(1, 4, "%c{blue}Atk: %c{}"+this._player.fighter.power().toFixed(2));
+		this._inventory.drawText(1, 5, "%c{yellow}Def: %c{}"+this._player.fighter.defense().toFixed(2));
 
 		if (this._player.fighter.unspentPoints > 0) {
 			let blink = "";
@@ -163,13 +163,13 @@ export class Game {
 			this.blinkLevel += 1;
 
 			this._inventory.drawText(1, 7, blink +" LEVEL UP! : "+this._player.fighter.unspentPoints);
-			this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}"+this._player.fighter.base_power + blink + " (a)");
-			this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Vitalidade: %c{}"+this._player.fighter.base_defense + blink + " (s)");
-			this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}"+ this._player.fighter.base_max_hp + blink + " (d)");
+			this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}"+this._player.fighter.base_power.toFixed(2) + blink + " (a)");
+			this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Resist: %c{}"+this._player.fighter.base_defense.toFixed(2) + blink + " (s)");
+			this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}"+ this._player.fighter.base_max_hp.toFixed(2) + blink + " (d)");
 		} else {
-			this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}"+this._player.fighter.base_power);
-			this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Vitalidade: %c{}"+this._player.fighter.base_defense);
-			this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}"+ this._player.fighter.base_max_hp);
+			this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}"+this._player.fighter.base_power.toFixed(2));
+			this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Resist: %c{}"+this._player.fighter.base_defense.toFixed(2));
+			this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}"+ this._player.fighter.base_max_hp.toFixed(2));
 		}
 
 		this._inventory.drawText(1, 12, "%c{rgb(140, 140, 160)}Rank: %c{}"+ this._player.fighter.rank);
@@ -197,12 +197,20 @@ export class Game {
 		} else {
 			this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Potions: %c{}"+ this._player.inventory + " [p]");
 		}
+
+		this._inventory.drawText(1, 29, "%c{rgb(140, 140, 160)}29: %c{}"+ this._player.x + " " + this._player.y);
+		this._inventory.drawText(1, 30, "%c{rgb(140, 140, 160)}30: %c{}"+ this._map.dungeon_level);
+		this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}31: %c{}"+ this._map.dungeon_level);
+		this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}32: %c{}"+ this._map.dungeon_level);
+		this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
+		this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
+		this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
 	}
 
 	switchScreen(screen : any) {
 	    // If we had a screen before, notify it that we exited
 	    if (this._currentScreen !== null) {
-	        this._currentScreen.exit();
+	        this._currentScreen.exit(this);
 	    }
 	    // Clear the display
 	    this.getDisplay().clear();
@@ -249,7 +257,7 @@ window.onload = function() {
 	// Initialize the game
 	let fighter = new Fighter(999, 1, 4, 0);
 	let player = new Entity(60, 45, new Glyph('@', [0,0,0], [0, 191, 255]), 'The Princess', 1, true, 1, 1, fighter, undefined, true);
-	player.fighter.unspentPoints = 0;
+	player.fighter.unspentPoints = 10;
 	game._player = player
 	game._entities = [game._player];
 	let knife = new Knife();

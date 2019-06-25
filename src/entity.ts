@@ -9,6 +9,7 @@ import { Enemy } from "./helper/enemy";
 import { deathFunction } from "./helper/deathFunction";
 import { MessageType } from "./helper/messageType";
 import { CreateDropItem } from "./helper/createItens";
+import { Exit } from "./content/itens/exit";
 
 export class Entity {
     x: number;
@@ -32,7 +33,7 @@ export class Entity {
     // cooldown
     // maxCooldown 
     damage: DamageBlock;
-    // stairs
+    stairs: Exit;
     level: number;
     nextLevel: number;
     equipment: Equipment;
@@ -46,7 +47,7 @@ export class Entity {
 
     constructor(x:number, y:number, glyph: Glyph, name: string, size:number = 0, blocks: boolean = false, maxStamina:number=0,
                 render_order:number = 99, fighter: Fighter = undefined, ai: any = undefined, player: boolean = false,
-                item: Equipment = undefined, inventory: any = undefined, damage: DamageBlock = undefined, stairs: any = undefined, level: any = undefined, 
+                item: Equipment = undefined, inventory: any = undefined, damage: DamageBlock = undefined, stairs: Exit = undefined, level: any = undefined, 
                 equipment: Equipment = undefined, equippable: any = undefined, _map: Map = undefined, _entities: Entity[] = undefined) {
         this.x = x;
         this.y = y;
@@ -69,6 +70,7 @@ export class Entity {
         this.player = player;
         this.item = item;
         this.inventory = 10;
+        this.stairs = stairs;
 
         if (this.player == true) {
             this.startMoveCountDown();
@@ -100,6 +102,7 @@ export class Entity {
         if(this.inventory != undefined) {
             this.inventory = 10;
         }
+        
     }
 
     move(dx: number, dy: number, map: Map) {

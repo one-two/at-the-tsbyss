@@ -32,7 +32,6 @@ export function startScreen() {
 			if (game.blinkLevel >= 2) blink = "%c{rgb(240, 240, 240)}";
 			if (game.blinkLevel > 5) game.blinkLevel = 0;
             game.blinkLevel += 1;
-            console.log(game.blinkLevel);
 
              // Render our prompt to the screen
             display.drawText((game._screenWidth/2),game._screenHeight-5, "%c{rgb(0, 191, 255)}We are lost...");
@@ -253,9 +252,17 @@ export function playScreen() {
             game._map.addEntityToMap();
             
             game._entities = game._map._entities;
+            console.log("entites:"   + game._entities.length)
 
         },
-        exit : () => { console.log("Exited play screen."); 
+        exit : (game: Game) => { 
+            console.log("Exited play screen."); 
+            for (let i = 0; i < game._map._entities.length; i++) {
+                let element = game._map._entities[i];
+                if (element.fighter != undefined && element.player == false) element.fighter.hp = 0;
+            }
+            game._map._entities = [];
+            game._map._tiles = [];
         },
         render : (display : Display, game: Game) => {
             let screenWidth = game._screenWidth;
@@ -316,12 +323,17 @@ export function playScreen() {
             if (inputType === 'keydown') {
                 switch (inputData.keyCode) {
                     case KEYS.VK_RETURN:
-                        //game.switchScreen(game.Screen.winScreen);
                         let gnd = game._map.getItemAt(game._entities[0].x, game._entities[0].x2, game._entities[0].y, game._entities[0].y2);
                         //console.log(gnd);
                         if (gnd.length > 0) {
-                            game._entities[0].equip(gnd[0]);
+                            console.log(gnd);
+                            if (gnd[0].stairs == undefined) {
+                                game._entities[0].equip(gnd[0]);
+                            } else {
+                                gnd[0].stairs.climb();
+                            }
                         } else {
+                            console.log("nada")
                         }
                         break;
                     case KEYS.VK_ESCAPE:
@@ -419,7 +431,7 @@ function createDungeon(game: Game) {
     game._map = new Map(mapWidth, mapHeight);
     game._map.owner = game;
     let emptyTile = new Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
-    console.log("Entered debug screen.");
+    //console.log("Entered debug screen.");
     for (let x = 0; x < mapWidth; x++) {
         // Create the nested array for the y values
         game._map._tiles.push([]);

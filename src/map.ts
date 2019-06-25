@@ -10,6 +10,7 @@ import { CreateItem } from "./helper/createItens";
 import { monsterProbabilities } from "./settings/monsterProbabilities";
 import { itemProbabilities } from "./settings/itemProbabilities";
 import { Game } from "./game";
+import { Exit } from "./content/itens/exit";
 
 export class Map {
     _display: Display;
@@ -70,7 +71,13 @@ export class Map {
         for (let index = 0; index < this._entities.length; index++) {
             for (let i = x; i <= x2; i++) {
                 for (let j = y; j <= y2; j++) {
-                    if (this._entities[index].x == i && this._entities[index].y == j && this._entities[index].item != undefined && this._entities[index].item.expire == false) {
+                    if (this._entities[index].x == i && this._entities[index].y == j 
+                        && this._entities[index].item != undefined 
+                        && this._entities[index].item.expire == false) {
+                        targets.push(this._entities[index]);
+                    }
+                    if (this._entities[index].x == i && this._entities[index].y == j 
+                        && this._entities[index].stairs != undefined) {
                         targets.push(this._entities[index]);
                     }
                 }
@@ -116,7 +123,7 @@ export class Map {
             if (emptyspace == true) {
                 let monster_choice = random_choice_from_dict(monster_chances);
                 let q = CreateMonster(monster_choice, x, y);
-                console.log(q);
+                //console.log(q);
                 q._map = this;
                 this._entities.push(q);
             } else {
@@ -152,6 +159,25 @@ export class Map {
             }
         }
 
+        let xexit = randint(0, this._width - 1)
+        let yexit = randint(0, this._height - 1)
+        let emptyspace = true;
+
+        while (emptyspace) {
+            console.log(xexit);
+            console.log(yexit);
+            let dist = Math.sqrt( (this._entities[0].x - xexit)**2+(this._entities[0].y - yexit)**2 );
+            if ( dist > 30 && this.getTile(xexit, yexit)._isWalkable) emptyspace = false;
+            else {
+                xexit = randint(0, this._width - 1)
+                yexit = randint(0, this._height - 1)
+            }
+        }
+
+        
+        let exit = new Exit(this);
+        let newex = new Entity(xexit, yexit, new Glyph("E", [0,0,0], [20,150,200]), "saida", 1, false, -1,2, undefined, undefined, false, undefined, undefined, undefined, exit);
+        this._entities.push(newex);
 
         return null;
     }
