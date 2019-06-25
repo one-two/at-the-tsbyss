@@ -394,7 +394,7 @@ export function playScreen() {
 
 function createCave(game: Game) {
     let mapWidth = 120;
-    let mapHeight = 90;
+    let mapHeight = 88;
     game._map = new Map(mapWidth, mapHeight);
     game._map.owner = game;
     let emptyTile = new Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
@@ -416,12 +416,13 @@ function createCave(game: Game) {
     }
     // Smoothen it one last time and then update our map
     generator.create((x, y, v) => {
-        if (v === 1 || x == 0 || y == 0 || x == mapWidth - 1 || x == mapHeight - 1) {
+        if (v === 1){ // || x == 0 || y == 0 || x == mapWidth - 1 || x == mapHeight - 1) {
             game._map._tiles[x][y] = new Tile('floor', '.', [0, 0, 0], [84, 54, 11]); //floor
         }
         else {
             game._map._tiles[x][y] = new Tile('wall', '#', [0, 0, 0], [218, 165, 32]);
         }
+        if (x == 0 || y == 0 || x == mapWidth - 1 || y == mapHeight - 1) game._map._tiles[x][y] = new Tile('wall', '#', [0, 0, 0], [218, 165, 32]);
     });
 }
 

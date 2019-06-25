@@ -5611,11 +5611,6 @@ class Exit {
     climb() {
         console.log("climb!");
         this._map.owner.level += 1;
-        for (let i = 0; i < this._map._entities.length; i++) {
-            let element = this._map._entities[i];
-            if (element.fighter != undefined && element.player == false)
-                element.fighter.hp = 0;
-        }
         this._map.owner.switchScreen(this._map.owner.Screen.playScreen);
     }
 }
@@ -6668,7 +6663,7 @@ class Game {
         this._screenHeight = 40;
         this._entities = [];
         this.timer = true;
-        this.level = 5;
+        this.level = 1;
         this.blinkLevel = 0;
         this.lang = "En";
         this.mainmenuOpt = 0;
@@ -6827,7 +6822,7 @@ class Game {
     switchScreen(screen) {
         // If we had a screen before, notify it that we exited
         if (this._currentScreen !== null) {
-            this._currentScreen.exit();
+            this._currentScreen.exit(this);
         }
         // Clear the display
         this.getDisplay().clear();
@@ -8291,8 +8286,15 @@ function playScreen() {
             game._entities = game._map._entities;
             console.log("entites:" + game._entities.length);
         },
-        exit: () => {
+        exit: (game) => {
             console.log("Exited play screen.");
+            for (let i = 0; i < game._map._entities.length; i++) {
+                let element = game._map._entities[i];
+                if (element.fighter != undefined && element.player == false)
+                    element.fighter.hp = 0;
+            }
+            game._map._entities = [];
+            game._map._tiles = [];
         },
         render: (display, game) => {
             let screenWidth = game._screenWidth;
@@ -8409,7 +8411,7 @@ function playScreen() {
 exports.playScreen = playScreen;
 function createCave(game) {
     let mapWidth = 120;
-    let mapHeight = 90;
+    let mapHeight = 88;
     game._map = new map_1.Map(mapWidth, mapHeight);
     game._map.owner = game;
     let emptyTile = new tiles_1.Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
@@ -8431,12 +8433,14 @@ function createCave(game) {
     }
     // Smoothen it one last time and then update our map
     generator.create((x, y, v) => {
-        if (v === 1 || x == 0 || y == 0 || x == mapWidth - 1 || x == mapHeight - 1) {
+        if (v === 1) { // || x == 0 || y == 0 || x == mapWidth - 1 || x == mapHeight - 1) {
             game._map._tiles[x][y] = new tiles_1.Tile('floor', '.', [0, 0, 0], [84, 54, 11]); //floor
         }
         else {
             game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [218, 165, 32]);
         }
+        if (x == 0 || y == 0 || x == mapWidth - 1 || y == mapHeight - 1)
+            game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [218, 165, 32]);
     });
 }
 function createDungeon(game) {
@@ -8445,7 +8449,7 @@ function createDungeon(game) {
     game._map = new map_1.Map(mapWidth, mapHeight);
     game._map.owner = game;
     let emptyTile = new tiles_1.Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
-    console.log("Entered debug screen.");
+    //console.log("Entered debug screen.");
     for (let x = 0; x < mapWidth; x++) {
         // Create the nested array for the y values
         game._map._tiles.push([]);
