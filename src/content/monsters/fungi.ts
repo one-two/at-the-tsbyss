@@ -51,7 +51,7 @@ export class Fungi implements Enemy {
         if (player == undefined) return;
         let dist = Math.sqrt( (player.x - this.owner.x)**2+(player.y - this.owner.y)**2 );
         if (dist < this.owner.sight*1.4) {
-            if (this.skills[0].cooldown == this.skills[0].maxCooldown) {
+            if (this.skills[0].cooldown >= this.skills[0].maxCooldown) {
                 poison_cloud(this.owner, player, this.skill_bonus*0.5);
                 this.skills[0].cooldown = 0
             }
@@ -60,7 +60,7 @@ export class Fungi implements Enemy {
         } else {
             this.owner.wander();
         }
-        if (dist < 2) if (this.skills[1].cooldown == this.skills[1].maxCooldown) {
+        if (dist < 2) if (this.skills[1].cooldown >= this.skills[1].maxCooldown) {
             poison_shield(this.owner, player, 1);
             this.skills[1].cooldown = 0
         }

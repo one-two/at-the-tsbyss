@@ -23,7 +23,7 @@ export function startScreen() {
         render : (display : any, game: Game) => {
             let y = 8;
             for (const line of game.logo) {
-                display.drawText(20,y, line);
+                display.drawText(10,y, line);
                 y+=1;
             }
 
@@ -34,10 +34,14 @@ export function startScreen() {
             game.blinkLevel += 1;
 
              // Render our prompt to the screen
-            display.drawText((game._screenWidth/2),game._screenHeight-5, "%c{rgb(0, 191, 255)}We are lost...");
-            display.drawText((game._screenWidth/2)-5,game._screenHeight-3, "%c{rgb(0, 191, 255)}Who are you? %c{}"+ game._entities[0].name + blink +"_");
-            if (game.mainmenuOpt == 0) display.drawText((game._screenWidth/2)-1,game._screenHeight-1, "%c{yellow}>Eng%c{}      Port");
-            if (game.mainmenuOpt == 1) display.drawText((game._screenWidth/2),game._screenHeight-1, "Eng     %c{yellow}>Port%c{}"); 
+            display.drawText((game._screenWidth/2),game._screenHeight-10, "%c{rgb(0, 191, 255)}We are lost...");
+            display.drawText((game._screenWidth/2)-5,game._screenHeight-7, "%c{rgb(0, 191, 255)}Who are you? %c{}"+ game._entities[0].name + blink +"_");
+            if (game.mainmenuOpt == 0) display.drawText((game._screenWidth/2)-1,game._screenHeight-5, "%c{yellow}>Eng%c{}      Port");
+            if (game.mainmenuOpt == 1) display.drawText((game._screenWidth/2),game._screenHeight-5, "Eng     %c{yellow}>Port%c{}"); 
+
+            display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Arrow%c{}: move"); 
+            display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}Enter%c{}: pickup"); 
+            display.drawText((game._screenWidth/10),game._screenHeight-1, "%c{yellow}Space%c{}: skill"); 
             
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {
@@ -264,6 +268,10 @@ export function playScreen() {
         render : (display : Display, game: Game) => {
             let screenWidth = game._screenWidth;
             let screenHeight = game._screenHeight;
+            if (game._player.fighter.status == 'dead') {
+                game.switchScreen(game.Screen.loseScreen);
+                return;
+            }
             let player = game._player;
             // Make sure the x-axis doesn't go to the left of the left bound
             let topLeftX = Math.max(0, player.x - (screenWidth / 2));

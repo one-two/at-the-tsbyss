@@ -5267,7 +5267,8 @@ class Equipment {
     }
     strike() {
     }
-    what() {
+    defend(amount) {
+        return amount;
     }
 }
 exports.Equipment = Equipment;
@@ -5340,6 +5341,9 @@ class Fighter {
         return this.base_max_hp + bonus;
     }
     takeDamage(amount) {
+        if (this.owner.player == true && this.owner.subequipment != undefined) {
+            amount = this.owner.subequipment.defend(amount);
+        }
         this.hp -= amount;
         if (this.hp <= 0) {
             this.hp = 0;
@@ -5439,7 +5443,7 @@ exports.Fighter = Fighter;
 Object.defineProperty(exports, "__esModule", { value: true });
 const createDamageBlock_1 = __webpack_require__(/*! ../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
 function poison_cloud(owner, target, damageMultiplier) {
-    let nameAtk = 'nuvem de esporos';
+    let nameAtk = 'spore cloud';
     createDamageBlock_1.createDamageBlock(owner, target.x, target.y, nameAtk, damageMultiplier, "ꙮ");
     createDamageBlock_1.createDamageBlock(owner, target.x + 1, target.y, nameAtk, damageMultiplier, "ꙮ");
     createDamageBlock_1.createDamageBlock(owner, target.x - 1, target.y, nameAtk, damageMultiplier, "ꙮ");
@@ -5448,7 +5452,7 @@ function poison_cloud(owner, target, damageMultiplier) {
 }
 exports.poison_cloud = poison_cloud;
 function poison_shield(owner, target, damageMultiplier) {
-    let nameAtk = 'escudo de esporos';
+    let nameAtk = 'spore shield';
     createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y - 1, nameAtk, damageMultiplier);
     createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y, nameAtk, damageMultiplier);
     createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y + 1, nameAtk, damageMultiplier);
@@ -5460,7 +5464,7 @@ function poison_shield(owner, target, damageMultiplier) {
 }
 exports.poison_shield = poison_shield;
 function punch(owner, target, damageMultiplier) {
-    let nameAtk = 'socao';
+    let nameAtk = 'smite';
     if (owner.face == 'n') {
         createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 1, nameAtk, damageMultiplier);
         createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 2, nameAtk, damageMultiplier);
@@ -5488,43 +5492,43 @@ function punch(owner, target, damageMultiplier) {
 }
 exports.punch = punch;
 function smash(owner, target, damageMultiplier) {
-    let nameAtk = 'socao';
+    let nameAtk = 'smash';
     if (owner.face == 'n') {
-        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 1, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 2, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 3, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 4, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y - 4, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y - 4, nameAtk, damageMultiplier);
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 1, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 2, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 3, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 4, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y - 4, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y - 4, nameAtk, damageMultiplier, '✶');
     }
     if (owner.face == 's') {
-        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 1, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 2, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 3, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 4, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y + 4, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y + 4, nameAtk, damageMultiplier);
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 1, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 2, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 3, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 4, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y + 4, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y + 4, nameAtk, damageMultiplier, '✶');
     }
     if (owner.face == 'w') {
-        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x - 2, owner.y, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x - 3, owner.y, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x - 4, owner.y, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x - 4, owner.y + 1, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x - 4, owner.y - 1, nameAtk, damageMultiplier);
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 2, owner.y, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 3, owner.y, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 4, owner.y, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 4, owner.y + 1, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 4, owner.y - 1, nameAtk, damageMultiplier, '✶');
     }
     if (owner.face == 'e') {
-        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x + 2, owner.y, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x + 3, owner.y, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x + 4, owner.y, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x + 4, owner.y + 1, nameAtk, damageMultiplier);
-        createDamageBlock_1.createDamageBlock(owner, owner.x + 4, owner.y - 1, nameAtk, damageMultiplier);
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 2, owner.y, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 3, owner.y, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 4, owner.y, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 4, owner.y + 1, nameAtk, damageMultiplier, '✶');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 4, owner.y - 1, nameAtk, damageMultiplier, '✶');
     }
 }
 exports.smash = smash;
 function windBlow(owner, target, damageMultiplier) {
-    let nameAtk = 'nuvem de esporos';
+    let nameAtk = 'wind blow';
     createDamageBlock_1.createDamageBlock(owner, target.x, target.y, nameAtk, damageMultiplier, "ꙮ");
     createDamageBlock_1.createDamageBlock(owner, target.x + 1, target.y + 1, nameAtk, damageMultiplier, "ꙮ");
     createDamageBlock_1.createDamageBlock(owner, target.x - 1, target.y - 1, nameAtk, damageMultiplier, "ꙮ");
@@ -5533,7 +5537,7 @@ function windBlow(owner, target, damageMultiplier) {
 }
 exports.windBlow = windBlow;
 function snipe(owner, target, damageMultiplier) {
-    let nameAtk = 'tiro';
+    let nameAtk = 'shot';
     let dx = target.x - owner.x;
     let dy = target.y - owner.y;
     if (Math.abs(dx) < Math.abs(dy)) {
@@ -5660,7 +5664,7 @@ class Knife extends equipment_1.Equipment {
             this.power_bonus += this.power_bonus * item.power_bonus;
             this.skill_bonus += this.skill_bonus * item.skill_bonus;
             this.defense_bonus += this.defense_bonus * item.defense_bonus;
-            this.max_cooldown += this.max_cooldown * item.max_cooldown;
+            this.max_cooldown += Math.round(this.max_cooldown * item.max_cooldown);
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('🗡', [0, 0, 0], [item.alpha, item.alpha, 0]);
         }
@@ -5791,7 +5795,7 @@ class Shield extends equipment_1.Equipment {
             this.power_bonus += this.power_bonus * item.power_bonus;
             this.skill_bonus += this.skill_bonus * item.skill_bonus;
             this.defense_bonus += this.defense_bonus * item.defense_bonus;
-            this.max_cooldown += this.max_cooldown * item.max_cooldown;
+            this.max_cooldown += Math.round(this.max_cooldown * item.max_cooldown);
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('ꂷ', [0, 0, 0], [item.alpha, item.alpha, 0]);
         }
@@ -5802,6 +5806,14 @@ class Shield extends equipment_1.Equipment {
             if (this.cooldown > 0)
                 this.cooldown--;
         }, 100);
+    }
+    defend(amount) {
+        if (this.cooldown <= 0) {
+            this.cooldown = this.max_cooldown;
+            amount = amount - (this.owner.fighter.defense() * this.skill_bonus);
+            amount = amount < 0 ? 0 : amount;
+        }
+        return amount;
     }
 }
 exports.Shield = Shield;
@@ -5849,7 +5861,7 @@ class Spear extends equipment_1.Equipment {
             this.power_bonus += this.power_bonus * item.power_bonus;
             this.skill_bonus += this.skill_bonus * item.skill_bonus;
             this.defense_bonus += this.defense_bonus * item.defense_bonus;
-            this.max_cooldown += this.max_cooldown * item.max_cooldown;
+            this.max_cooldown += Math.round(this.max_cooldown * item.max_cooldown);
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('ﴽ', [0, 0, 0], [item.alpha, item.alpha, 0]);
         }
@@ -5948,7 +5960,7 @@ class Sword extends equipment_1.Equipment {
             this.power_bonus += this.power_bonus * item.power_bonus;
             this.skill_bonus += this.skill_bonus * item.skill_bonus;
             this.defense_bonus += this.defense_bonus * item.defense_bonus;
-            this.max_cooldown += this.max_cooldown * item.max_cooldown;
+            this.max_cooldown += Math.round(this.max_cooldown * item.max_cooldown);
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('ރ', [0, 0, 0], [item.alpha, item.alpha, 0]);
         }
@@ -6052,7 +6064,7 @@ class Fungi {
             return;
         let dist = Math.sqrt(Math.pow((player.x - this.owner.x), 2) + Math.pow((player.y - this.owner.y), 2));
         if (dist < this.owner.sight * 1.4) {
-            if (this.skills[0].cooldown == this.skills[0].maxCooldown) {
+            if (this.skills[0].cooldown >= this.skills[0].maxCooldown) {
                 skilllist_1.poison_cloud(this.owner, player, this.skill_bonus * 0.5);
                 this.skills[0].cooldown = 0;
             }
@@ -6063,7 +6075,7 @@ class Fungi {
             this.owner.wander();
         }
         if (dist < 2)
-            if (this.skills[1].cooldown == this.skills[1].maxCooldown) {
+            if (this.skills[1].cooldown >= this.skills[1].maxCooldown) {
                 skilllist_1.poison_shield(this.owner, player, 1);
                 this.skills[1].cooldown = 0;
             }
@@ -8016,7 +8028,7 @@ class Map {
             }
         }
         let exit = new exit_1.Exit(this);
-        let newex = new entity_1.Entity(xexit, yexit, new glyph_1.Glyph("E", [0, 0, 0], [20, 150, 200]), "saida", 1, false, -1, 2, undefined, undefined, false, undefined, undefined, undefined, exit);
+        let newex = new entity_1.Entity(xexit, yexit, new glyph_1.Glyph("⇗", [0, 0, 0], [20, 150, 200]), "saida", 1, false, -1, 2, undefined, undefined, false, undefined, undefined, undefined, exit);
         this._entities.push(newex);
         return null;
     }
@@ -8209,7 +8221,7 @@ function startScreen() {
         render: (display, game) => {
             let y = 8;
             for (const line of game.logo) {
-                display.drawText(20, y, line);
+                display.drawText(10, y, line);
                 y += 1;
             }
             let blink = "";
@@ -8221,12 +8233,15 @@ function startScreen() {
                 game.blinkLevel = 0;
             game.blinkLevel += 1;
             // Render our prompt to the screen
-            display.drawText((game._screenWidth / 2), game._screenHeight - 5, "%c{rgb(0, 191, 255)}We are lost...");
-            display.drawText((game._screenWidth / 2) - 5, game._screenHeight - 3, "%c{rgb(0, 191, 255)}Who are you? %c{}" + game._entities[0].name + blink + "_");
+            display.drawText((game._screenWidth / 2), game._screenHeight - 10, "%c{rgb(0, 191, 255)}We are lost...");
+            display.drawText((game._screenWidth / 2) - 5, game._screenHeight - 7, "%c{rgb(0, 191, 255)}Who are you? %c{}" + game._entities[0].name + blink + "🖉");
             if (game.mainmenuOpt == 0)
-                display.drawText((game._screenWidth / 2) - 1, game._screenHeight - 1, "%c{yellow}>Eng%c{}      Port");
+                display.drawText((game._screenWidth / 2) - 1, game._screenHeight - 5, "%c{yellow}>Eng%c{}      Port");
             if (game.mainmenuOpt == 1)
-                display.drawText((game._screenWidth / 2), game._screenHeight - 1, "Eng     %c{yellow}>Port%c{}");
+                display.drawText((game._screenWidth / 2), game._screenHeight - 5, "Eng     %c{yellow}>Port%c{}");
+            display.drawText((game._screenWidth / 10), game._screenHeight - 3, "%c{yellow}Arrows%c{}: move");
+            display.drawText((game._screenWidth / 10), game._screenHeight - 2, "%c{yellow}Enter%c{}: pickup");
+            display.drawText((game._screenWidth / 10), game._screenHeight - 1, "%c{yellow}Space%c{}: skill");
         },
         handleInput: (inputType, inputData, game) => {
             // When [Enter] is pressed, go to the play screen
@@ -8435,6 +8450,10 @@ function playScreen() {
         render: (display, game) => {
             let screenWidth = game._screenWidth;
             let screenHeight = game._screenHeight;
+            if (game._player.fighter.status == 'dead') {
+                game.switchScreen(game.Screen.loseScreen);
+                return;
+            }
             let player = game._player;
             // Make sure the x-axis doesn't go to the left of the left bound
             let topLeftX = Math.max(0, player.x - (screenWidth / 2));

@@ -26,7 +26,7 @@ export abstract class Equipment {
     strike() {
     }
 
-    what() {
-        
+    defend(amount: number) {
+        return amount
     }
 }

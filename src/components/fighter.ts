@@ -64,6 +64,9 @@ export class Fighter {
     }
 
     takeDamage(amount: number): boolean{
+        if (this.owner.player == true && this.owner.subequipment != undefined) {
+            amount = this.owner.subequipment.defend(amount);
+        }
         this.hp -= amount
         if (this.hp <= 0) {
             this.hp = 0

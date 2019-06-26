@@ -47,6 +47,15 @@ export class Shield extends Equipment {
         }, 100);
     }
 
+    defend(amount: number) {
+        if ( this.cooldown <= 0) {
+            this.cooldown = this.max_cooldown;
+            amount = amount - (this.owner.fighter.defense() * this.skill_bonus);
+            amount = amount < 0 ? 0 : amount;
+        }
+        return amount;
+    }
+
     // strike() {
     //     if ( this.cooldown == 0) {
     //         this.cooldown = this.max_cooldown;
