@@ -13,16 +13,20 @@ Todo list to fill the void of our souls (but i really want to make it web)
 - [X] trade damages (push targets)
 - [X] basic UI
 - [X] Message logging
-- [ ] Use itens (basic potions)
-- [ ] Backpack
+- [X] Use itens (basic potions)
+- [-] Backpack
 - [X] Press space for AoE
 - [X] Leveling/xp system
-- [ ] Equipments/spell/stuff for progress (change parameters with pickups)
+- [X] Equipment
 - [X] decide on how player will attack
 - [X] State machines? sorta
-- [ ] Monster attack patterns
 - [X] Attack stamina != moving stamina
-- [ ] Exits
+- [X] Exits
 - [X] Larger mobs?
 - [X] Second algorithm for dungeons
-- [ ] Level path for floors
+- [X] Level path for floors
+- [ ] Random quality drops (except potions)
+- [ ] Equipments/spell/stuff for progress
+- [ ] Monster attack patterns
+- [ ] Boss fights! 
+- [ ] Switch screen animation
