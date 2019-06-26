@@ -184,11 +184,15 @@ export class Entity {
         }, 100);
     }
 
+    equipStart(item:Entity) {
+        this.equipment = item.item;
+        this.equipment.owner = this;
+        item.item.expire = true;
+    }
+
     equip(item: Entity) {
-        console.log('item: ');
+        console.log('item chao: ');
         console.log(item); //item do chao
-        // console.log("this:");
-        // console.log(this); //player
         if (item.item.type == "main") {
             if (this.equipment == undefined) {
                 this.equipment = item.item;
@@ -198,14 +202,15 @@ export class Entity {
             } else {
                 // colocar na backpack
                 let drop = CreateDropItem(this.equipment, this.x, this.y);
-                let droppedItem = new Entity(this.x, this.y, drop.glyph, drop.name, 1, false, 5, 2, undefined, undefined, false, drop.item); //cria entidade para dropar
+                let droppedItem = new Entity(this.x, this.y, drop.item.glyph, drop.item.fullname, 1, false, 5, 2, undefined, undefined, false, drop.item); //cria entidade para dropar
                 this._map._entities.push(droppedItem);
                 this.equipment = item.item;
                 this.equipment.owner = this;
                 item.item.expire = true;
-                this._map.messageLog.newMessage(this, 'switchEquip', item, this)
+                this._map.messageLog.newMessage(this, 'switchEquip', droppedItem, item)
             }
-            console.log(this)
+            console.log('this:');
+            console.log(this);
         }
         else if (item.item.type == "sub") {
             if (this.subequipment == undefined) {
@@ -216,7 +221,7 @@ export class Entity {
             } else {
                 // colocar na backpack
                 let drop = CreateDropItem(this.subequipment, this.x, this.y);
-                let droppedItem = new Entity(this.x, this.y, drop.glyph, drop.name, 1, false, 5, 2, undefined, undefined, false, drop.item); //cria entidade para dropar
+                let droppedItem = new Entity(this.x, this.y, drop.item.glyph, drop.item.fullname, 1, false, 5, 2, undefined, undefined, false, drop.item); //cria entidade para dropar
                 this._map._entities.push(droppedItem);
                 this.subequipment = item.item;
                 this.subequipment.owner = this;

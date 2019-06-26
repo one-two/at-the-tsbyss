@@ -59,7 +59,6 @@ function randomRoom(maxx: number, maxy: number): room {
         sizex : roomsizex,
         sizey : roomsizey
     }
-    //console.log(room)
     return room;
 }
 

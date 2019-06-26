@@ -96,7 +96,7 @@ export class Map {
 
     addEntityToMap(): void {
         let max_monsters_per_room = from_dungeon_level([[30, 1], [40, 4], [40, 6]], this.dungeon_level)
-        let max_items_per_room = from_dungeon_level([[2, 1], [2, 4]], this.dungeon_level)
+        let max_items_per_room = from_dungeon_level([[30, 1], [15, 4]], this.dungeon_level)
 
         let number_of_monsters = randint(Math.ceil(max_monsters_per_room/2), max_monsters_per_room)
         let number_of_items = randint(1, max_items_per_room);
@@ -152,6 +152,7 @@ export class Map {
                 if (index == 1 ) q = CreateItem("potion", 61, 45);
                 else q = CreateItem(item_choice, x, y);
                 console.log(item_choice + '- '+ x + ' ' + y);
+                console.log(q);
                 q._map = this;
                 this._entities.push(q);
             } else {
@@ -164,8 +165,7 @@ export class Map {
         let emptyspace = true;
 
         while (emptyspace) {
-            console.log(xexit);
-            console.log(yexit);
+            console.log('exit: ' +xexit + ' ' + yexit);
             let dist = Math.sqrt( (this._entities[0].x - xexit)**2+(this._entities[0].y - yexit)**2 );
             if ( dist > 30 && this.getTile(xexit, yexit)._isWalkable) emptyspace = false;
             else {

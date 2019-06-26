@@ -36,10 +36,11 @@ export class Messagelog {
         switch (this.game.lang) {
             case "En":
                     if (type == 'pickup') {
-                        newMessage.message = "%c{0}" + actor.name + "%c{base} equipped: %c{1}" + target1.name + "%c{base} !";
+                        newMessage.message = "%c{0}" + actor.name + "%c{base} got: %c{1}" + target1.name + "%c{base} !";
                     }
                     if (type == 'switchEquip') {
-                        newMessage.message = "%c{0}" + actor.name + "%c{base} switched: %c{1}" + target1.name.toString() + "%c{base} for: %c{2}"+ actor.subequipment.name.toString() +" %c{base}!";
+                        newMessage.color2 = actor.equipment.glyph.foreground;
+                        newMessage.message = "%c{0}" + actor.name + "%c{base} switched: %c{1}" + target1.name.toString() + "%c{base} for: %c{2}"+ target2.name.toString() +" %c{base}!";
                     }
                     if (type == 'fight') {
                         let damage = extrainfo;
@@ -70,7 +71,7 @@ export class Messagelog {
                         newMessage.message = "%c{0}" + actor.name + "%c{base} empunhou: %c{1}" + target1.name + "%c{base} !";
                     }
                     if (type == 'switchEquip') {
-                        newMessage.message = "%c{0}" + actor.name + "%c{base} trocou: %c{1}" + target1.name.toString() + "%c{base} por: %c{2}"+ actor.subequipment.name.toString() +" %c{base}!";
+                        newMessage.message = "%c{0}" + actor.name + "%c{base} trocou: %c{1}" + target1.name.toString() + "%c{base} por: %c{2}"+ actor.equipment.name.toString() +" %c{base}!";
                     }
                     if (type == 'fight') {
                         let damage = extrainfo;

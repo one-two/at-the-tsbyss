@@ -11,7 +11,6 @@ export class Exit {
     }
 
     climb() {
-        console.log("climb!");
         this._map.owner.level += 1;
 
         this._map.owner.switchScreen(this._map.owner.Screen.playScreen);

@@ -3,6 +3,7 @@ import { Entity } from "../../entity";
 import { DamageBlock } from "../../components/damageBlock";
 import { Glyph } from "../../glyph";
 import { createDamageBlock } from "../../helper/createDamageBlock";
+import { qualityGenerator } from "../../helper/qualityGenerator";
 
 export class Shield extends Equipment {
     power_bonus: number = 0;
@@ -11,6 +12,7 @@ export class Shield extends Equipment {
     hp_bonus: number = 10;
     owner: Entity;
     name: string = 'shield';
+    fullname: string = 'shield';
     cooldown: number = 8
     max_cooldown: number = 8
     glyph: Glyph;
@@ -23,7 +25,16 @@ export class Shield extends Equipment {
             this.defense_bonus = drop.defense_bonus;
             this.hp_bonus = drop.hp_bonus;
             this.name = drop.name;
+            this.fullname = drop.fullname;
             this.max_cooldown = drop.max_cooldown;
+        } else {
+            let item = qualityGenerator("sub");
+            this.power_bonus += this.power_bonus*item.power_bonus;
+            this.skill_bonus += this.skill_bonus*item.skill_bonus;
+            this.defense_bonus += this.defense_bonus*item.defense_bonus;
+            this.max_cooldown += Math.round(this.max_cooldown*item.max_cooldown);
+            this.fullname = item.prefix + this.name;
+            this.glyph = new Glyph('ꂷ', [0,0,0], [item.alpha, item.alpha, 0]);
         }
         this.startCountDown();
     }

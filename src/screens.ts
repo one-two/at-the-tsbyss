@@ -179,7 +179,6 @@ export function debugScreen() {
                     case KEYS.VK_RETURN:
                         //game.switchScreen(game.Screen.winScreen);
                         let gnd = game._map.getItemAt(game._entities[0].x, game._entities[0].x2, game._entities[0].y, game._entities[0].y2);
-                        console.log(gnd);
                         if (gnd.length > 0) {
                             game._entities[0].equip(gnd[0]);
                         } else {
@@ -252,8 +251,6 @@ export function playScreen() {
             game._map.addEntityToMap();
             
             game._entities = game._map._entities;
-            console.log("entites:"   + game._entities.length)
-
         },
         exit : (game: Game) => { 
             console.log("Exited play screen."); 
@@ -324,9 +321,7 @@ export function playScreen() {
                 switch (inputData.keyCode) {
                     case KEYS.VK_RETURN:
                         let gnd = game._map.getItemAt(game._entities[0].x, game._entities[0].x2, game._entities[0].y, game._entities[0].y2);
-                        //console.log(gnd);
                         if (gnd.length > 0) {
-                            console.log(gnd);
                             if (gnd[0].stairs == undefined) {
                                 game._entities[0].equip(gnd[0]);
                             } else {

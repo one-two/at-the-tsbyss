@@ -86,201 +86,6 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "../../../AppData/Roaming/npm/node_modules/webpack/node_modules/process/browser.js":
-/*!*************************************************!*\
-  !*** (webpack)/node_modules/process/browser.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-
-/***/ }),
-
 /***/ "./lib/color.js":
 /*!**********************!*\
   !*** ./lib/color.js ***!
@@ -1414,7 +1219,7 @@ class Term extends _backend_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     computeSize() { return [process.stdout.columns, process.stdout.rows]; }
 }
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../AppData/Roaming/npm/node_modules/webpack/node_modules/process/browser.js */ "../../../AppData/Roaming/npm/node_modules/webpack/node_modules/process/browser.js")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../node_modules/process/browser.js */ "./node_modules/process/browser.js")))
 
 /***/ }),
 
@@ -5205,6 +5010,201 @@ exports.Logo = Logo;
 
 /***/ }),
 
+/***/ "./node_modules/process/browser.js":
+/*!*****************************************!*\
+  !*** ./node_modules/process/browser.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+
+/***/ }),
+
 /***/ "./src/components/damageBlock.ts":
 /*!***************************************!*\
   !*** ./src/components/damageBlock.ts ***!
@@ -5262,6 +5262,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class Equipment {
     constructor(type) {
         this.expire = false;
+        this.prefix = '';
         this.type = type;
     }
     strike() {
@@ -5418,7 +5419,6 @@ class Fighter {
             this.rank += 1;
             this.nextRank += (this.nextRank + 10);
             this.unspentPoints += 1;
-            console.log("rank up!");
         }
     }
 }
@@ -5609,7 +5609,6 @@ class Exit {
         this._map = map;
     }
     climb() {
-        console.log("climb!");
         this._map.owner.level += 1;
         this._map.owner.switchScreen(this._map.owner.Screen.playScreen);
     }
@@ -5633,6 +5632,7 @@ const equipment_1 = __webpack_require__(/*! ../../components/equipment */ "./src
 const damageBlock_1 = __webpack_require__(/*! ../../components/damageBlock */ "./src/components/damageBlock.ts");
 const glyph_1 = __webpack_require__(/*! ../../glyph */ "./src/glyph.ts");
 const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
+const qualityGenerator_1 = __webpack_require__(/*! ../../helper/qualityGenerator */ "./src/helper/qualityGenerator.ts");
 class Knife extends equipment_1.Equipment {
     constructor(drop = undefined) {
         super("main");
@@ -5642,6 +5642,7 @@ class Knife extends equipment_1.Equipment {
         this.hp_bonus = 0;
         this.prefix = '';
         this.name = 'knife';
+        this.fullname = 'knife';
         this.cooldown = 8;
         this.max_cooldown = 8;
         if (drop != undefined) {
@@ -5650,11 +5651,18 @@ class Knife extends equipment_1.Equipment {
             this.defense_bonus = drop.defense_bonus;
             this.hp_bonus = drop.hp_bonus;
             this.name = drop.name;
+            this.fullname = drop.fullname;
             this.max_cooldown = drop.max_cooldown;
             this.glyph = drop.glyph;
         }
         else {
-            this.glyph = new glyph_1.Glyph('🗡', [0, 0, 0], [204, 200, 0]);
+            let item = qualityGenerator_1.qualityGenerator("main");
+            this.power_bonus += this.power_bonus * item.power_bonus;
+            this.skill_bonus += this.skill_bonus * item.skill_bonus;
+            this.defense_bonus += this.defense_bonus * item.defense_bonus;
+            this.max_cooldown += this.max_cooldown * item.max_cooldown;
+            this.fullname = item.prefix + this.name;
+            this.glyph = new glyph_1.Glyph('🗡', [0, 0, 0], [item.alpha, item.alpha, 0]);
         }
         this.startCountDown();
     }
@@ -5665,7 +5673,7 @@ class Knife extends equipment_1.Equipment {
         }, 100);
     }
     strike() {
-        if (this.cooldown == 0) {
+        if (this.cooldown <= 0) {
             this.cooldown = this.max_cooldown;
             let dir = this.owner.face;
             let dmg = new damageBlock_1.DamageBlock(this.skill_bonus);
@@ -5719,7 +5727,7 @@ class Potion extends equipment_1.Equipment {
         this.glyph = new glyph_1.Glyph('ზ', [0, 0, 0], [204, 200, 0]);
     }
     strike() {
-        if (this.cooldown == 0) {
+        if (this.cooldown <= 0) {
             this.cooldown = this.max_cooldown;
             let dir = this.owner.face;
             let dmg = new damageBlock_1.DamageBlock(this.skill_bonus);
@@ -5756,6 +5764,8 @@ exports.Potion = Potion;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const equipment_1 = __webpack_require__(/*! ../../components/equipment */ "./src/components/equipment.ts");
+const glyph_1 = __webpack_require__(/*! ../../glyph */ "./src/glyph.ts");
+const qualityGenerator_1 = __webpack_require__(/*! ../../helper/qualityGenerator */ "./src/helper/qualityGenerator.ts");
 class Shield extends equipment_1.Equipment {
     constructor(drop = undefined) {
         super("sub");
@@ -5764,6 +5774,7 @@ class Shield extends equipment_1.Equipment {
         this.defense_bonus = 2;
         this.hp_bonus = 10;
         this.name = 'shield';
+        this.fullname = 'shield';
         this.cooldown = 8;
         this.max_cooldown = 8;
         if (drop != undefined) {
@@ -5772,7 +5783,17 @@ class Shield extends equipment_1.Equipment {
             this.defense_bonus = drop.defense_bonus;
             this.hp_bonus = drop.hp_bonus;
             this.name = drop.name;
+            this.fullname = drop.fullname;
             this.max_cooldown = drop.max_cooldown;
+        }
+        else {
+            let item = qualityGenerator_1.qualityGenerator("sub");
+            this.power_bonus += this.power_bonus * item.power_bonus;
+            this.skill_bonus += this.skill_bonus * item.skill_bonus;
+            this.defense_bonus += this.defense_bonus * item.defense_bonus;
+            this.max_cooldown += this.max_cooldown * item.max_cooldown;
+            this.fullname = item.prefix + this.name;
+            this.glyph = new glyph_1.Glyph('ꂷ', [0, 0, 0], [item.alpha, item.alpha, 0]);
         }
         this.startCountDown();
     }
@@ -5800,7 +5821,9 @@ exports.Shield = Shield;
 Object.defineProperty(exports, "__esModule", { value: true });
 const equipment_1 = __webpack_require__(/*! ../../components/equipment */ "./src/components/equipment.ts");
 const damageBlock_1 = __webpack_require__(/*! ../../components/damageBlock */ "./src/components/damageBlock.ts");
+const glyph_1 = __webpack_require__(/*! ../../glyph */ "./src/glyph.ts");
 const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
+const qualityGenerator_1 = __webpack_require__(/*! ../../helper/qualityGenerator */ "./src/helper/qualityGenerator.ts");
 class Spear extends equipment_1.Equipment {
     constructor(drop = undefined) {
         super("main");
@@ -5809,6 +5832,7 @@ class Spear extends equipment_1.Equipment {
         this.defense_bonus = 0;
         this.hp_bonus = 0;
         this.name = 'spear';
+        this.fullname = 'spear';
         this.max_cooldown = 8;
         this.cooldown = 13;
         if (drop != undefined) {
@@ -5817,7 +5841,17 @@ class Spear extends equipment_1.Equipment {
             this.defense_bonus = drop.defense_bonus;
             this.hp_bonus = drop.hp_bonus;
             this.name = drop.name;
+            this.fullname = drop.fullname;
             this.max_cooldown = drop.max_cooldown;
+        }
+        else {
+            let item = qualityGenerator_1.qualityGenerator("main");
+            this.power_bonus += this.power_bonus * item.power_bonus;
+            this.skill_bonus += this.skill_bonus * item.skill_bonus;
+            this.defense_bonus += this.defense_bonus * item.defense_bonus;
+            this.max_cooldown += this.max_cooldown * item.max_cooldown;
+            this.fullname = item.prefix + this.name;
+            this.glyph = new glyph_1.Glyph('ﴽ', [0, 0, 0], [item.alpha, item.alpha, 0]);
         }
         this.startCountDown();
     }
@@ -5828,7 +5862,7 @@ class Spear extends equipment_1.Equipment {
         }, 100);
     }
     strike() {
-        if (this.cooldown == 0) {
+        if (this.cooldown <= 0) {
             this.cooldown = this.max_cooldown;
             let dir = this.owner.face;
             let dmg = new damageBlock_1.DamageBlock(this.skill_bonus);
@@ -5886,7 +5920,9 @@ exports.Spear = Spear;
 Object.defineProperty(exports, "__esModule", { value: true });
 const equipment_1 = __webpack_require__(/*! ../../components/equipment */ "./src/components/equipment.ts");
 const damageBlock_1 = __webpack_require__(/*! ../../components/damageBlock */ "./src/components/damageBlock.ts");
+const glyph_1 = __webpack_require__(/*! ../../glyph */ "./src/glyph.ts");
 const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
+const qualityGenerator_1 = __webpack_require__(/*! ../../helper/qualityGenerator */ "./src/helper/qualityGenerator.ts");
 class Sword extends equipment_1.Equipment {
     constructor(drop = undefined) {
         super("main");
@@ -5895,6 +5931,7 @@ class Sword extends equipment_1.Equipment {
         this.defense_bonus = 0;
         this.hp_bonus = 0;
         this.name = 'sword';
+        this.fullname = 'sword';
         this.cooldown = 10;
         this.max_cooldown = 10;
         if (drop != undefined) {
@@ -5903,7 +5940,17 @@ class Sword extends equipment_1.Equipment {
             this.defense_bonus = drop.defense_bonus;
             this.hp_bonus = drop.hp_bonus;
             this.name = drop.name;
+            this.fullname = drop.fullname;
             this.max_cooldown = drop.max_cooldown;
+        }
+        else {
+            let item = qualityGenerator_1.qualityGenerator("main");
+            this.power_bonus += this.power_bonus * item.power_bonus;
+            this.skill_bonus += this.skill_bonus * item.skill_bonus;
+            this.defense_bonus += this.defense_bonus * item.defense_bonus;
+            this.max_cooldown += this.max_cooldown * item.max_cooldown;
+            this.fullname = item.prefix + this.name;
+            this.glyph = new glyph_1.Glyph('ރ', [0, 0, 0], [item.alpha, item.alpha, 0]);
         }
         this.startCountDown();
     }
@@ -5914,7 +5961,7 @@ class Sword extends equipment_1.Equipment {
         }, 100);
     }
     strike() {
-        if (this.cooldown == 0) {
+        if (this.cooldown <= 0) {
             this.cooldown = this.max_cooldown;
             let dir = this.owner.face;
             let dmg = new damageBlock_1.DamageBlock(this.skill_bonus);
@@ -6459,11 +6506,14 @@ class Entity {
             }
         }, 100);
     }
+    equipStart(item) {
+        this.equipment = item.item;
+        this.equipment.owner = this;
+        item.item.expire = true;
+    }
     equip(item) {
-        console.log('item: ');
+        console.log('item chao: ');
         console.log(item); //item do chao
-        // console.log("this:");
-        // console.log(this); //player
         if (item.item.type == "main") {
             if (this.equipment == undefined) {
                 this.equipment = item.item;
@@ -6474,13 +6524,14 @@ class Entity {
             else {
                 // colocar na backpack
                 let drop = createItens_1.CreateDropItem(this.equipment, this.x, this.y);
-                let droppedItem = new Entity(this.x, this.y, drop.glyph, drop.name, 1, false, 5, 2, undefined, undefined, false, drop.item); //cria entidade para dropar
+                let droppedItem = new Entity(this.x, this.y, drop.item.glyph, drop.item.fullname, 1, false, 5, 2, undefined, undefined, false, drop.item); //cria entidade para dropar
                 this._map._entities.push(droppedItem);
                 this.equipment = item.item;
                 this.equipment.owner = this;
                 item.item.expire = true;
-                this._map.messageLog.newMessage(this, 'switchEquip', item, this);
+                this._map.messageLog.newMessage(this, 'switchEquip', droppedItem, item);
             }
+            console.log('this:');
             console.log(this);
         }
         else if (item.item.type == "sub") {
@@ -6493,7 +6544,7 @@ class Entity {
             else {
                 // colocar na backpack
                 let drop = createItens_1.CreateDropItem(this.subequipment, this.x, this.y);
-                let droppedItem = new Entity(this.x, this.y, drop.glyph, drop.name, 1, false, 5, 2, undefined, undefined, false, drop.item); //cria entidade para dropar
+                let droppedItem = new Entity(this.x, this.y, drop.item.glyph, drop.item.fullname, 1, false, 5, 2, undefined, undefined, false, drop.item); //cria entidade para dropar
                 this._map._entities.push(droppedItem);
                 this.subequipment = item.item;
                 this.subequipment.owner = this;
@@ -6655,7 +6706,6 @@ const fighter_1 = __webpack_require__(/*! ./components/fighter */ "./src/compone
 const messages_1 = __webpack_require__(/*! ./messages */ "./src/messages.ts");
 const logo_1 = __webpack_require__(/*! ../logo/logo */ "./logo/logo.ts");
 const createItens_1 = __webpack_require__(/*! ./helper/createItens */ "./src/helper/createItens.ts");
-const knife_1 = __webpack_require__(/*! ./content/itens/knife */ "./src/content/itens/knife.ts");
 class Game {
     constructor() {
         this._messageBoxSize = 10;
@@ -6792,7 +6842,7 @@ class Game {
         this._inventory.drawText(1, 12, "%c{rgb(140, 140, 160)}Rank: %c{}" + this._player.fighter.rank);
         this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}" + this._player.fighter.current_exp + "/" + this._player.fighter.nextRank);
         if (this._player.equipment != undefined) {
-            this._inventory.drawText(1, 15, "%c{rgb(140, 140, 160)}Main: %c{}" + this._player.equipment.name);
+            this._inventory.drawText(1, 15, "%c{rgb(140, 140, 160)}Main: %c{rgb(" + this._player.equipment.glyph.foreground.toString() + ")}" + this._player.equipment.name);
             this._inventory.drawText(3, 16, "%c{rgb(140, 140, 160)}atk: %c{}" + this._player.equipment.power_bonus.toFixed(2));
             this._inventory.drawText(3, 17, "%c{rgb(140, 140, 160)}skl: %c{}" + this._player.equipment.skill_bonus.toFixed(2));
             this._inventory.drawText(3, 18, "%c{rgb(140, 140, 160)}def: %c{}" + this._player.equipment.defense_bonus.toFixed(2));
@@ -6847,7 +6897,6 @@ class Game {
     startCountDown() {
         let counter = 1;
         var interval = setInterval(() => {
-            //console.log(counter);
             counter--;
             if (counter < 0) {
                 // code here will run when the counter reaches zero.
@@ -6869,9 +6918,10 @@ window.onload = function () {
     player.fighter.unspentPoints = 10;
     game._player = player;
     game._entities = [game._player];
-    let knife = new knife_1.Knife();
-    knife.owner = game._player;
-    game._player.equipment = createItens_1.CreateItem('knife', game._player.x, game._player.y).item;
+    //let knife = new Knife();
+    //knife.owner = game._player;
+    //game._player.equipment = CreateItem('knife', game._player.x, game._player.y).item;
+    game._player.equipStart(createItens_1.CreateItem('knife', game._player.x, game._player.y));
     game._player.equipment.owner = game._player;
     game.init();
     // Add the container to our HTML page
@@ -6932,7 +6982,6 @@ function createDamageBlock(creator, x, y, name, multi, glyph = '╳', timeout = 
     let dmg = new damageBlock_1.DamageBlock(multi, timeout);
     let attack = null;
     dmg.owner = creator;
-    //console.log(creator);
     if (creator.player)
         attack = new entity_1.Entity(x, y, new glyph_1.Glyph(glyph, [0, 0, 0], [creator.glyph.foreground[1], creator.glyph.foreground[1] / 3, creator.glyph.foreground[2] / 3]), name, 1, false, 0, 5, undefined, undefined, false, undefined, undefined, dmg);
     else
@@ -6976,31 +7025,32 @@ function CreateItem(item_choice, x, y) {
     }
     if (item_choice == 'knife') {
         let item_component = new knife_1.Knife();
-        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('🗡', [0, 0, 0], [204, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
+        let item = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
         item.item.glyph = item.glyph;
         return item;
     }
     else if (item_choice == 'sword') {
         let item_component = new sword_1.Sword();
-        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('ރ', [0, 0, 0], [200, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
+        let item = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
         item.item.glyph = item.glyph;
         return item;
     }
     else if (item_choice == 'spear') {
         let item_component = new spear_1.Spear();
-        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('ﴽ', [0, 0, 0], [200, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
+        let item = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
         item.item.glyph = item.glyph;
         return item;
     }
     else if (item_choice == 'dagger') {
         let item_component = new knife_1.Knife();
-        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('🗡', [0, 0, 0], [200, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
+        let item = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
         item.item.glyph = item.glyph;
         return item;
     }
     else if (item_choice == 'shield') {
         let item_component = new shield_1.Shield();
-        let item = new entity_1.Entity(x, y, new glyph_1.Glyph('ꂷ', [0, 0, 0], [200, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
+        console.log(item_component);
+        let item = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
         item.item.glyph = item.glyph;
         return item;
     }
@@ -7011,31 +7061,31 @@ function CreateDropItem(item, x, y) {
     let item_choice = item.name;
     if (item_choice == 'knife') {
         let item_component = new knife_1.Knife(item);
-        let itemDrop = new entity_1.Entity(x, y, new glyph_1.Glyph('🗡', [0, 0, 0], [204, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
+        let itemDrop = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
         itemDrop.item.glyph = item.glyph;
         return itemDrop;
     }
     else if (item_choice == 'sword') {
         let item_component = new sword_1.Sword(item);
-        let itemDrop = new entity_1.Entity(x, y, new glyph_1.Glyph('ރ', [0, 0, 0], [200, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
+        let itemDrop = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
         itemDrop.item.glyph = item.glyph;
         return itemDrop;
     }
     else if (item_choice == 'spear') {
         let item_component = new spear_1.Spear(item);
-        let itemDrop = new entity_1.Entity(x, y, new glyph_1.Glyph('ﴽ', [0, 0, 0], [200, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
+        let itemDrop = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
         itemDrop.item.glyph = item.glyph;
         return itemDrop;
     }
     else if (item_choice == 'dagger') {
         let item_component = new knife_1.Knife(item);
-        let itemDrop = new entity_1.Entity(x, y, new glyph_1.Glyph('🗡', [0, 0, 0], [200, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
+        let itemDrop = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
         itemDrop.item.glyph = item.glyph;
         return itemDrop;
     }
     else if (item_choice == 'shield') {
         let item_component = new shield_1.Shield(item);
-        let itemDrop = new entity_1.Entity(x, y, new glyph_1.Glyph('ꂷ', [0, 0, 0], [200, 200, 0]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
+        let itemDrop = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
         itemDrop.item.glyph = item.glyph;
         return itemDrop;
     }
@@ -7181,7 +7231,6 @@ function randomRoom(maxx, maxy) {
         sizex: roomsizex,
         sizey: roomsizey
     };
-    //console.log(room)
     return room;
 }
 function digHere(here, map) {
@@ -7652,6 +7701,75 @@ function removeDeadEnds(deadEnds, map, maxx, maxy) {
 
 /***/ }),
 
+/***/ "./src/helper/qualityGenerator.ts":
+/*!****************************************!*\
+  !*** ./src/helper/qualityGenerator.ts ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const randperc_1 = __webpack_require__(/*! ./randperc */ "./src/helper/randperc.ts");
+function qualityGenerator(type) {
+    let item = {
+        power_bonus: 0,
+        skill_bonus: 0,
+        defense_bonus: 0,
+        max_cooldown: 0,
+        prefix: '',
+        alpha: 0,
+    };
+    item.power_bonus = randperc_1.randperc(30);
+    item.skill_bonus = randperc_1.randperc(30);
+    item.defense_bonus = randperc_1.randperc(30);
+    item.max_cooldown = randperc_1.randperc(40);
+    let quality = item.power_bonus * 100 + item.skill_bonus * 100 + item.defense_bonus * 100 + item.max_cooldown * 100;
+    if (quality <= -60)
+        item.prefix = 'crappy ';
+    else if (quality < -30)
+        item.prefix = 'inferior ';
+    else if (quality < -15)
+        item.prefix = 'weak ';
+    else if (quality < 0)
+        item.prefix = '';
+    else if (quality < 15)
+        item.prefix = 'strong ';
+    else if (quality < 30)
+        item.prefix = 'superior ';
+    else if (quality < 60)
+        item.prefix = 'legendary ';
+    else if (quality >= 60)
+        item.prefix = 'infinite ';
+    item.alpha = 180 + 180 * Math.ceil(quality / 100);
+    if (type == "main") {
+        if (item.power_bonus * 100 > 13)
+            item.prefix += 'fierce ';
+        else if (item.skill_bonus * 100 > 13)
+            item.prefix += 'skillful ';
+        else if (item.defense_bonus * 100 > 13)
+            item.prefix += 'parry ';
+        else if (item.max_cooldown * 100 > 17)
+            item.prefix += 'quick ';
+    }
+    if (type == "sub") {
+        if (item.power_bonus * 100 > 13)
+            item.prefix += 'empowered ';
+        else if (item.skill_bonus * 100 > 13)
+            item.prefix += 'enchanted ';
+        else if (item.defense_bonus * 100 > 13)
+            item.prefix += 'vanguard ';
+        else if (item.max_cooldown * 100 > 17)
+            item.prefix += 'lightweight ';
+    }
+    return item;
+}
+exports.qualityGenerator = qualityGenerator;
+
+
+/***/ }),
+
 /***/ "./src/helper/randFromLevel.ts":
 /*!*************************************!*\
   !*** ./src/helper/randFromLevel.ts ***!
@@ -7714,6 +7832,25 @@ function randint(floor, ceil) {
     return Math.round(t);
 }
 exports.randint = randint;
+
+
+/***/ }),
+
+/***/ "./src/helper/randperc.ts":
+/*!********************************!*\
+  !*** ./src/helper/randperc.ts ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function randperc(perc) {
+    let t = (Math.random() * (perc)) - Math.ceil(perc / 2);
+    return (t / 100);
+}
+exports.randperc = randperc;
 
 
 /***/ }),
@@ -7809,7 +7946,7 @@ class Map {
     }
     addEntityToMap() {
         let max_monsters_per_room = randFromLevel_1.from_dungeon_level([[30, 1], [40, 4], [40, 6]], this.dungeon_level);
-        let max_items_per_room = randFromLevel_1.from_dungeon_level([[2, 1], [2, 4]], this.dungeon_level);
+        let max_items_per_room = randFromLevel_1.from_dungeon_level([[30, 1], [15, 4]], this.dungeon_level);
         let number_of_monsters = randint_1.randint(Math.ceil(max_monsters_per_room / 2), max_monsters_per_room);
         let number_of_items = randint_1.randint(1, max_items_per_room);
         let monster_chances = monsterProbabilities_1.monsterProbabilities(this.dungeon_level);
@@ -7857,6 +7994,7 @@ class Map {
                 else
                     q = createItens_1.CreateItem(item_choice, x, y);
                 console.log(item_choice + '- ' + x + ' ' + y);
+                console.log(q);
                 q._map = this;
                 this._entities.push(q);
             }
@@ -7868,8 +8006,7 @@ class Map {
         let yexit = randint_1.randint(0, this._height - 1);
         let emptyspace = true;
         while (emptyspace) {
-            console.log(xexit);
-            console.log(yexit);
+            console.log('exit: ' + xexit + ' ' + yexit);
             let dist = Math.sqrt(Math.pow((this._entities[0].x - xexit), 2) + Math.pow((this._entities[0].y - yexit), 2));
             if (dist > 30 && this.getTile(xexit, yexit)._isWalkable)
                 emptyspace = false;
@@ -7972,10 +8109,11 @@ class Messagelog {
         switch (this.game.lang) {
             case "En":
                 if (type == 'pickup') {
-                    newMessage.message = "%c{0}" + actor.name + "%c{base} equipped: %c{1}" + target1.name + "%c{base} !";
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} got: %c{1}" + target1.name + "%c{base} !";
                 }
                 if (type == 'switchEquip') {
-                    newMessage.message = "%c{0}" + actor.name + "%c{base} switched: %c{1}" + target1.name.toString() + "%c{base} for: %c{2}" + actor.subequipment.name.toString() + " %c{base}!";
+                    newMessage.color2 = actor.equipment.glyph.foreground;
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} switched: %c{1}" + target1.name.toString() + "%c{base} for: %c{2}" + target2.name.toString() + " %c{base}!";
                 }
                 if (type == 'fight') {
                     let damage = extrainfo;
@@ -8005,7 +8143,7 @@ class Messagelog {
                     newMessage.message = "%c{0}" + actor.name + "%c{base} empunhou: %c{1}" + target1.name + "%c{base} !";
                 }
                 if (type == 'switchEquip') {
-                    newMessage.message = "%c{0}" + actor.name + "%c{base} trocou: %c{1}" + target1.name.toString() + "%c{base} por: %c{2}" + actor.subequipment.name.toString() + " %c{base}!";
+                    newMessage.message = "%c{0}" + actor.name + "%c{base} trocou: %c{1}" + target1.name.toString() + "%c{base} por: %c{2}" + actor.equipment.name.toString() + " %c{base}!";
                 }
                 if (type == 'fight') {
                     let damage = extrainfo;
@@ -8215,7 +8353,6 @@ function debugScreen() {
                     case constants_1.KEYS.VK_RETURN:
                         //game.switchScreen(game.Screen.winScreen);
                         let gnd = game._map.getItemAt(game._entities[0].x, game._entities[0].x2, game._entities[0].y, game._entities[0].y2);
-                        console.log(gnd);
                         if (gnd.length > 0) {
                             game._entities[0].equip(gnd[0]);
                         }
@@ -8284,7 +8421,6 @@ function playScreen() {
             game._map.dungeon_level = game.level;
             game._map.addEntityToMap();
             game._entities = game._map._entities;
-            console.log("entites:" + game._entities.length);
         },
         exit: (game) => {
             console.log("Exited play screen.");
@@ -8339,9 +8475,7 @@ function playScreen() {
                 switch (inputData.keyCode) {
                     case constants_1.KEYS.VK_RETURN:
                         let gnd = game._map.getItemAt(game._entities[0].x, game._entities[0].x2, game._entities[0].y, game._entities[0].y2);
-                        //console.log(gnd);
                         if (gnd.length > 0) {
-                            console.log(gnd);
                             if (gnd[0].stairs == undefined) {
                                 game._entities[0].equip(gnd[0]);
                             }
@@ -8584,12 +8718,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const randFromLevel_1 = __webpack_require__(/*! ../helper/randFromLevel */ "./src/helper/randFromLevel.ts");
 function itemProbabilities(dungeon_level) {
     return {
-        'potion': 35,
-        'knife': randFromLevel_1.from_dungeon_level([[10, 1]], this.dungeon_level),
-        'dagger': randFromLevel_1.from_dungeon_level([[10, 1]], this.dungeon_level),
-        'sword': randFromLevel_1.from_dungeon_level([[10, 0], [10, 2]], this.dungeon_level),
-        'spear': randFromLevel_1.from_dungeon_level([[5, 1], [10, 3]], this.dungeon_level),
-        'shield': randFromLevel_1.from_dungeon_level([[15, 0]], this.dungeon_level),
+        'potion': 1,
+        'knife': randFromLevel_1.from_dungeon_level([[10, 1]], dungeon_level),
+        'dagger': randFromLevel_1.from_dungeon_level([[10, 1]], dungeon_level),
+        'sword': randFromLevel_1.from_dungeon_level([[10, 0], [10, 2]], dungeon_level),
+        'spear': randFromLevel_1.from_dungeon_level([[5, 1], [10, 3]], dungeon_level),
+        'shield': randFromLevel_1.from_dungeon_level([[30, 0]], dungeon_level),
     };
 }
 exports.itemProbabilities = itemProbabilities;

@@ -176,7 +176,7 @@ export class Game {
 		this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}"+ this._player.fighter.current_exp + "/" + this._player.fighter.nextRank);
 
 		if ( this._player.equipment != undefined) {
-			this._inventory.drawText(1, 15, "%c{rgb(140, 140, 160)}Main: %c{}"+ this._player.equipment.name);
+			this._inventory.drawText(1, 15, "%c{rgb(140, 140, 160)}Main: %c{rgb("+this._player.equipment.glyph.foreground.toString()+")}"+ this._player.equipment.name);
 			this._inventory.drawText(3, 16, "%c{rgb(140, 140, 160)}atk: %c{}"+ this._player.equipment.power_bonus.toFixed(2));
 			this._inventory.drawText(3, 17, "%c{rgb(140, 140, 160)}skl: %c{}"+ this._player.equipment.skill_bonus.toFixed(2));
 			this._inventory.drawText(3, 18, "%c{rgb(140, 140, 160)}def: %c{}"+ this._player.equipment.defense_bonus.toFixed(2));
@@ -237,7 +237,6 @@ export class Game {
 	startCountDown(){
 		let counter = 1
         var interval = setInterval(() => {
-			//console.log(counter);
 			
             counter--;
             if (counter < 0) {
@@ -260,9 +259,10 @@ window.onload = function() {
 	player.fighter.unspentPoints = 10;
 	game._player = player
 	game._entities = [game._player];
-	let knife = new Knife();
-	knife.owner = game._player;
-	game._player.equipment = CreateItem('knife', game._player.x, game._player.y).item;
+	//let knife = new Knife();
+	//knife.owner = game._player;
+	//game._player.equipment = CreateItem('knife', game._player.x, game._player.y).item;
+	game._player.equipStart(CreateItem('knife', game._player.x, game._player.y));
 	game._player.equipment.owner = game._player;
 	game.init();
 	// Add the container to our HTML page

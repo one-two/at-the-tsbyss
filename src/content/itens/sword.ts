@@ -3,6 +3,7 @@ import { Entity } from "../../entity";
 import { DamageBlock } from "../../components/damageBlock";
 import { Glyph } from "../../glyph";
 import { createDamageBlock } from "../../helper/createDamageBlock";
+import { qualityGenerator } from "../../helper/qualityGenerator";
 
 export class Sword extends Equipment {
     power_bonus: number = 4;
@@ -11,6 +12,7 @@ export class Sword extends Equipment {
     hp_bonus: number = 0;
     owner: Entity;
     name: string = 'sword';
+    fullname: string = 'sword';
     cooldown: number = 10
     max_cooldown: number = 10;
 
@@ -22,7 +24,16 @@ export class Sword extends Equipment {
             this.defense_bonus = drop.defense_bonus;
             this.hp_bonus = drop.hp_bonus;
             this.name = drop.name;
+            this.fullname = drop.fullname;
             this.max_cooldown = drop.max_cooldown;
+        } else {
+            let item = qualityGenerator("main");
+            this.power_bonus += this.power_bonus*item.power_bonus;
+            this.skill_bonus += this.skill_bonus*item.skill_bonus;
+            this.defense_bonus += this.defense_bonus*item.defense_bonus;
+            this.max_cooldown += Math.round(this.max_cooldown*item.max_cooldown);
+            this.fullname = item.prefix + this.name;
+            this.glyph = new Glyph('ރ', [0,0,0], [item.alpha, item.alpha, 0]);
         }
         this.startCountDown();
     }
@@ -34,7 +45,7 @@ export class Sword extends Equipment {
     }
 
     strike() {
-        if ( this.cooldown == 0) {
+        if ( this.cooldown <= 0) {
             this.cooldown = this.max_cooldown;
             let dir =this.owner.face;
             let dmg = new DamageBlock(this.skill_bonus)

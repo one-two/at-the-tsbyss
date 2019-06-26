@@ -23,7 +23,7 @@ export class Potion extends Equipment{
 
 
     strike() {
-        if ( this.cooldown == 0) {
+        if ( this.cooldown <= 0) {
             this.cooldown = this.max_cooldown;
             let dir =this.owner.face;
             let dmg = new DamageBlock(this.skill_bonus)

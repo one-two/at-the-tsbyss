@@ -145,7 +145,6 @@ export class Fighter {
             this.rank += 1;
             this.nextRank += (this.nextRank + 10)
             this.unspentPoints += 1;
-            console.log("rank up!")
         }
     }
 }
