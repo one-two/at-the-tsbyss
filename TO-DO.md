@@ -30,3 +30,4 @@ Todo list to fill the void of our souls (but i really want to make it web)
 - [ ] Monster attack patterns
 - [ ] Boss fights! 
 - [ ] Switch screen animation
+- [ ] Leaderboards!
