@@ -30,6 +30,7 @@ export class Sword extends Equipment {
             let item = qualityGenerator("main");
             this.power_bonus += this.power_bonus*item.power_bonus;
             this.skill_bonus += this.skill_bonus*item.skill_bonus;
+            if (item.defense_bonus*100 > 13) this.defense_bonus += (Math.random()*2);
             this.defense_bonus += this.defense_bonus*item.defense_bonus;
             this.max_cooldown += Math.round(this.max_cooldown*item.max_cooldown);
             this.fullname = item.prefix + this.name;

@@ -18,9 +18,9 @@ export function qualityGenerator(type: string){
     if (quality <= -60) item.prefix = 'crappy ';
     else if (quality < -30) item.prefix = 'inferior ';
     else if (quality < -15) item.prefix = 'weak ';
-    else if (quality < 0) item.prefix = '';
-    else if (quality < 15) item.prefix = 'strong ';
-    else if (quality < 30) item.prefix = 'superior ';
+    else if (quality < 15) item.prefix = '';
+    else if (quality < 30) item.prefix = 'strong ';
+    else if (quality < 45) item.prefix = 'superior ';
     else if (quality < 60) item.prefix = 'legendary ';
     else if (quality >= 60) item.prefix = 'infinite ';
     item.alpha = 180 + 180*Math.ceil(quality/100);

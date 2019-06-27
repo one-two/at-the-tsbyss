@@ -6,6 +6,7 @@ import { Sword } from "../content/itens/sword";
 import { Spear } from "../content/itens/spear";
 import { Shield } from "../content/itens/shield";
 import { Potion } from "../content/itens/potion";
+import { Firerod } from "../content/itens/firerod";
 
 // function ItemFactory(name: string, x: number, y): Entity{
 //     return new Entity(x, y, new Glyph('Ϯ', [0,0,0], [204, 200, 0]), 'knife', 1, false, 5, 2, undefined, undefined, false, item_component);
@@ -74,6 +75,12 @@ export function CreateDropItem(item: Equipment, x: number, y: number): Entity{
     }
     else if (item_choice == 'dagger') {
         let item_component = new Knife(item);
+        let itemDrop = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
+        itemDrop.item.glyph = item.glyph;
+        return itemDrop;
+    }
+    else if (item_choice == 'firerod') {
+        let item_component = new Firerod(item);
         let itemDrop = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
         itemDrop.item.glyph = item.glyph;
         return itemDrop;

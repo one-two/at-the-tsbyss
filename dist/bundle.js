@@ -8234,12 +8234,12 @@ function startScreen() {
             game.blinkLevel += 1;
             // Render our prompt to the screen
             display.drawText((game._screenWidth / 2), game._screenHeight - 10, "%c{rgb(0, 191, 255)}We are lost...");
-            display.drawText((game._screenWidth / 2) - 5, game._screenHeight - 7, "%c{rgb(0, 191, 255)}Who are you? %c{}" + game._entities[0].name + blink + "🖉");
+            display.drawText((game._screenWidth / 2) - 5, game._screenHeight - 7, "%c{rgb(0, 191, 255)}Who are you? %c{}" + game._entities[0].name + blink + "_");
             if (game.mainmenuOpt == 0)
                 display.drawText((game._screenWidth / 2) - 1, game._screenHeight - 5, "%c{yellow}>Eng%c{}      Port");
             if (game.mainmenuOpt == 1)
                 display.drawText((game._screenWidth / 2), game._screenHeight - 5, "Eng     %c{yellow}>Port%c{}");
-            display.drawText((game._screenWidth / 10), game._screenHeight - 3, "%c{yellow}Arrows%c{}: move");
+            display.drawText((game._screenWidth / 10), game._screenHeight - 3, "%c{yellow}Arrow%c{}: move");
             display.drawText((game._screenWidth / 10), game._screenHeight - 2, "%c{yellow}Enter%c{}: pickup");
             display.drawText((game._screenWidth / 10), game._screenHeight - 1, "%c{yellow}Space%c{}: skill");
         },

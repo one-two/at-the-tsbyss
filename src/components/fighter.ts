@@ -34,7 +34,8 @@ export class Fighter {
             if (this.owner.equipment != undefined) bonus += this.owner.equipment.power_bonus;
             if (this.owner.subequipment != undefined) bonus += this.owner.subequipment.power_bonus;
         } 
-        return this.base_power + bonus
+        let totalBase = (this.base_power + bonus) < 0 ? 0 : this.base_power + bonus 
+        return totalBase
     }
 
     skill_power() {
@@ -42,7 +43,8 @@ export class Fighter {
         if (this.owner.ai != undefined) return this.power() * this.owner.ai.skill_bonus;
         if (this.owner.equipment != undefined)  bonus += this.owner.equipment.skill_bonus;
         if (this.owner.subequipment != undefined) bonus += this.owner.equipment.skill_bonus;
-        return this.power() * bonus;
+        let basePower = this.power() < 1 ? 1 : this.power();
+        return basePower * bonus;
     }
 
     defense() {
