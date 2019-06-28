@@ -243,6 +243,26 @@ export function playScreen() {
             // Sync map and game variables
             game._map._entities = [];
             game._map._entities.push(game._player); //player always [0]
+
+            let newPlayerPositionBlocked = true;
+
+            while (newPlayerPositionBlocked) {
+                let x = randint(0, game._map._width - 1)
+                let y = randint(0, game._map._height - 1)
+
+                if (game._map.getTile(x, y)._isWalkable == false) {
+                    newPlayerPositionBlocked = true;
+                } else {
+                    game._player.x = x;
+                    game._player.x2 = x;
+                    game._player.y = y;
+                    game._player.y2 = y;
+                    newPlayerPositionBlocked = false;
+                }
+            }
+
+
+
             game._player._map = game._map;  
             game._map._display = game._display;
             game._map.messageLog = game.messageLog;

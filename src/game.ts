@@ -67,7 +67,7 @@ export class Game {
 			fontFamily: "Courier",
 			fontStyle: "bold", 
 			spacing : 0.75});
-		this._inventory = new Display({width: 20, height: this._screenHeight*0.75});
+		this._inventory = new Display({width: 20, height: this._screenHeight*0.8});
 		this._messaging = new Display({width: this._screenWidth*1.5, height: this._messageBoxSize});
 		this.messageLog = new Messagelog(0, this._screenHeight, this._messageBoxSize, this);
 		this.messageLog.messages = [{message: '', color0 : [0,0,0], color1 : [0,0,0], color2 : [0,0,0], type : "empty"}, 
@@ -151,60 +151,118 @@ export class Game {
 		let hp = this._player.fighter.hp.toFixed(2);
 		let max_hp = this._player.fighter.max_hp();
 		this._inventory.drawText(0, 1, "Status: ")
-		this._inventory.drawText(1, 3, "%c{rgb(255,0,0)}HP: %c{}" +hp + "/" +max_hp);
-		this._inventory.drawText(1, 4, "%c{blue}Atk: %c{}"+this._player.fighter.power().toFixed(2));
-		this._inventory.drawText(1, 5, "%c{yellow}Def: %c{}"+this._player.fighter.defense().toFixed(2));
-
-		if (this._player.fighter.unspentPoints > 0) {
-			let blink = "";
-			if (this.blinkLevel < 2) blink = "%c{rgb(140, 140, 140)}";
-			if (this.blinkLevel >= 2) blink = "%c{rgb(240, 240, 240)}";
-			if (this.blinkLevel > 5) this.blinkLevel = 0;
-			this.blinkLevel += 1;
-
-			this._inventory.drawText(1, 7, blink +" LEVEL UP! : "+this._player.fighter.unspentPoints);
-			this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}"+this._player.fighter.base_power.toFixed(2) + blink + " (a)");
-			this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Resist: %c{}"+this._player.fighter.base_defense.toFixed(2) + blink + " (s)");
-			this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}"+ this._player.fighter.base_max_hp.toFixed(2) + blink + " (d)");
-		} else {
-			this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}"+this._player.fighter.base_power.toFixed(2));
-			this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Resist: %c{}"+this._player.fighter.base_defense.toFixed(2));
-			this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}"+ this._player.fighter.base_max_hp.toFixed(2));
+		if (this.lang == "En") {
+			this._inventory.drawText(1, 3, "%c{rgb(255,0,0)}HP: %c{}" +hp + "/" +max_hp);
+			this._inventory.drawText(1, 4, "%c{blue}Atk: %c{}"+this._player.fighter.power().toFixed(2));
+			this._inventory.drawText(1, 5, "%c{yellow}Def: %c{}"+this._player.fighter.defense().toFixed(2));
+	
+			if (this._player.fighter.unspentPoints > 0) {
+				let blink = "";
+				if (this.blinkLevel < 2) blink = "%c{rgb(140, 140, 140)}";
+				if (this.blinkLevel >= 2) blink = "%c{rgb(240, 240, 240)}";
+				if (this.blinkLevel > 5) this.blinkLevel = 0;
+				this.blinkLevel += 1;
+	
+				this._inventory.drawText(1, 7, blink +" LEVEL UP! : "+this._player.fighter.unspentPoints);
+				this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Might: %c{}"+this._player.fighter.base_power.toFixed(2) + blink + " (a)");
+				this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Resist: %c{}"+this._player.fighter.base_defense.toFixed(2) + blink + " (s)");
+				this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Base HP: %c{}"+ this._player.fighter.base_max_hp.toFixed(2) + blink + " (d)");
+			} else {
+				this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Might: %c{}"+this._player.fighter.base_power.toFixed(2));
+				this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Resist: %c{}"+this._player.fighter.base_defense.toFixed(2));
+				this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Base HP: %c{}"+ this._player.fighter.base_max_hp.toFixed(2));
+			}
+	
+			this._inventory.drawText(1, 12, "%c{rgb(140, 140, 160)}Rank: %c{}"+ this._player.fighter.rank);
+			this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}"+ this._player.fighter.current_exp + "/" + this._player.fighter.nextRank);
+	
+			if ( this._player.equipment != undefined) {
+				this._inventory.drawText(1, 15, "%c{rgb(140, 140, 160)}Main: %c{rgb("+this._player.equipment.glyph.foreground.toString()+")}"+ this._player.equipment.name);
+				this._inventory.drawText(3, 16, "%c{rgb(140, 140, 160)}atk: %c{}"+ this._player.equipment.power_bonus.toFixed(2));
+				this._inventory.drawText(3, 17, "%c{rgb(140, 140, 160)}skl: %c{}"+ this._player.equipment.skill_bonus.toFixed(2));
+				this._inventory.drawText(3, 18, "%c{rgb(140, 140, 160)}def: %c{}"+ this._player.equipment.defense_bonus.toFixed(2));
+				this._inventory.drawText(3, 19, "%c{rgb(140, 140, 160)}hp: %c{}"+ this._player.equipment.hp_bonus.toFixed(2));
+				this._inventory.drawText(3, 20, "%c{rgb(140, 140, 160)}cd: %c{}"+ (this._player.equipment.max_cooldown-this._player.equipment.cooldown).toFixed(0) + "/" + this._player.equipment.max_cooldown.toFixed(0));
+				
+			}
+	
+			if ( this._player.subequipment != undefined) {
+				this._inventory.drawText(1, 22, "%c{rgb(140, 140, 160)}Sub: %c{}"+ this._player.subequipment.name);
+				this._inventory.drawText(3, 23, "%c{rgb(140, 140, 160)}atk: %c{}"+ this._player.subequipment.power_bonus.toFixed(2));
+				this._inventory.drawText(3, 24, "%c{rgb(140, 140, 160)}skl: %c{}"+ this._player.subequipment.skill_bonus.toFixed(2));
+				this._inventory.drawText(3, 25, "%c{rgb(140, 140, 160)}def: %c{}"+ this._player.subequipment.defense_bonus.toFixed(2));
+				this._inventory.drawText(3, 26, "%c{rgb(140, 140, 160)}hp: %c{}"+ this._player.subequipment.hp_bonus.toFixed(2));
+				this._inventory.drawText(3, 27, "%c{rgb(140, 140, 160)}cd: %c{}"+ (this._player.subequipment.max_cooldown-this._player.subequipment.cooldown).toFixed(0) + "/" + this._player.subequipment.max_cooldown.toFixed(0));
+				
+				this._inventory.drawText(1, 29, "%c{rgb(0, 255, 102)}Potions: %c{}"+ this._player.inventory + " [p]");
+			} else {
+				this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Potions: %c{}"+ this._player.inventory + " [p]");
+			}
+			this._inventory.drawText(1, 29, "%c{rgb(140, 140, 160)}posdebug: %c{}"+ this._player.x + " " + this._player.y);
+			this._inventory.drawText(1, 30, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
+			this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}exit: %c{}"+ this._map.dungeon_level);
+			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}32: %c{}"+ this._map.dungeon_level);
+			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
+			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
+			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
 		}
+		if (this.lang = "Pt") {
+			this._inventory.drawText(1, 3, "%c{rgb(255,0,0)}PV: %c{}" +hp + "/" +max_hp);
+			this._inventory.drawText(1, 4, "%c{blue}Ataque: %c{}"+this._player.fighter.power().toFixed(2));
+			this._inventory.drawText(1, 5, "%c{yellow}Defesa: %c{}"+this._player.fighter.defense().toFixed(2));
 
-		this._inventory.drawText(1, 12, "%c{rgb(140, 140, 160)}Rank: %c{}"+ this._player.fighter.rank);
-		this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}"+ this._player.fighter.current_exp + "/" + this._player.fighter.nextRank);
+			if (this._player.fighter.unspentPoints > 0) {
+				let blink = "";
+				if (this.blinkLevel < 2) blink = "%c{rgb(140, 140, 140)}";
+				if (this.blinkLevel >= 2) blink = "%c{rgb(240, 240, 240)}";
+				if (this.blinkLevel > 5) this.blinkLevel = 0;
+				this.blinkLevel += 1;
 
-		if ( this._player.equipment != undefined) {
-			this._inventory.drawText(1, 15, "%c{rgb(140, 140, 160)}Main: %c{rgb("+this._player.equipment.glyph.foreground.toString()+")}"+ this._player.equipment.name);
-			this._inventory.drawText(3, 16, "%c{rgb(140, 140, 160)}atk: %c{}"+ this._player.equipment.power_bonus.toFixed(2));
-			this._inventory.drawText(3, 17, "%c{rgb(140, 140, 160)}skl: %c{}"+ this._player.equipment.skill_bonus.toFixed(2));
-			this._inventory.drawText(3, 18, "%c{rgb(140, 140, 160)}def: %c{}"+ this._player.equipment.defense_bonus.toFixed(2));
-			this._inventory.drawText(3, 19, "%c{rgb(140, 140, 160)}hp: %c{}"+ this._player.equipment.hp_bonus.toFixed(2));
-			this._inventory.drawText(3, 20, "%c{rgb(140, 140, 160)}cd: %c{}"+ (this._player.equipment.max_cooldown-this._player.equipment.cooldown).toFixed(0) + "/" + this._player.equipment.max_cooldown.toFixed(0));
-			
+				this._inventory.drawText(1, 7, blink +" SUBIU DE NIVEL! : "+this._player.fighter.unspentPoints);
+				this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}"+this._player.fighter.base_power.toFixed(2) + blink + " (a)");
+				this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Proteção: %c{}"+this._player.fighter.base_defense.toFixed(2) + blink + " (s)");
+				this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}PV Base: %c{}"+ this._player.fighter.base_max_hp.toFixed(2) + blink + " (d)");
+			} else {
+				this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}"+this._player.fighter.base_power.toFixed(2));
+				this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Proteção: %c{}"+this._player.fighter.base_defense.toFixed(2));
+				this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}PV Base: %c{}"+ this._player.fighter.base_max_hp.toFixed(2));
+			}
+
+			this._inventory.drawText(1, 12, "%c{rgb(140, 140, 160)}Rank: %c{}"+ this._player.fighter.rank);
+			this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}"+ this._player.fighter.current_exp + "/" + this._player.fighter.nextRank);
+
+			if ( this._player.equipment != undefined) {
+				this._inventory.drawText(1, 15, "%c{rgb(140, 140, 160)}Principal: %c{rgb("+this._player.equipment.glyph.foreground.toString()+")}"+ this._player.equipment.name);
+				this._inventory.drawText(3, 16, "%c{rgb(140, 140, 160)}atq: %c{}"+ this._player.equipment.power_bonus.toFixed(2));
+				this._inventory.drawText(3, 17, "%c{rgb(140, 140, 160)}hab: %c{}"+ this._player.equipment.skill_bonus.toFixed(2));
+				this._inventory.drawText(3, 18, "%c{rgb(140, 140, 160)}def: %c{}"+ this._player.equipment.defense_bonus.toFixed(2));
+				this._inventory.drawText(3, 19, "%c{rgb(140, 140, 160)}pv: %c{}"+ this._player.equipment.hp_bonus.toFixed(2));
+				this._inventory.drawText(3, 20, "%c{rgb(140, 140, 160)}cd: %c{}"+ (this._player.equipment.max_cooldown-this._player.equipment.cooldown).toFixed(0) + "/" + this._player.equipment.max_cooldown.toFixed(0));
+				
+			}
+
+			if ( this._player.subequipment != undefined) {
+				this._inventory.drawText(1, 22, "%c{rgb(140, 140, 160)}Sub: %c{}"+ this._player.subequipment.name);
+				this._inventory.drawText(3, 23, "%c{rgb(140, 140, 160)}atq: %c{}"+ this._player.subequipment.power_bonus.toFixed(2));
+				this._inventory.drawText(3, 24, "%c{rgb(140, 140, 160)}hab: %c{}"+ this._player.subequipment.skill_bonus.toFixed(2));
+				this._inventory.drawText(3, 25, "%c{rgb(140, 140, 160)}def: %c{}"+ this._player.subequipment.defense_bonus.toFixed(2));
+				this._inventory.drawText(3, 26, "%c{rgb(140, 140, 160)}pv: %c{}"+ this._player.subequipment.hp_bonus.toFixed(2));
+				this._inventory.drawText(3, 27, "%c{rgb(140, 140, 160)}cd: %c{}"+ (this._player.subequipment.max_cooldown-this._player.subequipment.cooldown).toFixed(0) + "/" + this._player.subequipment.max_cooldown.toFixed(0));
+				
+				this._inventory.drawText(1, 29, "%c{rgb(0, 255, 102)}Poções: %c{}"+ this._player.inventory + " [p]");
+			} else {
+				this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Poções: %c{}"+ this._player.inventory + " [p]");
+			}
+
+			this._inventory.drawText(1, 29, "%c{rgb(140, 140, 160)}29: %c{}"+ this._player.x + " " + this._player.y);
+			this._inventory.drawText(1, 30, "%c{rgb(140, 140, 160)}30: %c{}"+ this._map.dungeon_level);
+			this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}31: %c{}"+ this._map.dungeon_level);
+			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}32: %c{}"+ this._map.dungeon_level);
+			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
+			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
+			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
 		}
-
-		if ( this._player.subequipment != undefined) {
-			this._inventory.drawText(1, 22, "%c{rgb(140, 140, 160)}Sub: %c{}"+ this._player.subequipment.name);
-			this._inventory.drawText(3, 23, "%c{rgb(140, 140, 160)}atk: %c{}"+ this._player.subequipment.power_bonus.toFixed(2));
-			this._inventory.drawText(3, 24, "%c{rgb(140, 140, 160)}skl: %c{}"+ this._player.subequipment.skill_bonus.toFixed(2));
-			this._inventory.drawText(3, 25, "%c{rgb(140, 140, 160)}def: %c{}"+ this._player.subequipment.defense_bonus.toFixed(2));
-			this._inventory.drawText(3, 26, "%c{rgb(140, 140, 160)}hp: %c{}"+ this._player.subequipment.hp_bonus.toFixed(2));
-			this._inventory.drawText(3, 27, "%c{rgb(140, 140, 160)}cd: %c{}"+ (this._player.subequipment.max_cooldown-this._player.subequipment.cooldown).toFixed(0) + "/" + this._player.subequipment.max_cooldown.toFixed(0));
-			
-			this._inventory.drawText(1, 29, "%c{rgb(0, 255, 102)}Potions: %c{}"+ this._player.inventory + " [p]");
-		} else {
-			this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Potions: %c{}"+ this._player.inventory + " [p]");
-		}
-
-		this._inventory.drawText(1, 29, "%c{rgb(140, 140, 160)}29: %c{}"+ this._player.x + " " + this._player.y);
-		this._inventory.drawText(1, 30, "%c{rgb(140, 140, 160)}30: %c{}"+ this._map.dungeon_level);
-		this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}31: %c{}"+ this._map.dungeon_level);
-		this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}32: %c{}"+ this._map.dungeon_level);
-		this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
-		this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
-		this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
+		
 	}
 
 	switchScreen(screen : any) {

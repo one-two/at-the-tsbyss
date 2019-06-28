@@ -43,6 +43,12 @@ export function CreateItem(item_choice: string, x: number, y: number): Entity{
         item.item.glyph = item.glyph;
         return item;
     }
+    else if (item_choice == 'firerod') {
+        let item_component = new Firerod()
+        let item = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
+    }
     else if (item_choice == 'shield') {
         let item_component = new Shield();
         console.log(item_component);

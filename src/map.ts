@@ -105,6 +105,8 @@ export class Map {
 
         let item_chances = itemProbabilities(this.dungeon_level);
 
+        let playerStart = false;
+
         for (let index = 0; index < number_of_monsters; index++) {
             let x = randint(0, this._width - 1)
             let y = randint(0, this._height - 1)
@@ -176,7 +178,7 @@ export class Map {
 
         
         let exit = new Exit(this);
-        let newex = new Entity(xexit, yexit, new Glyph("⇗", [0,0,0], [20,150,200]), "saida", 1, false, -1,2, undefined, undefined, false, undefined, undefined, undefined, exit);
+        let newex = new Entity(xexit, yexit, new Glyph("⍝", [0,0,0], [20,150,200]), "saida", 1, false, -1,2, undefined, undefined, false, undefined, undefined, undefined, exit);
         this._entities.push(newex);
 
         return null;

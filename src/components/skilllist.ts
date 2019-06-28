@@ -157,3 +157,115 @@ export function snipe(owner: Entity, target: Entity, damageMultiplier: number) {
         }
     }
 }
+
+export function flamestrike(owner: Entity, target: Entity, damageMultiplier: number) {
+    let nameAtk = 'flamestrike'
+    if (owner.face == 'n') {
+        createDamageBlock(owner, owner.x-2, owner.y-1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x-1, owner.y-1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x, owner.y-1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x, owner.y-2, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x-1, owner.y-1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x+1, owner.y-1, nameAtk, damageMultiplier, '⽕');
+    }
+    if (owner.face == 's') {
+        createDamageBlock(owner, owner.x, owner.y+1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x, owner.y+2, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x-2, owner.y+1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x+2, owner.y+1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x-1, owner.y+1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x+1, owner.y+1, nameAtk, damageMultiplier, '⽕');
+    }
+    if (owner.face == 'w') {
+        createDamageBlock(owner, owner.x-1, owner.y, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x-2, owner.y, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x-1, owner.y+2, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x-1, owner.y-2, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x-1, owner.y+1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x-1, owner.y-1, nameAtk, damageMultiplier, '⽕');
+    }
+    if (owner.face == 'e') {
+        createDamageBlock(owner, owner.x+1, owner.y, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x+2, owner.y, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x+1, owner.y-2, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x+1, owner.y+2, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x+1, owner.y+1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock(owner, owner.x+1, owner.y-1, nameAtk, damageMultiplier, '⽕');
+    }
+}
+
+export function firebreath(owner: Entity, target: Entity, damageMultiplier: number) {
+    let nameAtk = 'firebreath';
+    let dx = target.x - owner.x;
+    let dy = target.y - owner.y;
+    if ( Math.abs(dx) < Math.abs(dy)) {
+        if (dy > 0) {
+            createDamageBlock(owner, owner.x, owner.y+1, nameAtk, damageMultiplier, "⮇",5);
+
+            createDamageBlock(owner, owner.x+1, owner.y+2, nameAtk, damageMultiplier, "⮇",6);
+            createDamageBlock(owner, owner.x, owner.y+2, nameAtk, damageMultiplier, "⮇",6);
+            createDamageBlock(owner, owner.x-1, owner.y+2, nameAtk, damageMultiplier, "⮇",6);
+
+            createDamageBlock(owner, owner.x+1, owner.y+3, nameAtk, damageMultiplier, "⮇",7);
+            createDamageBlock(owner, owner.x, owner.y+3, nameAtk, damageMultiplier, "⮇",7);
+            createDamageBlock(owner, owner.x-1, owner.y+3, nameAtk, damageMultiplier, "⮇",7);
+
+            createDamageBlock(owner, owner.x+2, owner.y+4, nameAtk, damageMultiplier, "⮇",9);
+            createDamageBlock(owner, owner.x+1, owner.y+4, nameAtk, damageMultiplier, "⮇",9);
+            createDamageBlock(owner, owner.x, owner.y+4, nameAtk, damageMultiplier, "⮇",9);
+            createDamageBlock(owner, owner.x-1, owner.y+4, nameAtk, damageMultiplier, "⮇",9);
+            createDamageBlock(owner, owner.x-2, owner.y+4, nameAtk, damageMultiplier, "⮇",9);
+        } else {
+            createDamageBlock(owner, owner.x, owner.y-1, nameAtk, damageMultiplier, "⮅", 5);
+
+            createDamageBlock(owner, owner.x+1, owner.y-2, nameAtk, damageMultiplier,  "⮅", 6);
+            createDamageBlock(owner, owner.x, owner.y-2, nameAtk, damageMultiplier,  "⮅", 6);
+            createDamageBlock(owner, owner.x-1, owner.y-2, nameAtk, damageMultiplier,  "⮅", 6);
+
+            createDamageBlock(owner, owner.x+1, owner.y-3, nameAtk, damageMultiplier,  "⮅", 7);
+            createDamageBlock(owner, owner.x, owner.y-3, nameAtk, damageMultiplier,  "⮅", 7);
+            createDamageBlock(owner, owner.x-1, owner.y-3, nameAtk, damageMultiplier,  "⮅", 7);
+
+            createDamageBlock(owner, owner.x+2, owner.y-4, nameAtk, damageMultiplier,  "⮅", 8);
+            createDamageBlock(owner, owner.x+1, owner.y-4, nameAtk, damageMultiplier,  "⮅", 8);
+            createDamageBlock(owner, owner.x, owner.y-4, nameAtk, damageMultiplier,  "⮅", 8);
+            createDamageBlock(owner, owner.x-1, owner.y-4, nameAtk, damageMultiplier,  "⮅", 8);
+            createDamageBlock(owner, owner.x-2, owner.y-4, nameAtk, damageMultiplier,  "⮅", 8);
+        }
+    }
+    if (Math.abs(dx) > Math.abs(dy)) {
+        if ( dx > 0) {
+            createDamageBlock(owner, owner.x+1, owner.y, nameAtk, damageMultiplier,"⮆", 5);
+
+            createDamageBlock(owner, owner.x+2, owner.y+1, nameAtk, damageMultiplier,"⮆", 6);
+            createDamageBlock(owner, owner.x+2, owner.y, nameAtk, damageMultiplier,"⮆", 6);
+            createDamageBlock(owner, owner.x+2, owner.y-1, nameAtk, damageMultiplier,"⮆", 6);
+
+            createDamageBlock(owner, owner.x+3, owner.y+1, nameAtk, damageMultiplier,"⮆", 7);
+            createDamageBlock(owner, owner.x+3, owner.y, nameAtk, damageMultiplier,"⮆", 7);
+            createDamageBlock(owner, owner.x+3, owner.y-1, nameAtk, damageMultiplier,"⮆", 7);
+
+            createDamageBlock(owner, owner.x+4, owner.y+2, nameAtk, damageMultiplier,"⮆", 8);
+            createDamageBlock(owner, owner.x+4, owner.y+1, nameAtk, damageMultiplier,"⮆", 8);
+            createDamageBlock(owner, owner.x+4, owner.y, nameAtk, damageMultiplier,"⮆", 8);
+            createDamageBlock(owner, owner.x+4, owner.y-1, nameAtk, damageMultiplier,"⮆", 8);
+            createDamageBlock(owner, owner.x+4, owner.y-2, nameAtk, damageMultiplier,"⮆", 8);
+        } else {
+            createDamageBlock(owner, owner.x-1, owner.y, nameAtk, damageMultiplier, "⮄",5);
+
+            createDamageBlock(owner, owner.x-2, owner.y+1, nameAtk, damageMultiplier, "⮄",6);
+            createDamageBlock(owner, owner.x-2, owner.y, nameAtk, damageMultiplier, "⮄",6);
+            createDamageBlock(owner, owner.x-2, owner.y-1, nameAtk, damageMultiplier, "⮄",6);
+
+            createDamageBlock(owner, owner.x-3, owner.y+1, nameAtk, damageMultiplier, "⮄",7);
+            createDamageBlock(owner, owner.x-3, owner.y, nameAtk, damageMultiplier, "⮄",7);
+            createDamageBlock(owner, owner.x-3, owner.y-1, nameAtk, damageMultiplier, "⮄",7);
+
+            createDamageBlock(owner, owner.x-4, owner.y+2, nameAtk, damageMultiplier, "⮄",8);
+            createDamageBlock(owner, owner.x-4, owner.y+1, nameAtk, damageMultiplier, "⮄",8);
+            createDamageBlock(owner, owner.x-4, owner.y, nameAtk, damageMultiplier, "⮄",8);
+            createDamageBlock(owner, owner.x-4, owner.y-1, nameAtk, damageMultiplier, "⮄",8);
+            createDamageBlock(owner, owner.x-4, owner.y-2, nameAtk, damageMultiplier, "⮄",8);
+        }
+    }
+}

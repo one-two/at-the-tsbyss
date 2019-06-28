@@ -5308,7 +5308,8 @@ class Fighter {
             if (this.owner.subequipment != undefined)
                 bonus += this.owner.subequipment.power_bonus;
         }
-        return this.base_power + bonus;
+        let totalBase = (this.base_power + bonus) < 0 ? 0 : this.base_power + bonus;
+        return totalBase;
     }
     skill_power() {
         let bonus = 1;
@@ -5318,7 +5319,8 @@ class Fighter {
             bonus += this.owner.equipment.skill_bonus;
         if (this.owner.subequipment != undefined)
             bonus += this.owner.equipment.skill_bonus;
-        return this.power() * bonus;
+        let basePower = this.power() < 1 ? 1 : this.power();
+        return basePower * bonus;
     }
     defense() {
         let bonus = 0;
@@ -5594,6 +5596,108 @@ function snipe(owner, target, damageMultiplier) {
     }
 }
 exports.snipe = snipe;
+function flamestrike(owner, target, damageMultiplier) {
+    let nameAtk = 'flamestrike';
+    if (owner.face == 'n') {
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 2, owner.y - 1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y - 1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 2, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y - 1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y - 1, nameAtk, damageMultiplier, '⽕');
+    }
+    if (owner.face == 's') {
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 2, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 2, owner.y + 1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 2, owner.y + 1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y + 1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y + 1, nameAtk, damageMultiplier, '⽕');
+    }
+    if (owner.face == 'w') {
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 2, owner.y, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y + 2, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y - 2, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y + 1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y - 1, nameAtk, damageMultiplier, '⽕');
+    }
+    if (owner.face == 'e') {
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 2, owner.y, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y - 2, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y + 2, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y + 1, nameAtk, damageMultiplier, '⽕');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y - 1, nameAtk, damageMultiplier, '⽕');
+    }
+}
+exports.flamestrike = flamestrike;
+function firebreath(owner, target, damageMultiplier) {
+    let nameAtk = 'firebreath';
+    let dx = target.x - owner.x;
+    let dy = target.y - owner.y;
+    if (Math.abs(dx) < Math.abs(dy)) {
+        if (dy > 0) {
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 1, nameAtk, damageMultiplier, "⮇", 5);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y + 2, nameAtk, damageMultiplier, "⮇", 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 2, nameAtk, damageMultiplier, "⮇", 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y + 2, nameAtk, damageMultiplier, "⮇", 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y + 3, nameAtk, damageMultiplier, "⮇", 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 3, nameAtk, damageMultiplier, "⮇", 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y + 3, nameAtk, damageMultiplier, "⮇", 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 2, owner.y + 4, nameAtk, damageMultiplier, "⮇", 9);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y + 4, nameAtk, damageMultiplier, "⮇", 9);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 4, nameAtk, damageMultiplier, "⮇", 9);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y + 4, nameAtk, damageMultiplier, "⮇", 9);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 2, owner.y + 4, nameAtk, damageMultiplier, "⮇", 9);
+        }
+        else {
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 1, nameAtk, damageMultiplier, "⮅", 5);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y - 2, nameAtk, damageMultiplier, "⮅", 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 2, nameAtk, damageMultiplier, "⮅", 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y - 2, nameAtk, damageMultiplier, "⮅", 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y - 3, nameAtk, damageMultiplier, "⮅", 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 3, nameAtk, damageMultiplier, "⮅", 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y - 3, nameAtk, damageMultiplier, "⮅", 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 2, owner.y - 4, nameAtk, damageMultiplier, "⮅", 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y - 4, nameAtk, damageMultiplier, "⮅", 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 4, nameAtk, damageMultiplier, "⮅", 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y - 4, nameAtk, damageMultiplier, "⮅", 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 2, owner.y - 4, nameAtk, damageMultiplier, "⮅", 8);
+        }
+    }
+    if (Math.abs(dx) > Math.abs(dy)) {
+        if (dx > 0) {
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y, nameAtk, damageMultiplier, "⮆", 5);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 2, owner.y + 1, nameAtk, damageMultiplier, "⮆", 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 2, owner.y, nameAtk, damageMultiplier, "⮆", 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 2, owner.y - 1, nameAtk, damageMultiplier, "⮆", 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 3, owner.y + 1, nameAtk, damageMultiplier, "⮆", 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 3, owner.y, nameAtk, damageMultiplier, "⮆", 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 3, owner.y - 1, nameAtk, damageMultiplier, "⮆", 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 4, owner.y + 2, nameAtk, damageMultiplier, "⮆", 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 4, owner.y + 1, nameAtk, damageMultiplier, "⮆", 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 4, owner.y, nameAtk, damageMultiplier, "⮆", 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 4, owner.y - 1, nameAtk, damageMultiplier, "⮆", 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x + 4, owner.y - 2, nameAtk, damageMultiplier, "⮆", 8);
+        }
+        else {
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y, nameAtk, damageMultiplier, "⮄", 5);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 2, owner.y + 1, nameAtk, damageMultiplier, "⮄", 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 2, owner.y, nameAtk, damageMultiplier, "⮄", 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 2, owner.y - 1, nameAtk, damageMultiplier, "⮄", 6);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 3, owner.y + 1, nameAtk, damageMultiplier, "⮄", 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 3, owner.y, nameAtk, damageMultiplier, "⮄", 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 3, owner.y - 1, nameAtk, damageMultiplier, "⮄", 7);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 4, owner.y + 2, nameAtk, damageMultiplier, "⮄", 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 4, owner.y + 1, nameAtk, damageMultiplier, "⮄", 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 4, owner.y, nameAtk, damageMultiplier, "⮄", 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 4, owner.y - 1, nameAtk, damageMultiplier, "⮄", 8);
+            createDamageBlock_1.createDamageBlock(owner, owner.x - 4, owner.y - 2, nameAtk, damageMultiplier, "⮄", 8);
+        }
+    }
+}
+exports.firebreath = firebreath;
 
 
 /***/ }),
@@ -5618,6 +5722,133 @@ class Exit {
     }
 }
 exports.Exit = Exit;
+
+
+/***/ }),
+
+/***/ "./src/content/itens/firerod.ts":
+/*!**************************************!*\
+  !*** ./src/content/itens/firerod.ts ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const equipment_1 = __webpack_require__(/*! ../../components/equipment */ "./src/components/equipment.ts");
+const damageBlock_1 = __webpack_require__(/*! ../../components/damageBlock */ "./src/components/damageBlock.ts");
+const glyph_1 = __webpack_require__(/*! ../../glyph */ "./src/glyph.ts");
+const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
+const qualityGenerator_1 = __webpack_require__(/*! ../../helper/qualityGenerator */ "./src/helper/qualityGenerator.ts");
+class Firerod extends equipment_1.Equipment {
+    constructor(drop = undefined) {
+        super("main");
+        this.power_bonus = -2;
+        this.skill_bonus = 1.5;
+        this.defense_bonus = 0;
+        this.hp_bonus = 0;
+        this.prefix = '';
+        this.name = 'firerod';
+        this.fullname = 'firerod';
+        this.cooldown = 8;
+        this.max_cooldown = 8;
+        if (drop != undefined) {
+            this.power_bonus = drop.power_bonus;
+            this.skill_bonus = drop.skill_bonus;
+            this.defense_bonus = drop.defense_bonus;
+            this.hp_bonus = drop.hp_bonus;
+            this.name = drop.name;
+            this.fullname = drop.fullname;
+            this.max_cooldown = drop.max_cooldown;
+            this.glyph = drop.glyph;
+        }
+        else {
+            let item = qualityGenerator_1.qualityGenerator("main");
+            this.power_bonus += this.power_bonus * item.power_bonus;
+            this.skill_bonus += this.skill_bonus * item.skill_bonus;
+            if (item.defense_bonus * 100 > 13)
+                this.defense_bonus += (Math.random() * 2);
+            this.defense_bonus += this.defense_bonus * item.defense_bonus;
+            this.max_cooldown += Math.round(this.max_cooldown * item.max_cooldown);
+            this.fullname = item.prefix + this.name;
+            this.glyph = new glyph_1.Glyph('‽', [0, 0, 0], [item.alpha, item.alpha, 0]);
+        }
+        this.startCountDown();
+    }
+    startCountDown() {
+        var interval = setInterval(() => {
+            if (this.cooldown > 0)
+                this.cooldown--;
+        }, 100);
+    }
+    strike() {
+        if (this.cooldown <= 0) {
+            this.cooldown = this.max_cooldown;
+            let dir = this.owner.face;
+            let dmg = new damageBlock_1.DamageBlock(this.skill_bonus);
+            let attack = null;
+            dmg.owner = this.owner;
+            if (this.owner.face == 's') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 1, this.name, this.skill_bonus, 'f', 7);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y + 2, this.name, this.skill_bonus, 'f', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 2, this.name, this.skill_bonus, 'f', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y + 2, this.name, this.skill_bonus, 'f', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 3, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y + 3, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y + 3, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 2, this.owner.y + 4, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y + 4, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 4, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y + 4, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 2, this.owner.y + 4, this.name, this.skill_bonus, 'f', 10);
+            }
+            else if (this.owner.face == 'n') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 1, this.name, this.skill_bonus, 'f', 7);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y - 2, this.name, this.skill_bonus, 'f', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 2, this.name, this.skill_bonus, 'f', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y - 2, this.name, this.skill_bonus, 'f', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 3, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y - 3, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y - 3, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 2, this.owner.y - 4, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y - 4, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 4, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y - 4, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 2, this.owner.y - 4, this.name, this.skill_bonus, 'f', 10);
+            }
+            else if (this.owner.face == 'w') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y, this.name, this.skill_bonus, 'f', 7);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 2, this.owner.y + 1, this.name, this.skill_bonus, 'f', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 2, this.owner.y, this.name, this.skill_bonus, 'f', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 2, this.owner.y - 1, this.name, this.skill_bonus, 'f', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 3, this.owner.y, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 3, this.owner.y + 1, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 3, this.owner.y - 1, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 4, this.owner.y + 2, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 4, this.owner.y + 1, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 4, this.owner.y, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 4, this.owner.y - 1, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 4, this.owner.y - 2, this.name, this.skill_bonus, 'f', 10);
+            }
+            else if (this.owner.face == 'e') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y, this.name, this.skill_bonus, 'f', 7);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 2, this.owner.y + 1, this.name, this.skill_bonus, 'f', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 2, this.owner.y, this.name, this.skill_bonus, 'f', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 2, this.owner.y - 1, this.name, this.skill_bonus, 'f', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 3, this.owner.y, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 3, this.owner.y + 1, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 3, this.owner.y - 1, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 4, this.owner.y + 2, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 4, this.owner.y + 1, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 4, this.owner.y, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 4, this.owner.y - 1, this.name, this.skill_bonus, 'f', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 4, this.owner.y - 2, this.name, this.skill_bonus, 'f', 10);
+            }
+        }
+    }
+}
+exports.Firerod = Firerod;
 
 
 /***/ }),
@@ -5663,6 +5894,8 @@ class Knife extends equipment_1.Equipment {
             let item = qualityGenerator_1.qualityGenerator("main");
             this.power_bonus += this.power_bonus * item.power_bonus;
             this.skill_bonus += this.skill_bonus * item.skill_bonus;
+            if (item.defense_bonus * 100 > 13)
+                this.defense_bonus += (Math.random() * 2);
             this.defense_bonus += this.defense_bonus * item.defense_bonus;
             this.max_cooldown += Math.round(this.max_cooldown * item.max_cooldown);
             this.fullname = item.prefix + this.name;
@@ -5860,6 +6093,8 @@ class Spear extends equipment_1.Equipment {
             let item = qualityGenerator_1.qualityGenerator("main");
             this.power_bonus += this.power_bonus * item.power_bonus;
             this.skill_bonus += this.skill_bonus * item.skill_bonus;
+            if (item.defense_bonus * 100 > 13)
+                this.defense_bonus += (Math.random() * 2);
             this.defense_bonus += this.defense_bonus * item.defense_bonus;
             this.max_cooldown += Math.round(this.max_cooldown * item.max_cooldown);
             this.fullname = item.prefix + this.name;
@@ -5959,6 +6194,8 @@ class Sword extends equipment_1.Equipment {
             let item = qualityGenerator_1.qualityGenerator("main");
             this.power_bonus += this.power_bonus * item.power_bonus;
             this.skill_bonus += this.skill_bonus * item.skill_bonus;
+            if (item.defense_bonus * 100 > 13)
+                this.defense_bonus += (Math.random() * 2);
             this.defense_bonus += this.defense_bonus * item.defense_bonus;
             this.max_cooldown += Math.round(this.max_cooldown * item.max_cooldown);
             this.fullname = item.prefix + this.name;
@@ -6007,6 +6244,82 @@ class Sword extends equipment_1.Equipment {
     }
 }
 exports.Sword = Sword;
+
+
+/***/ }),
+
+/***/ "./src/content/monsters/dragon.ts":
+/*!****************************************!*\
+  !*** ./src/content/monsters/dragon.ts ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const deathFunction_1 = __webpack_require__(/*! ../../helper/deathFunction */ "./src/helper/deathFunction.ts");
+const skilllist_1 = __webpack_require__(/*! ../../components/skilllist */ "./src/components/skilllist.ts");
+class Dragon {
+    constructor() {
+        this.skill_bonus = 5;
+        this.skills = [{
+                name: 'fire breath',
+                cooldown: 10,
+                maxCooldown: 10
+            },
+            {
+                name: 'flamestrike',
+                cooldown: 20,
+                maxCooldown: 20
+            }];
+    }
+    startCountDown(seconds) {
+        var counter = seconds;
+        var interval = setInterval(() => {
+            counter--;
+            this.skills.forEach(element => {
+                if (element.cooldown < element.maxCooldown)
+                    element.cooldown++;
+            });
+            if (counter < 0) {
+                // code here will run when the counter reaches zero.
+                if (this.owner.fighter.hp == 0) {
+                    clearInterval(interval);
+                    deathFunction_1.deathFunction(this.owner);
+                }
+                else {
+                    counter = this.owner.maxStamina;
+                    this.act();
+                }
+            }
+        }, 100);
+    }
+    act() {
+        let player = this.owner._map.getPlayer();
+        if (player == undefined)
+            return;
+        let dist = Math.sqrt(Math.pow((player.x - this.owner.x), 2) + Math.pow((player.y - this.owner.y), 2));
+        if (dist < this.owner.sight) {
+            this.owner.hunt(player);
+            if (this.skills[0].cooldown >= this.skills[0].maxCooldown) {
+                skilllist_1.firebreath(this.owner, player, this.skill_bonus * 0.5);
+                this.skills[0].cooldown = 0;
+            }
+            //this.poison_cloud(player);
+        }
+        else {
+            this.owner.wander();
+        }
+        if (dist < 2)
+            if (this.skills[1].cooldown >= this.skills[1].maxCooldown) {
+                this.owner.hunt(player);
+                skilllist_1.flamestrike(this.owner, player, this.skill_bonus);
+                this.skills[1].cooldown = 0;
+            }
+    }
+}
+exports.Dragon = Dragon;
 
 
 /***/ }),
@@ -6754,7 +7067,7 @@ class Game {
             fontStyle: "bold",
             spacing: 0.75
         });
-        this._inventory = new index_1.Display({ width: 20, height: this._screenHeight * 0.75 });
+        this._inventory = new index_1.Display({ width: 20, height: this._screenHeight * 0.8 });
         this._messaging = new index_1.Display({ width: this._screenWidth * 1.5, height: this._messageBoxSize });
         this.messageLog = new messages_1.Messagelog(0, this._screenHeight, this._messageBoxSize, this);
         this.messageLog.messages = [{ message: '', color0: [0, 0, 0], color1: [0, 0, 0], color2: [0, 0, 0], type: "empty" },
@@ -6829,57 +7142,112 @@ class Game {
         let hp = this._player.fighter.hp.toFixed(2);
         let max_hp = this._player.fighter.max_hp();
         this._inventory.drawText(0, 1, "Status: ");
-        this._inventory.drawText(1, 3, "%c{rgb(255,0,0)}HP: %c{}" + hp + "/" + max_hp);
-        this._inventory.drawText(1, 4, "%c{blue}Atk: %c{}" + this._player.fighter.power().toFixed(2));
-        this._inventory.drawText(1, 5, "%c{yellow}Def: %c{}" + this._player.fighter.defense().toFixed(2));
-        if (this._player.fighter.unspentPoints > 0) {
-            let blink = "";
-            if (this.blinkLevel < 2)
-                blink = "%c{rgb(140, 140, 140)}";
-            if (this.blinkLevel >= 2)
-                blink = "%c{rgb(240, 240, 240)}";
-            if (this.blinkLevel > 5)
-                this.blinkLevel = 0;
-            this.blinkLevel += 1;
-            this._inventory.drawText(1, 7, blink + " LEVEL UP! : " + this._player.fighter.unspentPoints);
-            this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}" + this._player.fighter.base_power.toFixed(2) + blink + " (a)");
-            this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Resist: %c{}" + this._player.fighter.base_defense.toFixed(2) + blink + " (s)");
-            this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}" + this._player.fighter.base_max_hp.toFixed(2) + blink + " (d)");
+        if (this.lang == "En") {
+            this._inventory.drawText(1, 3, "%c{rgb(255,0,0)}HP: %c{}" + hp + "/" + max_hp);
+            this._inventory.drawText(1, 4, "%c{blue}Atk: %c{}" + this._player.fighter.power().toFixed(2));
+            this._inventory.drawText(1, 5, "%c{yellow}Def: %c{}" + this._player.fighter.defense().toFixed(2));
+            if (this._player.fighter.unspentPoints > 0) {
+                let blink = "";
+                if (this.blinkLevel < 2)
+                    blink = "%c{rgb(140, 140, 140)}";
+                if (this.blinkLevel >= 2)
+                    blink = "%c{rgb(240, 240, 240)}";
+                if (this.blinkLevel > 5)
+                    this.blinkLevel = 0;
+                this.blinkLevel += 1;
+                this._inventory.drawText(1, 7, blink + " LEVEL UP! : " + this._player.fighter.unspentPoints);
+                this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Might: %c{}" + this._player.fighter.base_power.toFixed(2) + blink + " (a)");
+                this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Resist: %c{}" + this._player.fighter.base_defense.toFixed(2) + blink + " (s)");
+                this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Base HP: %c{}" + this._player.fighter.base_max_hp.toFixed(2) + blink + " (d)");
+            }
+            else {
+                this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Might: %c{}" + this._player.fighter.base_power.toFixed(2));
+                this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Resist: %c{}" + this._player.fighter.base_defense.toFixed(2));
+                this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Base HP: %c{}" + this._player.fighter.base_max_hp.toFixed(2));
+            }
+            this._inventory.drawText(1, 12, "%c{rgb(140, 140, 160)}Rank: %c{}" + this._player.fighter.rank);
+            this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}" + this._player.fighter.current_exp + "/" + this._player.fighter.nextRank);
+            if (this._player.equipment != undefined) {
+                this._inventory.drawText(1, 15, "%c{rgb(140, 140, 160)}Main: %c{rgb(" + this._player.equipment.glyph.foreground.toString() + ")}" + this._player.equipment.name);
+                this._inventory.drawText(3, 16, "%c{rgb(140, 140, 160)}atk: %c{}" + this._player.equipment.power_bonus.toFixed(2));
+                this._inventory.drawText(3, 17, "%c{rgb(140, 140, 160)}skl: %c{}" + this._player.equipment.skill_bonus.toFixed(2));
+                this._inventory.drawText(3, 18, "%c{rgb(140, 140, 160)}def: %c{}" + this._player.equipment.defense_bonus.toFixed(2));
+                this._inventory.drawText(3, 19, "%c{rgb(140, 140, 160)}hp: %c{}" + this._player.equipment.hp_bonus.toFixed(2));
+                this._inventory.drawText(3, 20, "%c{rgb(140, 140, 160)}cd: %c{}" + (this._player.equipment.max_cooldown - this._player.equipment.cooldown).toFixed(0) + "/" + this._player.equipment.max_cooldown.toFixed(0));
+            }
+            if (this._player.subequipment != undefined) {
+                this._inventory.drawText(1, 22, "%c{rgb(140, 140, 160)}Sub: %c{}" + this._player.subequipment.name);
+                this._inventory.drawText(3, 23, "%c{rgb(140, 140, 160)}atk: %c{}" + this._player.subequipment.power_bonus.toFixed(2));
+                this._inventory.drawText(3, 24, "%c{rgb(140, 140, 160)}skl: %c{}" + this._player.subequipment.skill_bonus.toFixed(2));
+                this._inventory.drawText(3, 25, "%c{rgb(140, 140, 160)}def: %c{}" + this._player.subequipment.defense_bonus.toFixed(2));
+                this._inventory.drawText(3, 26, "%c{rgb(140, 140, 160)}hp: %c{}" + this._player.subequipment.hp_bonus.toFixed(2));
+                this._inventory.drawText(3, 27, "%c{rgb(140, 140, 160)}cd: %c{}" + (this._player.subequipment.max_cooldown - this._player.subequipment.cooldown).toFixed(0) + "/" + this._player.subequipment.max_cooldown.toFixed(0));
+                this._inventory.drawText(1, 29, "%c{rgb(0, 255, 102)}Potions: %c{}" + this._player.inventory + " [p]");
+            }
+            else {
+                this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Potions: %c{}" + this._player.inventory + " [p]");
+            }
+            this._inventory.drawText(1, 29, "%c{rgb(140, 140, 160)}29: %c{}" + this._player.x + " " + this._player.y);
+            this._inventory.drawText(1, 30, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
+            this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
+            this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}32: %c{}" + this._map.dungeon_level);
+            this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
+            this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
+            this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
         }
-        else {
-            this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}" + this._player.fighter.base_power.toFixed(2));
-            this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Resist: %c{}" + this._player.fighter.base_defense.toFixed(2));
-            this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Hp base: %c{}" + this._player.fighter.base_max_hp.toFixed(2));
+        if (this.lang = "Pt") {
+            this._inventory.drawText(1, 3, "%c{rgb(255,0,0)}PV: %c{}" + hp + "/" + max_hp);
+            this._inventory.drawText(1, 4, "%c{blue}Ataque: %c{}" + this._player.fighter.power().toFixed(2));
+            this._inventory.drawText(1, 5, "%c{yellow}Defesa: %c{}" + this._player.fighter.defense().toFixed(2));
+            if (this._player.fighter.unspentPoints > 0) {
+                let blink = "";
+                if (this.blinkLevel < 2)
+                    blink = "%c{rgb(140, 140, 140)}";
+                if (this.blinkLevel >= 2)
+                    blink = "%c{rgb(240, 240, 240)}";
+                if (this.blinkLevel > 5)
+                    this.blinkLevel = 0;
+                this.blinkLevel += 1;
+                this._inventory.drawText(1, 7, blink + " SUBIU DE NIVEL! : " + this._player.fighter.unspentPoints);
+                this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}" + this._player.fighter.base_power.toFixed(2) + blink + " (a)");
+                this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Proteção: %c{}" + this._player.fighter.base_defense.toFixed(2) + blink + " (s)");
+                this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}PV Base: %c{}" + this._player.fighter.base_max_hp.toFixed(2) + blink + " (d)");
+            }
+            else {
+                this._inventory.drawText(1, 8, "%c{rgb(24,191,230)}Força: %c{}" + this._player.fighter.base_power.toFixed(2));
+                this._inventory.drawText(1, 9, "%c{rgb(211, 234, 49)}Proteção: %c{}" + this._player.fighter.base_defense.toFixed(2));
+                this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}PV Base: %c{}" + this._player.fighter.base_max_hp.toFixed(2));
+            }
+            this._inventory.drawText(1, 12, "%c{rgb(140, 140, 160)}Rank: %c{}" + this._player.fighter.rank);
+            this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}" + this._player.fighter.current_exp + "/" + this._player.fighter.nextRank);
+            if (this._player.equipment != undefined) {
+                this._inventory.drawText(1, 15, "%c{rgb(140, 140, 160)}Principal: %c{rgb(" + this._player.equipment.glyph.foreground.toString() + ")}" + this._player.equipment.name);
+                this._inventory.drawText(3, 16, "%c{rgb(140, 140, 160)}atq: %c{}" + this._player.equipment.power_bonus.toFixed(2));
+                this._inventory.drawText(3, 17, "%c{rgb(140, 140, 160)}hab: %c{}" + this._player.equipment.skill_bonus.toFixed(2));
+                this._inventory.drawText(3, 18, "%c{rgb(140, 140, 160)}def: %c{}" + this._player.equipment.defense_bonus.toFixed(2));
+                this._inventory.drawText(3, 19, "%c{rgb(140, 140, 160)}pv: %c{}" + this._player.equipment.hp_bonus.toFixed(2));
+                this._inventory.drawText(3, 20, "%c{rgb(140, 140, 160)}cd: %c{}" + (this._player.equipment.max_cooldown - this._player.equipment.cooldown).toFixed(0) + "/" + this._player.equipment.max_cooldown.toFixed(0));
+            }
+            if (this._player.subequipment != undefined) {
+                this._inventory.drawText(1, 22, "%c{rgb(140, 140, 160)}Sub: %c{}" + this._player.subequipment.name);
+                this._inventory.drawText(3, 23, "%c{rgb(140, 140, 160)}atq: %c{}" + this._player.subequipment.power_bonus.toFixed(2));
+                this._inventory.drawText(3, 24, "%c{rgb(140, 140, 160)}hab: %c{}" + this._player.subequipment.skill_bonus.toFixed(2));
+                this._inventory.drawText(3, 25, "%c{rgb(140, 140, 160)}def: %c{}" + this._player.subequipment.defense_bonus.toFixed(2));
+                this._inventory.drawText(3, 26, "%c{rgb(140, 140, 160)}pv: %c{}" + this._player.subequipment.hp_bonus.toFixed(2));
+                this._inventory.drawText(3, 27, "%c{rgb(140, 140, 160)}cd: %c{}" + (this._player.subequipment.max_cooldown - this._player.subequipment.cooldown).toFixed(0) + "/" + this._player.subequipment.max_cooldown.toFixed(0));
+                this._inventory.drawText(1, 29, "%c{rgb(0, 255, 102)}Poções: %c{}" + this._player.inventory + " [p]");
+            }
+            else {
+                this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Poções: %c{}" + this._player.inventory + " [p]");
+            }
+            this._inventory.drawText(1, 29, "%c{rgb(140, 140, 160)}29: %c{}" + this._player.x + " " + this._player.y);
+            this._inventory.drawText(1, 30, "%c{rgb(140, 140, 160)}30: %c{}" + this._map.dungeon_level);
+            this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}31: %c{}" + this._map.dungeon_level);
+            this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}32: %c{}" + this._map.dungeon_level);
+            this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
+            this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
+            this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
         }
-        this._inventory.drawText(1, 12, "%c{rgb(140, 140, 160)}Rank: %c{}" + this._player.fighter.rank);
-        this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}" + this._player.fighter.current_exp + "/" + this._player.fighter.nextRank);
-        if (this._player.equipment != undefined) {
-            this._inventory.drawText(1, 15, "%c{rgb(140, 140, 160)}Main: %c{rgb(" + this._player.equipment.glyph.foreground.toString() + ")}" + this._player.equipment.name);
-            this._inventory.drawText(3, 16, "%c{rgb(140, 140, 160)}atk: %c{}" + this._player.equipment.power_bonus.toFixed(2));
-            this._inventory.drawText(3, 17, "%c{rgb(140, 140, 160)}skl: %c{}" + this._player.equipment.skill_bonus.toFixed(2));
-            this._inventory.drawText(3, 18, "%c{rgb(140, 140, 160)}def: %c{}" + this._player.equipment.defense_bonus.toFixed(2));
-            this._inventory.drawText(3, 19, "%c{rgb(140, 140, 160)}hp: %c{}" + this._player.equipment.hp_bonus.toFixed(2));
-            this._inventory.drawText(3, 20, "%c{rgb(140, 140, 160)}cd: %c{}" + (this._player.equipment.max_cooldown - this._player.equipment.cooldown).toFixed(0) + "/" + this._player.equipment.max_cooldown.toFixed(0));
-        }
-        if (this._player.subequipment != undefined) {
-            this._inventory.drawText(1, 22, "%c{rgb(140, 140, 160)}Sub: %c{}" + this._player.subequipment.name);
-            this._inventory.drawText(3, 23, "%c{rgb(140, 140, 160)}atk: %c{}" + this._player.subequipment.power_bonus.toFixed(2));
-            this._inventory.drawText(3, 24, "%c{rgb(140, 140, 160)}skl: %c{}" + this._player.subequipment.skill_bonus.toFixed(2));
-            this._inventory.drawText(3, 25, "%c{rgb(140, 140, 160)}def: %c{}" + this._player.subequipment.defense_bonus.toFixed(2));
-            this._inventory.drawText(3, 26, "%c{rgb(140, 140, 160)}hp: %c{}" + this._player.subequipment.hp_bonus.toFixed(2));
-            this._inventory.drawText(3, 27, "%c{rgb(140, 140, 160)}cd: %c{}" + (this._player.subequipment.max_cooldown - this._player.subequipment.cooldown).toFixed(0) + "/" + this._player.subequipment.max_cooldown.toFixed(0));
-            this._inventory.drawText(1, 29, "%c{rgb(0, 255, 102)}Potions: %c{}" + this._player.inventory + " [p]");
-        }
-        else {
-            this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Potions: %c{}" + this._player.inventory + " [p]");
-        }
-        this._inventory.drawText(1, 29, "%c{rgb(140, 140, 160)}29: %c{}" + this._player.x + " " + this._player.y);
-        this._inventory.drawText(1, 30, "%c{rgb(140, 140, 160)}30: %c{}" + this._map.dungeon_level);
-        this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}31: %c{}" + this._map.dungeon_level);
-        this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}32: %c{}" + this._map.dungeon_level);
-        this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
-        this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
-        this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
     }
     switchScreen(screen) {
         // If we had a screen before, notify it that we exited
@@ -7025,6 +7393,7 @@ const sword_1 = __webpack_require__(/*! ../content/itens/sword */ "./src/content
 const spear_1 = __webpack_require__(/*! ../content/itens/spear */ "./src/content/itens/spear.ts");
 const shield_1 = __webpack_require__(/*! ../content/itens/shield */ "./src/content/itens/shield.ts");
 const potion_1 = __webpack_require__(/*! ../content/itens/potion */ "./src/content/itens/potion.ts");
+const firerod_1 = __webpack_require__(/*! ../content/itens/firerod */ "./src/content/itens/firerod.ts");
 // function ItemFactory(name: string, x: number, y): Entity{
 //     return new Entity(x, y, new Glyph('Ϯ', [0,0,0], [204, 200, 0]), 'knife', 1, false, 5, 2, undefined, undefined, false, item_component);
 // }
@@ -7055,6 +7424,12 @@ function CreateItem(item_choice, x, y) {
     }
     else if (item_choice == 'dagger') {
         let item_component = new knife_1.Knife();
+        let item = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
+    }
+    else if (item_choice == 'firerod') {
+        let item_component = new firerod_1.Firerod();
         let item = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
         item.item.glyph = item.glyph;
         return item;
@@ -7095,6 +7470,12 @@ function CreateDropItem(item, x, y) {
         itemDrop.item.glyph = item.glyph;
         return itemDrop;
     }
+    else if (item_choice == 'firerod') {
+        let item_component = new firerod_1.Firerod(item);
+        let itemDrop = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
+        itemDrop.item.glyph = item.glyph;
+        return itemDrop;
+    }
     else if (item_choice == 'shield') {
         let item_component = new shield_1.Shield(item);
         let itemDrop = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
@@ -7125,41 +7506,42 @@ const glyph_1 = __webpack_require__(/*! ../glyph */ "./src/glyph.ts");
 const fighter_1 = __webpack_require__(/*! ../components/fighter */ "./src/components/fighter.ts");
 const ranger_1 = __webpack_require__(/*! ../content/monsters/ranger */ "./src/content/monsters/ranger.ts");
 const wyvern_1 = __webpack_require__(/*! ../content/monsters/wyvern */ "./src/content/monsters/wyvern.ts");
+const dragon_1 = __webpack_require__(/*! ../content/monsters/dragon */ "./src/content/monsters/dragon.ts");
 function CreateMonster(monster_choice, x, y) {
     if (monster_choice == 'fungi') {
-        let fighter_component = new fighter_1.Fighter(200, 0, 4, 35);
+        let fighter_component = new fighter_1.Fighter(30, 0, 4, 35);
         let ai_component = new fungi_1.Fungi();
         let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('f', [0, 0, 0], [0, 200, 0]), 'Fungi', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'orc') {
-        let fighter_component = new fighter_1.Fighter(200, 0, 4, 35);
+        let fighter_component = new fighter_1.Fighter(40, 0, 4, 35);
         let ai_component = new orc_1.Orc();
         let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', [0, 0, 0], [0, 128, 0]), 'Orc', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'troll') {
-        let fighter_component = new fighter_1.Fighter(30, 2, 8, 60);
+        let fighter_component = new fighter_1.Fighter(90, 2, 8, 60);
         let ai_component = new troll_1.Troll();
         let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('t', [0, 0, 0], [128, 0, 128]), 'Troll', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'wyvern') {
-        let fighter_component = new fighter_1.Fighter(20, 0, 5, 40);
+        let fighter_component = new fighter_1.Fighter(30, 0, 5, 40);
         let ai_component = new wyvern_1.Wyvern();
         let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('w', [0, 0, 0], [148, 0, 211]), 'Wyvern', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'ranger') {
-        let fighter_component = new fighter_1.Fighter(40, 1, 7, 40);
+        let fighter_component = new fighter_1.Fighter(40, 1, 8, 40);
         let ai_component = new ranger_1.Ranger(); //Ranger()
         let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('r', [0, 0, 0], [233, 150, 122]), 'Ranger', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'dragon') {
-        let fighter_component = new fighter_1.Fighter(100, 5, 16, 300);
-        let ai_component = new orc_1.Orc(); //Dragon()
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('d', [0, 0, 0], [220, 20, 60]), 'Dragon', 1, true, 5, 2, fighter_component, ai_component);
+        let fighter_component = new fighter_1.Fighter(100, 5, 14, 300);
+        let ai_component = new dragon_1.Dragon();
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('Đ', [0, 0, 0], [220, 20, 60]), 'Dragon', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
 }
@@ -7744,11 +8126,11 @@ function qualityGenerator(type) {
         item.prefix = 'inferior ';
     else if (quality < -15)
         item.prefix = 'weak ';
-    else if (quality < 0)
-        item.prefix = '';
     else if (quality < 15)
-        item.prefix = 'strong ';
+        item.prefix = '';
     else if (quality < 30)
+        item.prefix = 'strong ';
+    else if (quality < 45)
         item.prefix = 'superior ';
     else if (quality < 60)
         item.prefix = 'legendary ';
@@ -7963,6 +8345,7 @@ class Map {
         let number_of_items = randint_1.randint(1, max_items_per_room);
         let monster_chances = monsterProbabilities_1.monsterProbabilities(this.dungeon_level);
         let item_chances = itemProbabilities_1.itemProbabilities(this.dungeon_level);
+        let playerStart = false;
         for (let index = 0; index < number_of_monsters; index++) {
             let x = randint_1.randint(0, this._width - 1);
             let y = randint_1.randint(0, this._height - 1);
@@ -8028,7 +8411,7 @@ class Map {
             }
         }
         let exit = new exit_1.Exit(this);
-        let newex = new entity_1.Entity(xexit, yexit, new glyph_1.Glyph("⇗", [0, 0, 0], [20, 150, 200]), "saida", 1, false, -1, 2, undefined, undefined, false, undefined, undefined, undefined, exit);
+        let newex = new entity_1.Entity(xexit, yexit, new glyph_1.Glyph("⍝", [0, 0, 0], [20, 150, 200]), "saida", 1, false, -1, 2, undefined, undefined, false, undefined, undefined, undefined, exit);
         this._entities.push(newex);
         return null;
     }
@@ -8428,6 +8811,21 @@ function playScreen() {
             // Sync map and game variables
             game._map._entities = [];
             game._map._entities.push(game._player); //player always [0]
+            let newPlayerPositionBlocked = true;
+            while (newPlayerPositionBlocked) {
+                let x = randint_1.randint(0, game._map._width - 1);
+                let y = randint_1.randint(0, game._map._height - 1);
+                if (game._map.getTile(x, y)._isWalkable == false) {
+                    newPlayerPositionBlocked = true;
+                }
+                else {
+                    game._player.x = x;
+                    game._player.x2 = x;
+                    game._player.y = y;
+                    game._player.y2 = y;
+                    newPlayerPositionBlocked = false;
+                }
+            }
             game._player._map = game._map;
             game._map._display = game._display;
             game._map.messageLog = game.messageLog;
@@ -8742,6 +9140,7 @@ function itemProbabilities(dungeon_level) {
         'dagger': randFromLevel_1.from_dungeon_level([[10, 1]], dungeon_level),
         'sword': randFromLevel_1.from_dungeon_level([[10, 0], [10, 2]], dungeon_level),
         'spear': randFromLevel_1.from_dungeon_level([[5, 1], [10, 3]], dungeon_level),
+        'firerod': randFromLevel_1.from_dungeon_level([[500, 1], [10, 3]], dungeon_level),
         'shield': randFromLevel_1.from_dungeon_level([[30, 0]], dungeon_level),
     };
 }
@@ -8767,7 +9166,7 @@ function monsterProbabilities(dungeon_level) {
         'orc': randFromLevel_1.from_dungeon_level([[1, 1], [60, 3], [40, 7]], dungeon_level),
         'troll': randFromLevel_1.from_dungeon_level([[1, 1], [10, 3], [30, 5], [60, 7]], dungeon_level),
         'wyvern': randFromLevel_1.from_dungeon_level([[1, 1], [50, 2], [50, 5]], dungeon_level),
-        'dragon': randFromLevel_1.from_dungeon_level([[1, 1], [10, 3], [20, 7]], dungeon_level),
+        'dragon': randFromLevel_1.from_dungeon_level([[10, 1], [10, 3], [20, 7]], dungeon_level),
         'ranger': randFromLevel_1.from_dungeon_level([[1, 1]], dungeon_level),
     };
 }
