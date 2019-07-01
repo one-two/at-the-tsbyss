@@ -194,6 +194,35 @@ export function flamestrike(owner: Entity, target: Entity, damageMultiplier: num
     }
 }
 
+export function bite(owner: Entity, target: Entity, damageMultiplier: number) {
+    let nameAtk = 'bite'
+    if (owner.face == 'n') {
+        createDamageBlock(owner, owner.x-1, owner.y-1, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x, owner.y-1, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x, owner.y-2, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x-1, owner.y-1, nameAtk, damageMultiplier, '✖');
+    }
+    if (owner.face == 's') {
+        createDamageBlock(owner, owner.x, owner.y+2, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x-2, owner.y+1, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x+2, owner.y+1, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x-1, owner.y+1, nameAtk, damageMultiplier, '✖');
+    }
+    if (owner.face == 'w') {
+        createDamageBlock(owner, owner.x-2, owner.y, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x-1, owner.y+2, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x-1, owner.y-2, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x-1, owner.y+1, nameAtk, damageMultiplier, '✖');
+    }
+    if (owner.face == 'e') {
+        createDamageBlock(owner, owner.x+2, owner.y, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x+1, owner.y-2, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x+1, owner.y+2, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x+1, owner.y+1, nameAtk, damageMultiplier, '✖');
+    }
+}
+
+
 export function firebreath(owner: Entity, target: Entity, damageMultiplier: number) {
     let nameAtk = 'firebreath';
     let dx = target.x - owner.x;

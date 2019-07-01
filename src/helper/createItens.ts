@@ -8,6 +8,10 @@ import { Shield } from "../content/itens/shield";
 import { Potion } from "../content/itens/potion";
 import { Firerod } from "../content/itens/firerod";
 import { Dagger } from "../content/itens/dagger";
+import { Icerod } from "../content/itens/icerod";
+import { CrossedSwords } from "../content/itens/crossedsword";
+import { Offdagger } from "../content/itens/offdagger";
+import { Blademail } from "../content/itens/blademail";
 
 // function ItemFactory(name: string, x: number, y): Entity{
 //     return new Entity(x, y, new Glyph('Ϯ', [0,0,0], [204, 200, 0]), 'knife', 1, false, 5, 2, undefined, undefined, false, item_component);
@@ -50,8 +54,34 @@ export function CreateItem(item_choice: string, x: number, y: number): Entity{
         item.item.glyph = item.glyph;
         return item;
     }
+    else if (item_choice == 'icerod') {
+        let item_component = new Icerod()
+        let item = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
+    }
+    else if (item_choice == 'crossedswords') {
+        let item_component = new CrossedSwords()
+        let item = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
+    }
     else if (item_choice == 'shield') {
         let item_component = new Shield();
+        console.log(item_component);
+        let item = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
+    }
+    else if (item_choice == 'offdagger') {
+        let item_component = new Offdagger();
+        console.log(item_component);
+        let item = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
+        item.item.glyph = item.glyph;
+        return item;
+    }
+    else if (item_choice == 'blademail') {
+        let item_component = new Blademail();
         console.log(item_component);
         let item = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
         item.item.glyph = item.glyph;
@@ -92,8 +122,32 @@ export function CreateDropItem(item: Equipment, x: number, y: number): Entity{
         itemDrop.item.glyph = item.glyph;
         return itemDrop;
     }
+    else if (item_choice == 'icerod') {
+        let item_component = new Icerod(item);
+        let itemDrop = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
+        itemDrop.item.glyph = item.glyph;
+        return itemDrop;
+    }
+    else if (item_choice == 'crossedswords') {
+        let item_component = new CrossedSwords(item);
+        let itemDrop = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
+        itemDrop.item.glyph = item.glyph;
+        return itemDrop;
+    }
     else if (item_choice == 'shield') {
         let item_component = new Shield(item);
+        let itemDrop = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
+        itemDrop.item.glyph = item.glyph;
+        return itemDrop;
+    }
+    else if (item_choice == 'offdagger') {
+        let item_component = new Offdagger(item);
+        let itemDrop = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
+        itemDrop.item.glyph = item.glyph;
+        return itemDrop;
+    }
+    else if (item_choice == 'blademail') {
+        let item_component = new Blademail(item);
         let itemDrop = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
         itemDrop.item.glyph = item.glyph;
         return itemDrop;

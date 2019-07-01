@@ -5,16 +5,16 @@ import { Glyph } from "../../glyph";
 import { createDamageBlock } from "../../helper/createDamageBlock";
 import { qualityGenerator } from "../../helper/qualityGenerator";
 
-export class Shield extends Equipment {
-    power_bonus: number = 0;
+export class Offdagger extends Equipment {
+    power_bonus: number = 1;
     skill_bonus: number = 1;
-    defense_bonus: number = 2;
-    hp_bonus: number = 15;
+    defense_bonus: number = 0.5;
+    hp_bonus: number = -5;
     owner: Entity;
-    name: string = 'shield';
-    fullname: string = 'shield';
-    cooldown: number = 8
-    max_cooldown: number = 8
+    name: string = 'offdagger';
+    fullname: string = 'offdagger';
+    cooldown: number = 6
+    max_cooldown: number = 6
     glyph: Glyph;
 
     constructor(drop: Equipment = undefined) {
@@ -34,7 +34,7 @@ export class Shield extends Equipment {
             this.defense_bonus += this.defense_bonus*item.defense_bonus;
             this.max_cooldown += Math.round(this.max_cooldown*item.max_cooldown);
             this.fullname = item.prefix + this.name;
-            this.glyph = new Glyph('ꂷ', [0,0,0], [item.alpha, item.alpha, 0]);
+            this.glyph = new Glyph('℩', [0,0,0], [item.alpha, item.alpha, 0]);
         }
         this.startCountDown();
     }
@@ -50,8 +50,14 @@ export class Shield extends Equipment {
     defend(amount: number) {
         if ( this.cooldown <= 0) {
             this.cooldown = this.max_cooldown;
-            amount = amount - (this.owner.fighter.defense() * this.skill_bonus);
-            amount = amount < 0 ? 0 : amount;
+            let dir =this.owner.face;
+            let dmg = new DamageBlock(this.skill_bonus)
+            let attack:Entity = null;
+            dmg.owner = this.owner;
+            createDamageBlock(this.owner, this.owner.x, this.owner.y+1, this.name, this.skill_bonus);
+            createDamageBlock(this.owner, this.owner.x, this.owner.y-1, this.name, this.skill_bonus);
+            createDamageBlock(this.owner, this.owner.x+1, this.owner.y, this.name, this.skill_bonus);
+            createDamageBlock(this.owner, this.owner.x-1, this.owner.y, this.name, this.skill_bonus);
         }
         return amount;
     }
