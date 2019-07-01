@@ -21,6 +21,7 @@ export function startScreen() {
             console.log("Exited start screen."); 
         },
         render : (display : any, game: Game) => {
+            display.drawText(0,0, "%c{rgb(50, 50, 50)}Alpha: v.1971");
             let y = 8;
             for (const line of game.logo) {
                 display.drawText(10,y, line);

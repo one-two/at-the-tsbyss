@@ -206,7 +206,7 @@ export class Game {
 			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
 			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
 		}
-		if (this.lang = "Pt") {
+		else if (this.lang = "Pt") {
 			this._inventory.drawText(1, 3, "%c{rgb(255,0,0)}PV: %c{}" +hp + "/" +max_hp);
 			this._inventory.drawText(1, 4, "%c{blue}Ataque: %c{}"+this._player.fighter.power().toFixed(2));
 			this._inventory.drawText(1, 5, "%c{yellow}Defesa: %c{}"+this._player.fighter.defense().toFixed(2));
@@ -312,9 +312,9 @@ export class Game {
 window.onload = function() {
 	let game = new Game();
 	// Initialize the game
-	let fighter = new Fighter(999, 1, 4, 0);
+	let fighter = new Fighter(100, 1, 4, 0);
 	let player = new Entity(60, 45, new Glyph('@', [0,0,0], [0, 191, 255]), 'The Princess', 1, true, 1, 1, fighter, undefined, true);
-	player.fighter.unspentPoints = 10;
+	player.fighter.unspentPoints = 2;
 	game._player = player
 	game._entities = [game._player];
 	//let knife = new Knife();

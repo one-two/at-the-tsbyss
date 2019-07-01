@@ -5702,6 +5702,105 @@ exports.firebreath = firebreath;
 
 /***/ }),
 
+/***/ "./src/content/itens/dagger.ts":
+/*!*************************************!*\
+  !*** ./src/content/itens/dagger.ts ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const equipment_1 = __webpack_require__(/*! ../../components/equipment */ "./src/components/equipment.ts");
+const damageBlock_1 = __webpack_require__(/*! ../../components/damageBlock */ "./src/components/damageBlock.ts");
+const glyph_1 = __webpack_require__(/*! ../../glyph */ "./src/glyph.ts");
+const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
+const qualityGenerator_1 = __webpack_require__(/*! ../../helper/qualityGenerator */ "./src/helper/qualityGenerator.ts");
+class Dagger extends equipment_1.Equipment {
+    constructor(drop = undefined) {
+        super("main");
+        this.power_bonus = 2.5;
+        this.skill_bonus = 0.7;
+        this.defense_bonus = 0;
+        this.hp_bonus = 0;
+        this.prefix = '';
+        this.name = 'dagger';
+        this.fullname = 'dagger';
+        this.cooldown = 8;
+        this.max_cooldown = 8;
+        if (drop != undefined) {
+            this.power_bonus = drop.power_bonus;
+            this.skill_bonus = drop.skill_bonus;
+            this.defense_bonus = drop.defense_bonus;
+            this.hp_bonus = drop.hp_bonus;
+            this.name = drop.name;
+            this.fullname = drop.fullname;
+            this.max_cooldown = drop.max_cooldown;
+            this.glyph = drop.glyph;
+        }
+        else {
+            let item = qualityGenerator_1.qualityGenerator("main");
+            this.power_bonus += this.power_bonus * item.power_bonus;
+            this.skill_bonus += this.skill_bonus * item.skill_bonus;
+            if (item.defense_bonus * 100 > 13)
+                this.defense_bonus += (Math.random() * 2);
+            this.defense_bonus += this.defense_bonus * item.defense_bonus;
+            this.max_cooldown += Math.round(this.max_cooldown * item.max_cooldown);
+            this.fullname = item.prefix + this.name;
+            this.glyph = new glyph_1.Glyph('🗡', [0, 0, 0], [item.alpha, item.alpha, 0]);
+        }
+        this.startCountDown();
+    }
+    startCountDown() {
+        var interval = setInterval(() => {
+            if (this.cooldown > 0)
+                this.cooldown--;
+        }, 100);
+    }
+    strike() {
+        if (this.cooldown <= 0) {
+            this.cooldown = this.max_cooldown;
+            let dir = this.owner.face;
+            let dmg = new damageBlock_1.DamageBlock(this.skill_bonus);
+            let attack = null;
+            dmg.owner = this.owner;
+            if (this.owner.face == 's') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 2, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y + 3, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 3, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y + 3, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 4, this.name, this.skill_bonus);
+            }
+            else if (this.owner.face == 'n') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 2, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y - 3, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 3, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y - 3, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 4, this.name, this.skill_bonus);
+            }
+            else if (this.owner.face == 'w') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 2, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 3, this.owner.y + 1, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 3, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 3, this.owner.y - 1, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 4, this.owner.y, this.name, this.skill_bonus);
+            }
+            else if (this.owner.face == 'e') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 2, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 3, this.owner.y - 1, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 3, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 3, this.owner.y + 1, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 4, this.owner.y, this.name, this.skill_bonus);
+            }
+        }
+    }
+}
+exports.Dagger = Dagger;
+
+
+/***/ }),
+
 /***/ "./src/content/itens/exit.ts":
 /*!***********************************!*\
   !*** ./src/content/itens/exit.ts ***!
@@ -5918,15 +6017,19 @@ class Knife extends equipment_1.Equipment {
             dmg.owner = this.owner;
             if (this.owner.face == 's') {
                 createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 1, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 2, this.name, this.skill_bonus);
             }
             else if (this.owner.face == 'n') {
                 createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 1, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 2, this.name, this.skill_bonus);
             }
             else if (this.owner.face == 'w') {
                 createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 2, this.owner.y, this.name, this.skill_bonus);
             }
             else if (this.owner.face == 'e') {
                 createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 2, this.owner.y, this.name, this.skill_bonus);
             }
         }
     }
@@ -7187,15 +7290,15 @@ class Game {
             else {
                 this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Potions: %c{}" + this._player.inventory + " [p]");
             }
-            this._inventory.drawText(1, 29, "%c{rgb(140, 140, 160)}29: %c{}" + this._player.x + " " + this._player.y);
+            this._inventory.drawText(1, 29, "%c{rgb(140, 140, 160)}posdebug: %c{}" + this._player.x + " " + this._player.y);
             this._inventory.drawText(1, 30, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
-            this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
+            this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}exit: %c{}" + this._map.dungeon_level);
             this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}32: %c{}" + this._map.dungeon_level);
             this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
             this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
             this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
         }
-        if (this.lang = "Pt") {
+        else if (this.lang = "Pt") {
             this._inventory.drawText(1, 3, "%c{rgb(255,0,0)}PV: %c{}" + hp + "/" + max_hp);
             this._inventory.drawText(1, 4, "%c{blue}Ataque: %c{}" + this._player.fighter.power().toFixed(2));
             this._inventory.drawText(1, 5, "%c{yellow}Defesa: %c{}" + this._player.fighter.defense().toFixed(2));
@@ -7293,9 +7396,9 @@ exports.Game = Game;
 window.onload = function () {
     let game = new Game();
     // Initialize the game
-    let fighter = new fighter_1.Fighter(999, 1, 4, 0);
+    let fighter = new fighter_1.Fighter(100, 1, 4, 0);
     let player = new entity_1.Entity(60, 45, new glyph_1.Glyph('@', [0, 0, 0], [0, 191, 255]), 'The Princess', 1, true, 1, 1, fighter, undefined, true);
-    player.fighter.unspentPoints = 10;
+    player.fighter.unspentPoints = 2;
     game._player = player;
     game._entities = [game._player];
     //let knife = new Knife();
@@ -7394,6 +7497,7 @@ const spear_1 = __webpack_require__(/*! ../content/itens/spear */ "./src/content
 const shield_1 = __webpack_require__(/*! ../content/itens/shield */ "./src/content/itens/shield.ts");
 const potion_1 = __webpack_require__(/*! ../content/itens/potion */ "./src/content/itens/potion.ts");
 const firerod_1 = __webpack_require__(/*! ../content/itens/firerod */ "./src/content/itens/firerod.ts");
+const dagger_1 = __webpack_require__(/*! ../content/itens/dagger */ "./src/content/itens/dagger.ts");
 // function ItemFactory(name: string, x: number, y): Entity{
 //     return new Entity(x, y, new Glyph('Ϯ', [0,0,0], [204, 200, 0]), 'knife', 1, false, 5, 2, undefined, undefined, false, item_component);
 // }
@@ -7423,7 +7527,7 @@ function CreateItem(item_choice, x, y) {
         return item;
     }
     else if (item_choice == 'dagger') {
-        let item_component = new knife_1.Knife();
+        let item_component = new dagger_1.Dagger();
         let item = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
         item.item.glyph = item.glyph;
         return item;
@@ -7465,7 +7569,7 @@ function CreateDropItem(item, x, y) {
         return itemDrop;
     }
     else if (item_choice == 'dagger') {
-        let item_component = new knife_1.Knife(item);
+        let item_component = new dagger_1.Dagger(item);
         let itemDrop = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
         itemDrop.item.glyph = item.glyph;
         return itemDrop;
@@ -7507,39 +7611,45 @@ const fighter_1 = __webpack_require__(/*! ../components/fighter */ "./src/compon
 const ranger_1 = __webpack_require__(/*! ../content/monsters/ranger */ "./src/content/monsters/ranger.ts");
 const wyvern_1 = __webpack_require__(/*! ../content/monsters/wyvern */ "./src/content/monsters/wyvern.ts");
 const dragon_1 = __webpack_require__(/*! ../content/monsters/dragon */ "./src/content/monsters/dragon.ts");
+const randperc_1 = __webpack_require__(/*! ./randperc */ "./src/helper/randperc.ts");
 function CreateMonster(monster_choice, x, y) {
+    let qHp = randperc_1.randperc(100) + 0.2;
+    let qAtk = randperc_1.randperc(50);
+    let qDef = randperc_1.randperc(30);
+    let qExp = qHp + (qAtk * 3) + (qDef * 5);
+    qExp = qExp / 3;
     if (monster_choice == 'fungi') {
-        let fighter_component = new fighter_1.Fighter(30, 0, 4, 35);
+        let fighter_component = new fighter_1.Fighter(30 + 30 * qHp, 2 + 2 * qDef, 4 + 4 * qAtk, 25 + 25 * qExp);
         let ai_component = new fungi_1.Fungi();
         let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('f', [0, 0, 0], [0, 200, 0]), 'Fungi', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'orc') {
-        let fighter_component = new fighter_1.Fighter(40, 0, 4, 35);
+        let fighter_component = new fighter_1.Fighter(40 + 40 * qHp, 2 + 2 * qDef, 4 + 4 * qAtk, 35 + 35 * qExp);
         let ai_component = new orc_1.Orc();
         let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', [0, 0, 0], [0, 128, 0]), 'Orc', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'troll') {
-        let fighter_component = new fighter_1.Fighter(90, 2, 8, 60);
+        let fighter_component = new fighter_1.Fighter(90 + 90 * qHp, 3 + 3 * qDef, 8 + 8 * qAtk, 60 + 60 * qExp);
         let ai_component = new troll_1.Troll();
         let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('t', [0, 0, 0], [128, 0, 128]), 'Troll', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'wyvern') {
-        let fighter_component = new fighter_1.Fighter(30, 0, 5, 40);
+        let fighter_component = new fighter_1.Fighter(30 + 30 * qHp, 2 + 2 * qDef, 5 + 5 * qAtk, 20 + 20 * qExp);
         let ai_component = new wyvern_1.Wyvern();
         let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('w', [0, 0, 0], [148, 0, 211]), 'Wyvern', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'ranger') {
-        let fighter_component = new fighter_1.Fighter(40, 1, 8, 40);
+        let fighter_component = new fighter_1.Fighter(40 + 40 * qHp, 3 + 3 * qDef, 8 + 8 * qAtk, 40 + 40 * qExp);
         let ai_component = new ranger_1.Ranger(); //Ranger()
         let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('r', [0, 0, 0], [233, 150, 122]), 'Ranger', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'dragon') {
-        let fighter_component = new fighter_1.Fighter(100, 5, 14, 300);
+        let fighter_component = new fighter_1.Fighter(100 + 100 * qHp, 6 + 6 * qDef, 14 + 14 * qAtk, 300 + 300 * qExp);
         let ai_component = new dragon_1.Dragon();
         let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('Đ', [0, 0, 0], [220, 20, 60]), 'Dragon', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
@@ -8241,6 +8351,7 @@ exports.randint = randint;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 function randperc(perc) {
+    /// Return -(0.perc/2) ~ +(0.perc/2)
     let t = (Math.random() * (perc)) - Math.ceil(perc / 2);
     return (t / 100);
 }
@@ -8340,9 +8451,9 @@ class Map {
     }
     addEntityToMap() {
         let max_monsters_per_room = randFromLevel_1.from_dungeon_level([[30, 1], [40, 4], [40, 6]], this.dungeon_level);
-        let max_items_per_room = randFromLevel_1.from_dungeon_level([[30, 1], [15, 4]], this.dungeon_level);
-        let number_of_monsters = randint_1.randint(Math.ceil(max_monsters_per_room / 2), max_monsters_per_room);
-        let number_of_items = randint_1.randint(1, max_items_per_room);
+        let max_items_per_room = randFromLevel_1.from_dungeon_level([[10, 1], [15, 4]], this.dungeon_level);
+        let number_of_monsters = randint_1.randint(Math.ceil(max_monsters_per_room / (1.5)), max_monsters_per_room);
+        let number_of_items = randint_1.randint(Math.ceil(max_monsters_per_room / 2), max_items_per_room);
         let monster_chances = monsterProbabilities_1.monsterProbabilities(this.dungeon_level);
         let item_chances = itemProbabilities_1.itemProbabilities(this.dungeon_level);
         let playerStart = false;
@@ -8602,6 +8713,7 @@ function startScreen() {
             console.log("Exited start screen.");
         },
         render: (display, game) => {
+            display.drawText(0, 0, "%c{rgb(50, 50, 50)}Alpha: v.1971");
             let y = 8;
             for (const line of game.logo) {
                 display.drawText(10, y, line);
@@ -9135,13 +9247,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const randFromLevel_1 = __webpack_require__(/*! ../helper/randFromLevel */ "./src/helper/randFromLevel.ts");
 function itemProbabilities(dungeon_level) {
     return {
-        'potion': 1,
-        'knife': randFromLevel_1.from_dungeon_level([[10, 1]], dungeon_level),
-        'dagger': randFromLevel_1.from_dungeon_level([[10, 1]], dungeon_level),
-        'sword': randFromLevel_1.from_dungeon_level([[10, 0], [10, 2]], dungeon_level),
+        'potion': 35,
+        'knife': randFromLevel_1.from_dungeon_level([[10, 1], [5, 3]], dungeon_level),
+        'dagger': randFromLevel_1.from_dungeon_level([[10, 1], [5, 3]], dungeon_level),
+        'sword': randFromLevel_1.from_dungeon_level([[5, 1], [10, 3]], dungeon_level),
         'spear': randFromLevel_1.from_dungeon_level([[5, 1], [10, 3]], dungeon_level),
-        'firerod': randFromLevel_1.from_dungeon_level([[500, 1], [10, 3]], dungeon_level),
-        'shield': randFromLevel_1.from_dungeon_level([[30, 0]], dungeon_level),
+        'firerod': randFromLevel_1.from_dungeon_level([[1, 1], [10, 3]], dungeon_level),
+        'shield': randFromLevel_1.from_dungeon_level([[1, 0], [10, 2]], dungeon_level),
     };
 }
 exports.itemProbabilities = itemProbabilities;
@@ -9162,12 +9274,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const randFromLevel_1 = __webpack_require__(/*! ../helper/randFromLevel */ "./src/helper/randFromLevel.ts");
 function monsterProbabilities(dungeon_level) {
     return {
-        'fungi': randFromLevel_1.from_dungeon_level([[1, 1]], dungeon_level),
-        'orc': randFromLevel_1.from_dungeon_level([[1, 1], [60, 3], [40, 7]], dungeon_level),
-        'troll': randFromLevel_1.from_dungeon_level([[1, 1], [10, 3], [30, 5], [60, 7]], dungeon_level),
-        'wyvern': randFromLevel_1.from_dungeon_level([[1, 1], [50, 2], [50, 5]], dungeon_level),
-        'dragon': randFromLevel_1.from_dungeon_level([[10, 1], [10, 3], [20, 7]], dungeon_level),
-        'ranger': randFromLevel_1.from_dungeon_level([[1, 1]], dungeon_level),
+        'fungi': randFromLevel_1.from_dungeon_level([[5, 1], [15, 1]], dungeon_level),
+        'orc': randFromLevel_1.from_dungeon_level([[40, 1], [20, 3], [10, 7]], dungeon_level),
+        'troll': randFromLevel_1.from_dungeon_level([[10, 1], [20, 3], [30, 5], [60, 7]], dungeon_level),
+        'wyvern': randFromLevel_1.from_dungeon_level([[10, 1], [30, 2], [50, 5]], dungeon_level),
+        'dragon': randFromLevel_1.from_dungeon_level([[1, 3], [20, 7]], dungeon_level),
+        'ranger': randFromLevel_1.from_dungeon_level([[5, 1], [10, 2]], dungeon_level),
     };
 }
 exports.monsterProbabilities = monsterProbabilities;

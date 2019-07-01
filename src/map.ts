@@ -96,10 +96,10 @@ export class Map {
 
     addEntityToMap(): void {
         let max_monsters_per_room = from_dungeon_level([[30, 1], [40, 4], [40, 6]], this.dungeon_level)
-        let max_items_per_room = from_dungeon_level([[30, 1], [15, 4]], this.dungeon_level)
+        let max_items_per_room = from_dungeon_level([[10, 1], [15, 4]], this.dungeon_level)
 
-        let number_of_monsters = randint(Math.ceil(max_monsters_per_room/2), max_monsters_per_room)
-        let number_of_items = randint(1, max_items_per_room);
+        let number_of_monsters = randint(Math.ceil(max_monsters_per_room/(1.5)), max_monsters_per_room)
+        let number_of_items = randint(Math.ceil(max_monsters_per_room/2), max_items_per_room);
         
         let monster_chances = monsterProbabilities(this.dungeon_level);
 
