@@ -240,6 +240,9 @@ export function playScreen() {
             if (game.level >= 5 && game.level < 7 ) {
                 createDungeon(game);
             }
+            if (game.level == 7) {
+                game.switchScreen(winScreen);
+            }
             
             // Sync map and game variables
             game._map._entities = [];
@@ -496,14 +499,9 @@ export function winScreen() {
         },
         render : (display: any) => {
             // Render our prompt to the screen
-            for (var i = 0; i < 22; i++) {
-                // Generate random background colors
-                var r = Math.round(Math.random() * 255);
-                var g = Math.round(Math.random() * 255);
-                var b = Math.round(Math.random() * 255);
-                var background = Color.toRGB([r, g, b]);
-                display.drawText(2, i + 1, "%b{" + background + "}You win!");
-            }
+
+            display.drawText(2, 16, "%c{rgb(200,200,200)}your future is not yet reachable");
+            display.drawText(25, 17, "%c{rgb(30,30,30)}under development.....");
         },
         handleInput : (inputType: any, inputData: any) => {
             // Nothing to do here      

@@ -12,81 +12,58 @@ import { Icerod } from "../content/itens/icerod";
 import { CrossedSwords } from "../content/itens/crossedsword";
 import { Offdagger } from "../content/itens/offdagger";
 import { Blademail } from "../content/itens/blademail";
+import { randint } from "./randint";
 
 // function ItemFactory(name: string, x: number, y): Entity{
 //     return new Entity(x, y, new Glyph('Ϯ', [0,0,0], [204, 200, 0]), 'knife', 1, false, 5, 2, undefined, undefined, false, item_component);
 // }
 
-export function CreateItem(item_choice: string, x: number, y: number): Entity{
+export function CreateItem(item_choice: string, x: number, y: number, dungeon_level: number): Entity{
+    let item_component: Equipment;
+    let upgrades: number[] = [0,0,0,0,0];
+    for (let index = 0; index < dungeon_level; index++) {
+        let i = randint(0,4);
+        upgrades[i] += 1;        
+    }
     if (item_choice == 'potion') {
-        let item_component = new Potion()
+        item_component = new Potion()
         let item = new Entity(x, y, new Glyph('ზ', [0,0,0], [50, 200, 50]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
         item.item.glyph= item.glyph;
         return item;
     }
     if (item_choice == 'knife') {
-        let item_component = new Knife()
-        let item = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph= item.glyph;
-        return item;
+        item_component = new Knife(undefined, upgrades);
     }
     else if (item_choice == 'sword') {
-        let item_component = new Sword()
-        let item = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        item_component = new Sword(undefined, upgrades);
     }
     else if (item_choice == 'spear') {
-        let item_component = new Spear()
-        let item = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        item_component = new Spear(undefined, upgrades);
     }
     else if (item_choice == 'dagger') {
-        let item_component = new Dagger()
-        let item = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        item_component = new Dagger(undefined, upgrades);
     }
     else if (item_choice == 'firerod') {
-        let item_component = new Firerod()
-        let item = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        item_component = new Firerod(undefined, upgrades);
     }
     else if (item_choice == 'icerod') {
-        let item_component = new Icerod()
-        let item = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        item_component = new Icerod(undefined, upgrades);
     }
     else if (item_choice == 'crossedswords') {
-        let item_component = new CrossedSwords()
-        let item = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        item_component = new CrossedSwords(undefined, upgrades);
     }
     else if (item_choice == 'shield') {
-        let item_component = new Shield();
-        console.log(item_component);
-        let item = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        item_component = new Shield(undefined, upgrades);
     }
     else if (item_choice == 'offdagger') {
-        let item_component = new Offdagger();
-        console.log(item_component);
-        let item = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        item_component = new Offdagger(undefined, upgrades);
     }
     else if (item_choice == 'blademail') {
-        let item_component = new Blademail();
-        console.log(item_component);
-        let item = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        item_component = new Blademail(undefined, upgrades);
     }
+    let item = new Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
+    item.item.glyph = item.glyph;
+    return item;
 }
 
 export function CreateDropItem(item: Equipment, x: number, y: number): Entity{

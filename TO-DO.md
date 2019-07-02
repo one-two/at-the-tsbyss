@@ -28,7 +28,7 @@ Todo list to fill the void of our souls (but i really want to make it web)
 - [X] Random quality drops (except potions)
 - [X] Defensive skills
 - [ ] Equipments/spell/stuff for progress
-- [ ] Monster attack patterns
+- [X] Monster attack patterns
 - [ ] Boss fights! 
 - [ ] Switch screen animation
 - [ ] Leaderboards!

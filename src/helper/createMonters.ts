@@ -10,11 +10,12 @@ import { Dragon } from "../content/monsters/dragon";
 import { randperc } from "./randperc";
 import { Crawler } from "../content/monsters/crawler";
 
-export function CreateMonster(monster_choice: string, x: number, y: number): Entity{
-    let qHp = randperc(100)+0.2;
-    let qAtk = randperc(50);
-    let qDef = randperc(30);
-    let qExp = qHp+(qAtk*3)+(qDef*5);
+export function CreateMonster(monster_choice: string, x: number, y: number, dungeon_level: number): Entity{
+    let dl = dungeon_level/10;
+    let qHp = randperc(100)+0.2+dl;
+    let qAtk = randperc(50)+dl;
+    let qDef = randperc(30)+dl;
+    let qExp = (qHp > 0 ? qHp : qHp*0.5)+(qAtk > 0 ? qAtk*2 : qAtk*0.5)+(qDef > 0 ? qDef*3 : qDef*0.5);
     qExp = qExp/3;
 
     if (monster_choice == 'fungi') {

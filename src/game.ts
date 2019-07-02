@@ -320,7 +320,7 @@ window.onload = function() {
 	//let knife = new Knife();
 	//knife.owner = game._player;
 	//game._player.equipment = CreateItem('knife', game._player.x, game._player.y).item;
-	game._player.equipStart(CreateItem('knife', game._player.x, game._player.y));
+	game._player.equipStart(CreateItem('knife', game._player.x, game._player.y, 1));
 	game._player.equipment.owner = game._player;
 	game.init();
 	// Add the container to our HTML page

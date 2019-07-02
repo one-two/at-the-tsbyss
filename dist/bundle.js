@@ -5632,6 +5632,34 @@ function flamestrike(owner, target, damageMultiplier) {
     }
 }
 exports.flamestrike = flamestrike;
+function bite(owner, target, damageMultiplier) {
+    let nameAtk = 'bite';
+    if (owner.face == 'n') {
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y - 1, nameAtk, damageMultiplier, '✖');
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 1, nameAtk, damageMultiplier, '✖');
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 2, nameAtk, damageMultiplier, '✖');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y - 1, nameAtk, damageMultiplier, '✖');
+    }
+    if (owner.face == 's') {
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 2, nameAtk, damageMultiplier, '✖');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 2, owner.y + 1, nameAtk, damageMultiplier, '✖');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 2, owner.y + 1, nameAtk, damageMultiplier, '✖');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y + 1, nameAtk, damageMultiplier, '✖');
+    }
+    if (owner.face == 'w') {
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 2, owner.y, nameAtk, damageMultiplier, '✖');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y + 2, nameAtk, damageMultiplier, '✖');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y - 2, nameAtk, damageMultiplier, '✖');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y + 1, nameAtk, damageMultiplier, '✖');
+    }
+    if (owner.face == 'e') {
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 2, owner.y, nameAtk, damageMultiplier, '✖');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y - 2, nameAtk, damageMultiplier, '✖');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y + 2, nameAtk, damageMultiplier, '✖');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y + 1, nameAtk, damageMultiplier, '✖');
+    }
+}
+exports.bite = bite;
 function firebreath(owner, target, damageMultiplier) {
     let nameAtk = 'firebreath';
     let dx = target.x - owner.x;
@@ -5702,6 +5730,192 @@ exports.firebreath = firebreath;
 
 /***/ }),
 
+/***/ "./src/content/itens/blademail.ts":
+/*!****************************************!*\
+  !*** ./src/content/itens/blademail.ts ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const equipment_1 = __webpack_require__(/*! ../../components/equipment */ "./src/components/equipment.ts");
+const damageBlock_1 = __webpack_require__(/*! ../../components/damageBlock */ "./src/components/damageBlock.ts");
+const glyph_1 = __webpack_require__(/*! ../../glyph */ "./src/glyph.ts");
+const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
+const qualityGenerator_1 = __webpack_require__(/*! ../../helper/qualityGenerator */ "./src/helper/qualityGenerator.ts");
+class Blademail extends equipment_1.Equipment {
+    constructor(drop = undefined, upgrades = undefined) {
+        super("sub");
+        this.power_bonus = -2;
+        this.skill_bonus = 1;
+        this.defense_bonus = 3;
+        this.hp_bonus = 25;
+        this.name = 'blademail';
+        this.fullname = 'blademail';
+        this.cooldown = 12;
+        this.max_cooldown = 12;
+        if (drop != undefined) {
+            this.power_bonus = drop.power_bonus;
+            this.skill_bonus = drop.skill_bonus;
+            this.defense_bonus = drop.defense_bonus;
+            this.hp_bonus = drop.hp_bonus;
+            this.name = drop.name;
+            this.fullname = drop.fullname;
+            this.max_cooldown = drop.max_cooldown;
+            this.glyph = drop.glyph;
+        }
+        else {
+            let item = qualityGenerator_1.qualityGenerator("sub");
+            this.power_bonus += (this.power_bonus + upgrades[0]) * item.power_bonus;
+            this.skill_bonus += (this.skill_bonus + (upgrades[1] / 10)) * item.skill_bonus;
+            this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
+            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.hp_bonus += upgrades[4] * 5;
+            this.fullname = item.prefix + this.name;
+            this.glyph = new glyph_1.Glyph('❂', [0, 0, 0], [item.alpha, item.alpha, 0]);
+        }
+        this.startCountDown();
+    }
+    startCountDown() {
+        var interval = setInterval(() => {
+            if (this.cooldown > 0)
+                this.cooldown--;
+        }, 100);
+    }
+    defend(amount) {
+        if (this.cooldown <= 0) {
+            this.cooldown = this.max_cooldown;
+            let dir = this.owner.face;
+            let dmg = new damageBlock_1.DamageBlock(this.skill_bonus);
+            let attack = null;
+            dmg.owner = this.owner;
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 1, this.name, this.skill_bonus);
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y + 1, this.name, this.skill_bonus);
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y + 1, this.name, this.skill_bonus);
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y, this.name, this.skill_bonus);
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y, this.name, this.skill_bonus);
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y - 1, this.name, this.skill_bonus);
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 1, this.name, this.skill_bonus);
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y - 1, this.name, this.skill_bonus);
+        }
+        return amount;
+    }
+}
+exports.Blademail = Blademail;
+
+
+/***/ }),
+
+/***/ "./src/content/itens/crossedsword.ts":
+/*!*******************************************!*\
+  !*** ./src/content/itens/crossedsword.ts ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const equipment_1 = __webpack_require__(/*! ../../components/equipment */ "./src/components/equipment.ts");
+const damageBlock_1 = __webpack_require__(/*! ../../components/damageBlock */ "./src/components/damageBlock.ts");
+const glyph_1 = __webpack_require__(/*! ../../glyph */ "./src/glyph.ts");
+const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
+const qualityGenerator_1 = __webpack_require__(/*! ../../helper/qualityGenerator */ "./src/helper/qualityGenerator.ts");
+class CrossedSwords extends equipment_1.Equipment {
+    constructor(drop = undefined, upgrades = undefined) {
+        super("main");
+        this.power_bonus = 8;
+        this.skill_bonus = 1;
+        this.defense_bonus = 0;
+        this.hp_bonus = 0;
+        this.prefix = '';
+        this.name = 'crossedswords';
+        this.fullname = 'crossedswords';
+        this.cooldown = 6;
+        this.max_cooldown = 6;
+        if (drop != undefined) {
+            this.power_bonus = drop.power_bonus;
+            this.skill_bonus = drop.skill_bonus;
+            this.defense_bonus = drop.defense_bonus;
+            this.hp_bonus = drop.hp_bonus;
+            this.name = drop.name;
+            this.fullname = drop.fullname;
+            this.max_cooldown = drop.max_cooldown;
+            this.glyph = drop.glyph;
+        }
+        else {
+            let item = qualityGenerator_1.qualityGenerator("main");
+            this.power_bonus += (this.power_bonus + upgrades[0]) * item.power_bonus;
+            this.skill_bonus += (this.skill_bonus + (upgrades[1] / 10)) * item.skill_bonus;
+            if (item.defense_bonus * 100 > 13)
+                this.defense_bonus += (Math.random() * 2);
+            this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
+            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.hp_bonus += upgrades[4] * 5;
+            this.fullname = item.prefix + this.name;
+            this.glyph = new glyph_1.Glyph('⚔', [0, 0, 0], [item.alpha, item.alpha, 0]);
+        }
+        this.startCountDown();
+    }
+    startCountDown() {
+        var interval = setInterval(() => {
+            if (this.cooldown > 0)
+                this.cooldown--;
+        }, 100);
+    }
+    strike() {
+        if (this.cooldown <= 0) {
+            this.cooldown = this.max_cooldown;
+            let dir = this.owner.face;
+            let dmg = new damageBlock_1.DamageBlock(this.skill_bonus);
+            let attack = null;
+            dmg.owner = this.owner;
+            if (this.owner.face == 's') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y + 1, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 1, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y + 1, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 2, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y + 3, this.name, this.skill_bonus, '✖', 6);
+                //createDamageBlock(this.owner, this.owner.x, this.owner.y+4, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y + 3, this.name, this.skill_bonus, '✖', 6);
+            }
+            else if (this.owner.face == 'n') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y - 1, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 1, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y - 1, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 2, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y - 3, this.name, this.skill_bonus, '✖', 6);
+                //createDamageBlock(this.owner, this.owner.x, this.owner.y-4, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y - 3, this.name, this.skill_bonus, '✖', 6);
+            }
+            else if (this.owner.face == 'w') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y + 1, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y - 1, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 2, this.owner.y, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 3, this.owner.y + 1, this.name, this.skill_bonus, '✖', 6);
+                //createDamageBlock(this.owner, this.owner.x, this.owner.y-4, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 3, this.owner.y - 1, this.name, this.skill_bonus, '✖', 6);
+            }
+            else if (this.owner.face == 'e') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y + 1, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y - 1, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 2, this.owner.y, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 3, this.owner.y + 1, this.name, this.skill_bonus, '✖', 6);
+                //createDamageBlock(this.owner, this.owner.x, this.owner.y-4, this.name, this.skill_bonus, '✖', 6);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 3, this.owner.y - 1, this.name, this.skill_bonus, '✖', 6);
+            }
+        }
+    }
+}
+exports.CrossedSwords = CrossedSwords;
+
+
+/***/ }),
+
 /***/ "./src/content/itens/dagger.ts":
 /*!*************************************!*\
   !*** ./src/content/itens/dagger.ts ***!
@@ -5718,7 +5932,7 @@ const glyph_1 = __webpack_require__(/*! ../../glyph */ "./src/glyph.ts");
 const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
 const qualityGenerator_1 = __webpack_require__(/*! ../../helper/qualityGenerator */ "./src/helper/qualityGenerator.ts");
 class Dagger extends equipment_1.Equipment {
-    constructor(drop = undefined) {
+    constructor(drop = undefined, upgrades = undefined) {
         super("main");
         this.power_bonus = 2.5;
         this.skill_bonus = 0.7;
@@ -5741,12 +5955,13 @@ class Dagger extends equipment_1.Equipment {
         }
         else {
             let item = qualityGenerator_1.qualityGenerator("main");
-            this.power_bonus += this.power_bonus * item.power_bonus;
-            this.skill_bonus += this.skill_bonus * item.skill_bonus;
+            this.power_bonus += (this.power_bonus + upgrades[0]) * item.power_bonus;
+            this.skill_bonus += (this.skill_bonus + (upgrades[1] / 10)) * item.skill_bonus;
             if (item.defense_bonus * 100 > 13)
                 this.defense_bonus += (Math.random() * 2);
-            this.defense_bonus += this.defense_bonus * item.defense_bonus;
-            this.max_cooldown += Math.round(this.max_cooldown * item.max_cooldown);
+            this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
+            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.hp_bonus += upgrades[4] * 5;
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('🗡', [0, 0, 0], [item.alpha, item.alpha, 0]);
         }
@@ -5841,7 +6056,7 @@ const glyph_1 = __webpack_require__(/*! ../../glyph */ "./src/glyph.ts");
 const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
 const qualityGenerator_1 = __webpack_require__(/*! ../../helper/qualityGenerator */ "./src/helper/qualityGenerator.ts");
 class Firerod extends equipment_1.Equipment {
-    constructor(drop = undefined) {
+    constructor(drop = undefined, upgrades = undefined) {
         super("main");
         this.power_bonus = -2;
         this.skill_bonus = 1.5;
@@ -5864,12 +6079,13 @@ class Firerod extends equipment_1.Equipment {
         }
         else {
             let item = qualityGenerator_1.qualityGenerator("main");
-            this.power_bonus += this.power_bonus * item.power_bonus;
-            this.skill_bonus += this.skill_bonus * item.skill_bonus;
+            this.power_bonus += (this.power_bonus + upgrades[0]) * item.power_bonus;
+            this.skill_bonus += (this.skill_bonus + (upgrades[1] / 10)) * item.skill_bonus;
             if (item.defense_bonus * 100 > 13)
                 this.defense_bonus += (Math.random() * 2);
-            this.defense_bonus += this.defense_bonus * item.defense_bonus;
-            this.max_cooldown += Math.round(this.max_cooldown * item.max_cooldown);
+            this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
+            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.hp_bonus += upgrades[4] * 5;
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('‽', [0, 0, 0], [item.alpha, item.alpha, 0]);
         }
@@ -5952,6 +6168,138 @@ exports.Firerod = Firerod;
 
 /***/ }),
 
+/***/ "./src/content/itens/icerod.ts":
+/*!*************************************!*\
+  !*** ./src/content/itens/icerod.ts ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const equipment_1 = __webpack_require__(/*! ../../components/equipment */ "./src/components/equipment.ts");
+const damageBlock_1 = __webpack_require__(/*! ../../components/damageBlock */ "./src/components/damageBlock.ts");
+const glyph_1 = __webpack_require__(/*! ../../glyph */ "./src/glyph.ts");
+const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
+const qualityGenerator_1 = __webpack_require__(/*! ../../helper/qualityGenerator */ "./src/helper/qualityGenerator.ts");
+class Icerod extends equipment_1.Equipment {
+    constructor(drop = undefined, upgrades = undefined) {
+        super("main");
+        this.power_bonus = -1;
+        this.skill_bonus = 1.7;
+        this.defense_bonus = 0;
+        this.hp_bonus = 0;
+        this.prefix = '';
+        this.name = 'icerod';
+        this.fullname = 'icerod';
+        this.cooldown = 8;
+        this.max_cooldown = 8;
+        if (drop != undefined) {
+            this.power_bonus = drop.power_bonus;
+            this.skill_bonus = drop.skill_bonus;
+            this.defense_bonus = drop.defense_bonus;
+            this.hp_bonus = drop.hp_bonus;
+            this.name = drop.name;
+            this.fullname = drop.fullname;
+            this.max_cooldown = drop.max_cooldown;
+            this.glyph = drop.glyph;
+        }
+        else {
+            let item = qualityGenerator_1.qualityGenerator("main");
+            this.power_bonus += (this.power_bonus + upgrades[0]) * item.power_bonus;
+            this.skill_bonus += (this.skill_bonus + (upgrades[1] / 10)) * item.skill_bonus;
+            if (item.defense_bonus * 100 > 13)
+                this.defense_bonus += (Math.random() * 2);
+            this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
+            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.hp_bonus += upgrades[4] * 5;
+            this.fullname = item.prefix + this.name;
+            this.glyph = new glyph_1.Glyph('☦', [0, 0, 0], [item.alpha, item.alpha, 0]);
+        }
+        this.startCountDown();
+    }
+    startCountDown() {
+        var interval = setInterval(() => {
+            if (this.cooldown > 0)
+                this.cooldown--;
+        }, 100);
+    }
+    strike() {
+        if (this.cooldown <= 0) {
+            this.cooldown = this.max_cooldown;
+            let dir = this.owner.face;
+            let dmg = new damageBlock_1.DamageBlock(this.skill_bonus);
+            let attack = null;
+            dmg.owner = this.owner;
+            if (this.owner.face == 's') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 1, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y + 2, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 2, this.name, this.skill_bonus, '♢', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y + 2, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 2, this.owner.y + 3, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y + 3, this.name, this.skill_bonus, '♢', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 3, this.name, this.skill_bonus, '♢', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y + 3, this.name, this.skill_bonus, '♢', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 2, this.owner.y + 3, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y + 4, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 4, this.name, this.skill_bonus, '♢', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y + 4, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 5, this.name, this.skill_bonus, '♢', 8);
+            }
+            else if (this.owner.face == 'n') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 1, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y - 2, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 2, this.name, this.skill_bonus, '♢', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y - 2, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 2, this.owner.y - 3, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y - 3, this.name, this.skill_bonus, '♢', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 3, this.name, this.skill_bonus, '♢', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y - 3, this.name, this.skill_bonus, '♢', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 2, this.owner.y - 3, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y - 4, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 4, this.name, this.skill_bonus, '♢', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y - 4, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 5, this.name, this.skill_bonus, '♢', 8);
+            }
+            else if (this.owner.face == 'w') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 2, this.owner.y + 1, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 2, this.owner.y, this.name, this.skill_bonus, '♢', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 2, this.owner.y - 1, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 3, this.owner.y + 2, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 3, this.owner.y + 1, this.name, this.skill_bonus, '♢', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 3, this.owner.y, this.name, this.skill_bonus, '♢', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 3, this.owner.y - 1, this.name, this.skill_bonus, '♢', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 3, this.owner.y - 2, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 4, this.owner.y + 1, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 4, this.owner.y, this.name, this.skill_bonus, '♢', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 4, this.owner.y - 1, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 4, this.owner.y, this.name, this.skill_bonus, '♢', 8);
+            }
+            else if (this.owner.face == 'e') {
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 2, this.owner.y + 1, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 2, this.owner.y, this.name, this.skill_bonus, '♢', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 2, this.owner.y - 1, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 3, this.owner.y + 2, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 3, this.owner.y + 1, this.name, this.skill_bonus, '♢', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 3, this.owner.y, this.name, this.skill_bonus, '♢', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 3, this.owner.y - 1, this.name, this.skill_bonus, '♢', 9);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 3, this.owner.y - 2, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 4, this.owner.y + 1, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 4, this.owner.y, this.name, this.skill_bonus, '♢', 10);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 4, this.owner.y - 1, this.name, this.skill_bonus, '♢', 8);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 4, this.owner.y, this.name, this.skill_bonus, '♢', 8);
+            }
+        }
+    }
+}
+exports.Icerod = Icerod;
+
+
+/***/ }),
+
 /***/ "./src/content/itens/knife.ts":
 /*!************************************!*\
   !*** ./src/content/itens/knife.ts ***!
@@ -5968,7 +6316,7 @@ const glyph_1 = __webpack_require__(/*! ../../glyph */ "./src/glyph.ts");
 const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
 const qualityGenerator_1 = __webpack_require__(/*! ../../helper/qualityGenerator */ "./src/helper/qualityGenerator.ts");
 class Knife extends equipment_1.Equipment {
-    constructor(drop = undefined) {
+    constructor(drop = undefined, upgrades = undefined) {
         super("main");
         this.power_bonus = 2;
         this.skill_bonus = 0.5;
@@ -5991,12 +6339,13 @@ class Knife extends equipment_1.Equipment {
         }
         else {
             let item = qualityGenerator_1.qualityGenerator("main");
-            this.power_bonus += this.power_bonus * item.power_bonus;
-            this.skill_bonus += this.skill_bonus * item.skill_bonus;
+            this.power_bonus += (this.power_bonus + upgrades[0]) * item.power_bonus;
+            this.skill_bonus += (this.skill_bonus + (upgrades[1] / 10)) * item.skill_bonus;
             if (item.defense_bonus * 100 > 13)
                 this.defense_bonus += (Math.random() * 2);
-            this.defense_bonus += this.defense_bonus * item.defense_bonus;
-            this.max_cooldown += Math.round(this.max_cooldown * item.max_cooldown);
+            this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
+            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.hp_bonus += upgrades[4] * 5;
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('🗡', [0, 0, 0], [item.alpha, item.alpha, 0]);
         }
@@ -6025,7 +6374,7 @@ class Knife extends equipment_1.Equipment {
             }
             else if (this.owner.face == 'w') {
                 createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y, this.name, this.skill_bonus);
-                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 2, this.owner.y, this.name, this.skill_bonus);
+                createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 2, this.owner.y, this.name, this.skill_bonus);
             }
             else if (this.owner.face == 'e') {
                 createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y, this.name, this.skill_bonus);
@@ -6035,6 +6384,79 @@ class Knife extends equipment_1.Equipment {
     }
 }
 exports.Knife = Knife;
+
+
+/***/ }),
+
+/***/ "./src/content/itens/offdagger.ts":
+/*!****************************************!*\
+  !*** ./src/content/itens/offdagger.ts ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const equipment_1 = __webpack_require__(/*! ../../components/equipment */ "./src/components/equipment.ts");
+const damageBlock_1 = __webpack_require__(/*! ../../components/damageBlock */ "./src/components/damageBlock.ts");
+const glyph_1 = __webpack_require__(/*! ../../glyph */ "./src/glyph.ts");
+const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
+const qualityGenerator_1 = __webpack_require__(/*! ../../helper/qualityGenerator */ "./src/helper/qualityGenerator.ts");
+class Offdagger extends equipment_1.Equipment {
+    constructor(drop = undefined, upgrades = undefined) {
+        super("sub");
+        this.power_bonus = 1;
+        this.skill_bonus = 1;
+        this.defense_bonus = 0.5;
+        this.hp_bonus = -5;
+        this.name = 'offdagger';
+        this.fullname = 'offdagger';
+        this.cooldown = 6;
+        this.max_cooldown = 6;
+        if (drop != undefined) {
+            this.power_bonus = drop.power_bonus;
+            this.skill_bonus = drop.skill_bonus;
+            this.defense_bonus = drop.defense_bonus;
+            this.hp_bonus = drop.hp_bonus;
+            this.name = drop.name;
+            this.fullname = drop.fullname;
+            this.max_cooldown = drop.max_cooldown;
+        }
+        else {
+            let item = qualityGenerator_1.qualityGenerator("sub");
+            this.power_bonus += (this.power_bonus + upgrades[0]) * item.power_bonus;
+            this.skill_bonus += (this.skill_bonus + (upgrades[1] / 10)) * item.skill_bonus;
+            this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
+            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.hp_bonus += upgrades[4] * 5;
+            this.fullname = item.prefix + this.name;
+            this.glyph = new glyph_1.Glyph('℩', [0, 0, 0], [item.alpha, item.alpha, 0]);
+        }
+        this.startCountDown();
+    }
+    startCountDown() {
+        var interval = setInterval(() => {
+            if (this.cooldown > 0)
+                this.cooldown--;
+        }, 100);
+    }
+    defend(amount) {
+        if (this.cooldown <= 0) {
+            this.cooldown = this.max_cooldown;
+            let dir = this.owner.face;
+            let dmg = new damageBlock_1.DamageBlock(this.skill_bonus);
+            let attack = null;
+            dmg.owner = this.owner;
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y + 1, this.name, this.skill_bonus);
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x, this.owner.y - 1, this.name, this.skill_bonus);
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x + 1, this.owner.y, this.name, this.skill_bonus);
+            createDamageBlock_1.createDamageBlock(this.owner, this.owner.x - 1, this.owner.y, this.name, this.skill_bonus);
+        }
+        return amount;
+    }
+}
+exports.Offdagger = Offdagger;
 
 
 /***/ }),
@@ -6107,12 +6529,12 @@ const equipment_1 = __webpack_require__(/*! ../../components/equipment */ "./src
 const glyph_1 = __webpack_require__(/*! ../../glyph */ "./src/glyph.ts");
 const qualityGenerator_1 = __webpack_require__(/*! ../../helper/qualityGenerator */ "./src/helper/qualityGenerator.ts");
 class Shield extends equipment_1.Equipment {
-    constructor(drop = undefined) {
+    constructor(drop = undefined, upgrades = undefined) {
         super("sub");
         this.power_bonus = 0;
         this.skill_bonus = 1;
         this.defense_bonus = 2;
-        this.hp_bonus = 10;
+        this.hp_bonus = 15;
         this.name = 'shield';
         this.fullname = 'shield';
         this.cooldown = 8;
@@ -6128,10 +6550,11 @@ class Shield extends equipment_1.Equipment {
         }
         else {
             let item = qualityGenerator_1.qualityGenerator("sub");
-            this.power_bonus += this.power_bonus * item.power_bonus;
-            this.skill_bonus += this.skill_bonus * item.skill_bonus;
-            this.defense_bonus += this.defense_bonus * item.defense_bonus;
-            this.max_cooldown += Math.round(this.max_cooldown * item.max_cooldown);
+            this.power_bonus += (this.power_bonus + upgrades[0]) * item.power_bonus;
+            this.skill_bonus += (this.skill_bonus + (upgrades[1] / 10)) * item.skill_bonus;
+            this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
+            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.hp_bonus += upgrades[4] * 5;
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('ꂷ', [0, 0, 0], [item.alpha, item.alpha, 0]);
         }
@@ -6173,7 +6596,7 @@ const glyph_1 = __webpack_require__(/*! ../../glyph */ "./src/glyph.ts");
 const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
 const qualityGenerator_1 = __webpack_require__(/*! ../../helper/qualityGenerator */ "./src/helper/qualityGenerator.ts");
 class Spear extends equipment_1.Equipment {
-    constructor(drop = undefined) {
+    constructor(drop = undefined, upgrades = undefined) {
         super("main");
         this.power_bonus = 4;
         this.skill_bonus = 1.1;
@@ -6194,12 +6617,13 @@ class Spear extends equipment_1.Equipment {
         }
         else {
             let item = qualityGenerator_1.qualityGenerator("main");
-            this.power_bonus += this.power_bonus * item.power_bonus;
-            this.skill_bonus += this.skill_bonus * item.skill_bonus;
+            this.power_bonus += (this.power_bonus + upgrades[0]) * item.power_bonus;
+            this.skill_bonus += (this.skill_bonus + (upgrades[1] / 10)) * item.skill_bonus;
             if (item.defense_bonus * 100 > 13)
                 this.defense_bonus += (Math.random() * 2);
-            this.defense_bonus += this.defense_bonus * item.defense_bonus;
-            this.max_cooldown += Math.round(this.max_cooldown * item.max_cooldown);
+            this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
+            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.hp_bonus += upgrades[4] * 5;
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('ﴽ', [0, 0, 0], [item.alpha, item.alpha, 0]);
         }
@@ -6274,7 +6698,7 @@ const glyph_1 = __webpack_require__(/*! ../../glyph */ "./src/glyph.ts");
 const createDamageBlock_1 = __webpack_require__(/*! ../../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
 const qualityGenerator_1 = __webpack_require__(/*! ../../helper/qualityGenerator */ "./src/helper/qualityGenerator.ts");
 class Sword extends equipment_1.Equipment {
-    constructor(drop = undefined) {
+    constructor(drop = undefined, upgrades = undefined) {
         super("main");
         this.power_bonus = 4;
         this.skill_bonus = 0.7;
@@ -6295,12 +6719,13 @@ class Sword extends equipment_1.Equipment {
         }
         else {
             let item = qualityGenerator_1.qualityGenerator("main");
-            this.power_bonus += this.power_bonus * item.power_bonus;
-            this.skill_bonus += this.skill_bonus * item.skill_bonus;
+            this.power_bonus += (this.power_bonus + upgrades[0]) * item.power_bonus;
+            this.skill_bonus += (this.skill_bonus + (upgrades[1] / 10)) * item.skill_bonus;
             if (item.defense_bonus * 100 > 13)
                 this.defense_bonus += (Math.random() * 2);
-            this.defense_bonus += this.defense_bonus * item.defense_bonus;
-            this.max_cooldown += Math.round(this.max_cooldown * item.max_cooldown);
+            this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
+            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.hp_bonus += upgrades[4] * 5;
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('ރ', [0, 0, 0], [item.alpha, item.alpha, 0]);
         }
@@ -6347,6 +6772,70 @@ class Sword extends equipment_1.Equipment {
     }
 }
 exports.Sword = Sword;
+
+
+/***/ }),
+
+/***/ "./src/content/monsters/crawler.ts":
+/*!*****************************************!*\
+  !*** ./src/content/monsters/crawler.ts ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const deathFunction_1 = __webpack_require__(/*! ../../helper/deathFunction */ "./src/helper/deathFunction.ts");
+const skilllist_1 = __webpack_require__(/*! ../../components/skilllist */ "./src/components/skilllist.ts");
+class Crawler {
+    constructor() {
+        this.skill_bonus = 1.2;
+        this.skills = [{
+                name: 'bite',
+                cooldown: 6,
+                maxCooldown: 6
+            }];
+    }
+    startCountDown(seconds) {
+        var counter = seconds;
+        var interval = setInterval(() => {
+            counter--;
+            this.skills.forEach(element => {
+                if (element.cooldown < element.maxCooldown)
+                    element.cooldown++;
+            });
+            if (counter < 0) {
+                // code here will run when the counter reaches zero.
+                if (this.owner.fighter.hp == 0) {
+                    clearInterval(interval);
+                    deathFunction_1.deathFunction(this.owner);
+                }
+                else {
+                    counter = this.owner.maxStamina;
+                    this.act();
+                }
+            }
+        }, 100);
+    }
+    act() {
+        let player = this.owner._map.getPlayer();
+        if (player == undefined)
+            return;
+        let dist = Math.sqrt(Math.pow((player.x - this.owner.x), 2) + Math.pow((player.y - this.owner.y), 2));
+        if (dist < this.owner.sight) {
+            this.owner.hunt(player);
+            if (dist <= 2) {
+                if (this.skills[0].cooldown <= this.skills[0].maxCooldown)
+                    skilllist_1.bite(this.owner, player, this.skill_bonus);
+            }
+        }
+        else {
+            this.owner.wander();
+        }
+    }
+}
+exports.Crawler = Crawler;
 
 
 /***/ }),
@@ -7404,7 +7893,7 @@ window.onload = function () {
     //let knife = new Knife();
     //knife.owner = game._player;
     //game._player.equipment = CreateItem('knife', game._player.x, game._player.y).item;
-    game._player.equipStart(createItens_1.CreateItem('knife', game._player.x, game._player.y));
+    game._player.equipStart(createItens_1.CreateItem('knife', game._player.x, game._player.y, 1));
     game._player.equipment.owner = game._player;
     game.init();
     // Add the container to our HTML page
@@ -7498,53 +7987,60 @@ const shield_1 = __webpack_require__(/*! ../content/itens/shield */ "./src/conte
 const potion_1 = __webpack_require__(/*! ../content/itens/potion */ "./src/content/itens/potion.ts");
 const firerod_1 = __webpack_require__(/*! ../content/itens/firerod */ "./src/content/itens/firerod.ts");
 const dagger_1 = __webpack_require__(/*! ../content/itens/dagger */ "./src/content/itens/dagger.ts");
+const icerod_1 = __webpack_require__(/*! ../content/itens/icerod */ "./src/content/itens/icerod.ts");
+const crossedsword_1 = __webpack_require__(/*! ../content/itens/crossedsword */ "./src/content/itens/crossedsword.ts");
+const offdagger_1 = __webpack_require__(/*! ../content/itens/offdagger */ "./src/content/itens/offdagger.ts");
+const blademail_1 = __webpack_require__(/*! ../content/itens/blademail */ "./src/content/itens/blademail.ts");
+const randint_1 = __webpack_require__(/*! ./randint */ "./src/helper/randint.ts");
 // function ItemFactory(name: string, x: number, y): Entity{
 //     return new Entity(x, y, new Glyph('Ϯ', [0,0,0], [204, 200, 0]), 'knife', 1, false, 5, 2, undefined, undefined, false, item_component);
 // }
-function CreateItem(item_choice, x, y) {
+function CreateItem(item_choice, x, y, dungeon_level) {
+    let item_component;
+    let upgrades = [0, 0, 0, 0, 0];
+    for (let index = 0; index < dungeon_level; index++) {
+        let i = randint_1.randint(0, 4);
+        upgrades[i] += 1;
+    }
     if (item_choice == 'potion') {
-        let item_component = new potion_1.Potion();
+        item_component = new potion_1.Potion();
         let item = new entity_1.Entity(x, y, new glyph_1.Glyph('ზ', [0, 0, 0], [50, 200, 50]), item_component.name, 1, false, 5, 2, undefined, undefined, false, item_component);
         item.item.glyph = item.glyph;
         return item;
     }
     if (item_choice == 'knife') {
-        let item_component = new knife_1.Knife();
-        let item = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        item_component = new knife_1.Knife(undefined, upgrades);
     }
     else if (item_choice == 'sword') {
-        let item_component = new sword_1.Sword();
-        let item = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        item_component = new sword_1.Sword(undefined, upgrades);
     }
     else if (item_choice == 'spear') {
-        let item_component = new spear_1.Spear();
-        let item = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        item_component = new spear_1.Spear(undefined, upgrades);
     }
     else if (item_choice == 'dagger') {
-        let item_component = new dagger_1.Dagger();
-        let item = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        item_component = new dagger_1.Dagger(undefined, upgrades);
     }
     else if (item_choice == 'firerod') {
-        let item_component = new firerod_1.Firerod();
-        let item = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        item_component = new firerod_1.Firerod(undefined, upgrades);
+    }
+    else if (item_choice == 'icerod') {
+        item_component = new icerod_1.Icerod(undefined, upgrades);
+    }
+    else if (item_choice == 'crossedswords') {
+        item_component = new crossedsword_1.CrossedSwords(undefined, upgrades);
     }
     else if (item_choice == 'shield') {
-        let item_component = new shield_1.Shield();
-        console.log(item_component);
-        let item = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
-        item.item.glyph = item.glyph;
-        return item;
+        item_component = new shield_1.Shield(undefined, upgrades);
     }
+    else if (item_choice == 'offdagger') {
+        item_component = new offdagger_1.Offdagger(undefined, upgrades);
+    }
+    else if (item_choice == 'blademail') {
+        item_component = new blademail_1.Blademail(undefined, upgrades);
+    }
+    let item = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
+    item.item.glyph = item.glyph;
+    return item;
 }
 exports.CreateItem = CreateItem;
 function CreateDropItem(item, x, y) {
@@ -7580,8 +8076,32 @@ function CreateDropItem(item, x, y) {
         itemDrop.item.glyph = item.glyph;
         return itemDrop;
     }
+    else if (item_choice == 'icerod') {
+        let item_component = new icerod_1.Icerod(item);
+        let itemDrop = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
+        itemDrop.item.glyph = item.glyph;
+        return itemDrop;
+    }
+    else if (item_choice == 'crossedswords') {
+        let item_component = new crossedsword_1.CrossedSwords(item);
+        let itemDrop = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
+        itemDrop.item.glyph = item.glyph;
+        return itemDrop;
+    }
     else if (item_choice == 'shield') {
         let item_component = new shield_1.Shield(item);
+        let itemDrop = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
+        itemDrop.item.glyph = item.glyph;
+        return itemDrop;
+    }
+    else if (item_choice == 'offdagger') {
+        let item_component = new offdagger_1.Offdagger(item);
+        let itemDrop = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
+        itemDrop.item.glyph = item.glyph;
+        return itemDrop;
+    }
+    else if (item_choice == 'blademail') {
+        let item_component = new blademail_1.Blademail(item);
         let itemDrop = new entity_1.Entity(x, y, item_component.glyph, item_component.fullname, 1, false, 5, 2, undefined, undefined, false, item_component);
         itemDrop.item.glyph = item.glyph;
         return itemDrop;
@@ -7612,40 +8132,48 @@ const ranger_1 = __webpack_require__(/*! ../content/monsters/ranger */ "./src/co
 const wyvern_1 = __webpack_require__(/*! ../content/monsters/wyvern */ "./src/content/monsters/wyvern.ts");
 const dragon_1 = __webpack_require__(/*! ../content/monsters/dragon */ "./src/content/monsters/dragon.ts");
 const randperc_1 = __webpack_require__(/*! ./randperc */ "./src/helper/randperc.ts");
-function CreateMonster(monster_choice, x, y) {
-    let qHp = randperc_1.randperc(100) + 0.2;
-    let qAtk = randperc_1.randperc(50);
-    let qDef = randperc_1.randperc(30);
-    let qExp = qHp + (qAtk * 3) + (qDef * 5);
+const crawler_1 = __webpack_require__(/*! ../content/monsters/crawler */ "./src/content/monsters/crawler.ts");
+function CreateMonster(monster_choice, x, y, dungeon_level) {
+    let dl = dungeon_level / 10;
+    let qHp = randperc_1.randperc(100) + 0.2 + dl;
+    let qAtk = randperc_1.randperc(50) + dl;
+    let qDef = randperc_1.randperc(30) + dl;
+    let qExp = (qHp > 0 ? qHp : qHp * 0.5) + (qAtk > 0 ? qAtk * 2 : qAtk * 0.5) + (qDef > 0 ? qDef * 3 : qDef * 0.5);
     qExp = qExp / 3;
     if (monster_choice == 'fungi') {
         let fighter_component = new fighter_1.Fighter(30 + 30 * qHp, 2 + 2 * qDef, 4 + 4 * qAtk, 25 + 25 * qExp);
         let ai_component = new fungi_1.Fungi();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('f', [0, 0, 0], [0, 200, 0]), 'Fungi', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('f', [0, 0, 0], [0, 200, 0]), 'Fungi', 1, true, 6, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'orc') {
         let fighter_component = new fighter_1.Fighter(40 + 40 * qHp, 2 + 2 * qDef, 4 + 4 * qAtk, 35 + 35 * qExp);
         let ai_component = new orc_1.Orc();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', [0, 0, 0], [0, 128, 0]), 'Orc', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', [0, 0, 0], [0, 128, 0]), 'Orc', 1, true, 4, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'troll') {
         let fighter_component = new fighter_1.Fighter(90 + 90 * qHp, 3 + 3 * qDef, 8 + 8 * qAtk, 60 + 60 * qExp);
         let ai_component = new troll_1.Troll();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('t', [0, 0, 0], [128, 0, 128]), 'Troll', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('t', [0, 0, 0], [128, 0, 128]), 'Troll', 1, true, 4, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'wyvern') {
         let fighter_component = new fighter_1.Fighter(30 + 30 * qHp, 2 + 2 * qDef, 5 + 5 * qAtk, 20 + 20 * qExp);
         let ai_component = new wyvern_1.Wyvern();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('w', [0, 0, 0], [148, 0, 211]), 'Wyvern', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('w', [0, 0, 0], [148, 0, 211]), 'Wyvern', 1, true, 3, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'ranger') {
         let fighter_component = new fighter_1.Fighter(40 + 40 * qHp, 3 + 3 * qDef, 8 + 8 * qAtk, 40 + 40 * qExp);
         let ai_component = new ranger_1.Ranger(); //Ranger()
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('r', [0, 0, 0], [233, 150, 122]), 'Ranger', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('r', [0, 0, 0], [233, 150, 122]), 'Ranger', 1, true, 3, 2, fighter_component, ai_component);
+        return monster;
+    }
+    else if (monster_choice == 'crawler') {
+        let fighter_component = new fighter_1.Fighter(60 + 60 * qHp, 5 + 5 * qDef, 8 + 8 * qAtk, 50 + 50 * qExp);
+        let ai_component = new crawler_1.Crawler(); //Ranger()
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('c', [0, 0, 0], [172, 30, 155]), 'Crawler', 1, true, 3, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'dragon') {
@@ -8471,7 +8999,7 @@ class Map {
             }
             if (emptyspace == true) {
                 let monster_choice = randFromLevel_1.random_choice_from_dict(monster_chances);
-                let q = createMonters_1.CreateMonster(monster_choice, x, y);
+                let q = createMonters_1.CreateMonster(monster_choice, x, y, this.dungeon_level);
                 //console.log(q);
                 q._map = this;
                 this._entities.push(q);
@@ -8496,9 +9024,9 @@ class Map {
                 let item_choice = randFromLevel_1.random_choice_from_dict(item_chances);
                 let q;
                 if (index == 1)
-                    q = createItens_1.CreateItem("potion", 61, 45);
+                    q = createItens_1.CreateItem("potion", 61, 45, this.dungeon_level);
                 else
-                    q = createItens_1.CreateItem(item_choice, x, y);
+                    q = createItens_1.CreateItem(item_choice, x, y, this.dungeon_level);
                 console.log(item_choice + '- ' + x + ' ' + y);
                 console.log(q);
                 q._map = this;
@@ -9250,10 +9778,14 @@ function itemProbabilities(dungeon_level) {
         'potion': 35,
         'knife': randFromLevel_1.from_dungeon_level([[10, 1], [5, 3]], dungeon_level),
         'dagger': randFromLevel_1.from_dungeon_level([[10, 1], [5, 3]], dungeon_level),
-        'sword': randFromLevel_1.from_dungeon_level([[5, 1], [10, 3]], dungeon_level),
-        'spear': randFromLevel_1.from_dungeon_level([[5, 1], [10, 3]], dungeon_level),
-        'firerod': randFromLevel_1.from_dungeon_level([[1, 1], [10, 3]], dungeon_level),
+        'sword': randFromLevel_1.from_dungeon_level([[2, 1], [10, 3], [5, 3]], dungeon_level),
+        'spear': randFromLevel_1.from_dungeon_level([[2, 1], [10, 3], [5, 3]], dungeon_level),
+        'firerod': randFromLevel_1.from_dungeon_level([[1, 1], [5, 3], [10, 5]], dungeon_level),
+        'icerod': randFromLevel_1.from_dungeon_level([[5, 3], [10, 5]], dungeon_level),
+        'crossedswords': randFromLevel_1.from_dungeon_level([[5, 3], [10, 5]], dungeon_level),
         'shield': randFromLevel_1.from_dungeon_level([[1, 0], [10, 2]], dungeon_level),
+        'offdagger': randFromLevel_1.from_dungeon_level([[1, 0], [10, 4]], dungeon_level),
+        'blademail': randFromLevel_1.from_dungeon_level([[10, 5]], dungeon_level),
     };
 }
 exports.itemProbabilities = itemProbabilities;
@@ -9278,8 +9810,9 @@ function monsterProbabilities(dungeon_level) {
         'orc': randFromLevel_1.from_dungeon_level([[40, 1], [20, 3], [10, 7]], dungeon_level),
         'troll': randFromLevel_1.from_dungeon_level([[10, 1], [20, 3], [30, 5], [60, 7]], dungeon_level),
         'wyvern': randFromLevel_1.from_dungeon_level([[10, 1], [30, 2], [50, 5]], dungeon_level),
-        'dragon': randFromLevel_1.from_dungeon_level([[1, 3], [20, 7]], dungeon_level),
-        'ranger': randFromLevel_1.from_dungeon_level([[5, 1], [10, 2]], dungeon_level),
+        'ranger': randFromLevel_1.from_dungeon_level([[5, 1], [15, 2]], dungeon_level),
+        'crawler': randFromLevel_1.from_dungeon_level([[10, 2], [20, 5]], dungeon_level),
+        'dragon': randFromLevel_1.from_dungeon_level([[5, 3], [20, 7]], dungeon_level),
     };
 }
 exports.monsterProbabilities = monsterProbabilities;

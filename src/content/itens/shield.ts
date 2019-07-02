@@ -17,7 +17,7 @@ export class Shield extends Equipment {
     max_cooldown: number = 8
     glyph: Glyph;
 
-    constructor(drop: Equipment = undefined) {
+    constructor(drop: Equipment = undefined, upgrades: number[] = undefined) {
         super("sub");
         if (drop != undefined) {
             this.power_bonus = drop.power_bonus;
@@ -29,10 +29,11 @@ export class Shield extends Equipment {
             this.max_cooldown = drop.max_cooldown;
         } else {
             let item = qualityGenerator("sub");
-            this.power_bonus += this.power_bonus*item.power_bonus;
-            this.skill_bonus += this.skill_bonus*item.skill_bonus;
-            this.defense_bonus += this.defense_bonus*item.defense_bonus;
-            this.max_cooldown += Math.round(this.max_cooldown*item.max_cooldown);
+            this.power_bonus += (this.power_bonus+upgrades[0])*item.power_bonus;
+            this.skill_bonus += (this.skill_bonus+(upgrades[1]/10))*item.skill_bonus;
+            this.defense_bonus += (this.defense_bonus+upgrades[2])*item.defense_bonus;
+            this.max_cooldown += Math.round((this.max_cooldown-(upgrades[3]*0.2))*item.max_cooldown);
+            this.hp_bonus += upgrades[4]*5;
             this.fullname = item.prefix + this.name;
             this.glyph = new Glyph('ꂷ', [0,0,0], [item.alpha, item.alpha, 0]);
         }

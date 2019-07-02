@@ -124,7 +124,7 @@ export class Map {
 
             if (emptyspace == true) {
                 let monster_choice = random_choice_from_dict(monster_chances);
-                let q = CreateMonster(monster_choice, x, y);
+                let q = CreateMonster(monster_choice, x, y, this.dungeon_level);
                 //console.log(q);
                 q._map = this;
                 this._entities.push(q);
@@ -151,8 +151,8 @@ export class Map {
             if (emptyspace == true) {
                 let item_choice = random_choice_from_dict(item_chances);
                 let q;
-                if (index == 1 ) q = CreateItem("potion", 61, 45);
-                else q = CreateItem(item_choice, x, y);
+                if (index == 1 ) q = CreateItem("potion", 61, 45, this.dungeon_level);
+                else q = CreateItem(item_choice, x, y, this.dungeon_level);
                 console.log(item_choice + '- '+ x + ' ' + y);
                 console.log(q);
                 q._map = this;
