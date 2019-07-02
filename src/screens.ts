@@ -28,6 +28,7 @@ export function startScreen() {
                 y+=1;
             }
 
+
             let blink = "";
 			if (game.blinkLevel < 2) blink = "%c{rgb(140, 140, 140)}";
 			if (game.blinkLevel >= 2) blink = "%c{rgb(240, 240, 240)}";
