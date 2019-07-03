@@ -446,6 +446,7 @@ export function playScreen() {
                             break;
                         case KEYS.VK_D:
                             game._player.fighter.base_max_hp += 10;
+                            game._player.fighter.hp += 5;
                             game._player.fighter.unspentPoints -= 1;
                             break;
                         default:

@@ -69,7 +69,7 @@ export class Entity {
         this.damage = damage;
         this.player = player;
         this.item = item;
-        this.inventory = 10;
+        this.inventory = 1;
         this.stairs = stairs;
 
         if (this.player == true) {
@@ -100,7 +100,7 @@ export class Entity {
         }
 
         if(this.inventory != undefined) {
-            this.inventory = 10;
+            this.inventory = 1;
         }
         
     }

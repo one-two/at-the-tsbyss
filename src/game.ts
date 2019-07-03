@@ -174,7 +174,7 @@ export class Game {
 			}
 	
 			this._inventory.drawText(1, 12, "%c{rgb(140, 140, 160)}Rank: %c{}"+ this._player.fighter.rank);
-			this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}"+ this._player.fighter.current_exp + "/" + this._player.fighter.nextRank);
+			this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}"+ this._player.fighter.current_exp.toFixed(2) + "/" + this._player.fighter.nextRank.toFixed(2));
 	
 			if ( this._player.equipment != undefined) {
 				this._inventory.drawText(1, 15, "%c{rgb(140, 140, 160)}Main: %c{rgb("+this._player.equipment.glyph.foreground.toString()+")}"+ this._player.equipment.name);
