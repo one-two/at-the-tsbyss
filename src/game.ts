@@ -33,7 +33,7 @@ export class Game {
 	_entities: Entity[] = [];
 	timer: boolean = true;
 	logo: any;
-	level: number = 1;
+	level: number = 0;
 	blinkLevel: number = 0;
 	lang: string = "En";
 	mainmenuOpt:number = 0;

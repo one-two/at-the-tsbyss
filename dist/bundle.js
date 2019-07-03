@@ -5771,7 +5771,7 @@ class Blademail extends equipment_1.Equipment {
             this.power_bonus += (this.power_bonus + upgrades[0]) * item.power_bonus;
             this.skill_bonus += (this.skill_bonus + (upgrades[1] / 10)) * item.skill_bonus;
             this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
-            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.max_cooldown -= Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
             this.hp_bonus += upgrades[4] * 5;
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('❂', [0, 0, 0], [item.alpha, item.alpha, 0]);
@@ -5852,7 +5852,7 @@ class CrossedSwords extends equipment_1.Equipment {
             if (item.defense_bonus * 100 > 13)
                 this.defense_bonus += (Math.random() * 2);
             this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
-            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.max_cooldown -= Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
             this.hp_bonus += upgrades[4] * 5;
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('⚔', [0, 0, 0], [item.alpha, item.alpha, 0]);
@@ -5960,7 +5960,7 @@ class Dagger extends equipment_1.Equipment {
             if (item.defense_bonus * 100 > 13)
                 this.defense_bonus += (Math.random() * 2);
             this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
-            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.max_cooldown -= Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
             this.hp_bonus += upgrades[4] * 5;
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('🗡', [0, 0, 0], [item.alpha, item.alpha, 0]);
@@ -6084,7 +6084,7 @@ class Firerod extends equipment_1.Equipment {
             if (item.defense_bonus * 100 > 13)
                 this.defense_bonus += (Math.random() * 2);
             this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
-            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.max_cooldown -= Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
             this.hp_bonus += upgrades[4] * 5;
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('‽', [0, 0, 0], [item.alpha, item.alpha, 0]);
@@ -6212,7 +6212,7 @@ class Icerod extends equipment_1.Equipment {
             if (item.defense_bonus * 100 > 13)
                 this.defense_bonus += (Math.random() * 2);
             this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
-            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.max_cooldown -= Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
             this.hp_bonus += upgrades[4] * 5;
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('☦', [0, 0, 0], [item.alpha, item.alpha, 0]);
@@ -6344,10 +6344,10 @@ class Knife extends equipment_1.Equipment {
             if (item.defense_bonus * 100 > 13)
                 this.defense_bonus += (Math.random() * 2);
             this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
-            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.max_cooldown -= Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
             this.hp_bonus += upgrades[4] * 5;
             this.fullname = item.prefix + this.name;
-            this.glyph = new glyph_1.Glyph('🗡', [0, 0, 0], [item.alpha, item.alpha, 0]);
+            this.glyph = new glyph_1.Glyph('⟊', [0, 0, 0], [item.alpha, item.alpha, 0]);
         }
         this.startCountDown();
     }
@@ -6428,7 +6428,7 @@ class Offdagger extends equipment_1.Equipment {
             this.power_bonus += (this.power_bonus + upgrades[0]) * item.power_bonus;
             this.skill_bonus += (this.skill_bonus + (upgrades[1] / 10)) * item.skill_bonus;
             this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
-            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.max_cooldown -= Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
             this.hp_bonus += upgrades[4] * 5;
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('℩', [0, 0, 0], [item.alpha, item.alpha, 0]);
@@ -6553,7 +6553,7 @@ class Shield extends equipment_1.Equipment {
             this.power_bonus += (this.power_bonus + upgrades[0]) * item.power_bonus;
             this.skill_bonus += (this.skill_bonus + (upgrades[1] / 10)) * item.skill_bonus;
             this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
-            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.max_cooldown -= Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
             this.hp_bonus += upgrades[4] * 5;
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('ꂷ', [0, 0, 0], [item.alpha, item.alpha, 0]);
@@ -6622,7 +6622,7 @@ class Spear extends equipment_1.Equipment {
             if (item.defense_bonus * 100 > 13)
                 this.defense_bonus += (Math.random() * 2);
             this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
-            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.max_cooldown -= Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
             this.hp_bonus += upgrades[4] * 5;
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('ﴽ', [0, 0, 0], [item.alpha, item.alpha, 0]);
@@ -6724,7 +6724,7 @@ class Sword extends equipment_1.Equipment {
             if (item.defense_bonus * 100 > 13)
                 this.defense_bonus += (Math.random() * 2);
             this.defense_bonus += (this.defense_bonus + upgrades[2]) * item.defense_bonus;
-            this.max_cooldown += Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
+            this.max_cooldown -= Math.round((this.max_cooldown - (upgrades[3] * 0.2)) * item.max_cooldown);
             this.hp_bonus += upgrades[4] * 5;
             this.fullname = item.prefix + this.name;
             this.glyph = new glyph_1.Glyph('ރ', [0, 0, 0], [item.alpha, item.alpha, 0]);
@@ -7630,7 +7630,7 @@ class Game {
         this._screenHeight = 40;
         this._entities = [];
         this.timer = true;
-        this.level = 1;
+        this.level = 0;
         this.blinkLevel = 0;
         this.lang = "En";
         this.mainmenuOpt = 0;
@@ -9228,9 +9228,13 @@ const constants_1 = __webpack_require__(/*! ../lib/constants */ "./lib/constants
 const Color = __webpack_require__(/*! ../lib/color */ "./lib/color.js");
 const tiles_1 = __webpack_require__(/*! ./tiles */ "./src/tiles.ts");
 const maps = __webpack_require__(/*! ../lib/map */ "./lib/map/index.js");
+const entity_1 = __webpack_require__(/*! ./entity */ "./src/entity.ts");
 const randint_1 = __webpack_require__(/*! ./helper/randint */ "./src/helper/randint.ts");
 const knife_1 = __webpack_require__(/*! ./content/itens/knife */ "./src/content/itens/knife.ts");
 const dungeonMaze_1 = __webpack_require__(/*! ./helper/dungeonMaze */ "./src/helper/dungeonMaze.ts");
+const createItens_1 = __webpack_require__(/*! ./helper/createItens */ "./src/helper/createItens.ts");
+const exit_1 = __webpack_require__(/*! ./content/itens/exit */ "./src/content/itens/exit.ts");
+const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
 function startScreen() {
     //Game.Screen.startScreen = {
     return {
@@ -9242,22 +9246,8 @@ function startScreen() {
         },
         render: (display, game) => {
             display.drawText(0, 0, "%c{rgb(50, 50, 50)}Alpha: v.1971");
-            let test = [`.       __/)     (\\__`,
-                `.    ,-'~~(   _   )~~'-.`,
-                `.   /      \\/'_'\\/      \``,
-                `.  |       /_(_)_\\       |`,
-                `.  |     _(/(\\_/)\\)_     |`,
-                `.  |    / /\\/ \\ / \\ \\    |`,
-                `.   \\  | ''  / \\ ''  |  /`,
-                `.    \\  )   /   \\   (  /`,
-                `.     )/   /     \\   \(`,
-                `.     '    '-'-'-'    '`];
             let y = 8;
-            // for (const line of game.logo) {
-            //     display.drawText(10,y, line);
-            //     y+=1;
-            // }
-            for (const line of test) {
+            for (const line of game.logo) {
                 display.drawText(10, y, line);
                 y += 1;
             }
@@ -9448,7 +9438,44 @@ exports.debugScreen = debugScreen;
 function playScreen() {
     return {
         enter: (game) => {
-            if (game.level <= 2) {
+            if (game.level == 0) {
+                createStart(game);
+                game._player.x = 10;
+                game._player.x2 = 10;
+                game._player.y = 28;
+                game._player.y2 = 28;
+                game._map._entities.push(game._player);
+                game._player._map = game._map;
+                game._map._display = game._display;
+                game._map.messageLog = game.messageLog;
+                game.timer = true;
+                //game.startCountDown();
+                game._map.dungeon_level = game.level;
+                let exit = new exit_1.Exit(game._map);
+                let newex = new entity_1.Entity(10, 2, new glyph_1.Glyph("⍝", [0, 0, 0], [20, 150, 200]), "saida", 1, false, -1, 2, undefined, undefined, false, undefined, undefined, undefined, exit);
+                game._map._entities.push(newex);
+                let posx = [6, 10, 14];
+                let posy = [12, 10, 12];
+                for (let i = 0; i < 3; i++) {
+                    let rd = randint_1.randint(0, 3);
+                    let item_choice = "";
+                    if (rd == 0)
+                        item_choice = 'potion';
+                    if (rd == 1)
+                        item_choice = 'knife';
+                    if (rd == 2)
+                        item_choice = 'dagger';
+                    if (rd == 3)
+                        item_choice = 'sword';
+                    console.log(item_choice);
+                    let q = createItens_1.CreateItem(item_choice, posx[i], posy[i], game.level);
+                    q._map = this;
+                    game._map._entities.push(q);
+                }
+                game._entities = game._map._entities;
+                return;
+            }
+            if (game.level > 0 && game.level <= 2) {
                 createCave(game);
             }
             if (game.level > 2 && game.level <= 4) {
@@ -9543,6 +9570,11 @@ function playScreen() {
                     }
                 }
             }
+            if (game.level == 0) {
+                display.drawText((game._screenWidth / 10), game._screenHeight - 3, "%c{yellow}Arrow%c{}: move");
+                display.drawText((game._screenWidth / 10), game._screenHeight - 2, "%c{yellow}Enter%c{}: pickup");
+                display.drawText((game._screenWidth / 10), game._screenHeight - 1, "%c{yellow}Space%c{}: skill");
+            }
         },
         handleInput: (inputType, inputData, game) => {
             if (inputType === 'keydown') {
@@ -9617,6 +9649,35 @@ function playScreen() {
     };
 }
 exports.playScreen = playScreen;
+function createStart(game) {
+    let mapWidth = 21;
+    let mapHeight = 31;
+    game._map = new map_1.Map(mapWidth, mapHeight);
+    game._map.owner = game;
+    let emptyTile = new tiles_1.Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
+    console.log("Entered play screen.");
+    for (let x = 0; x < mapWidth; x++) {
+        // Create the nested array for the y values
+        game._map._tiles.push([]);
+        // Add all the tiles
+        for (let y = 0; y < mapHeight; y++) {
+            game._map._tiles[x].push(emptyTile);
+        }
+    }
+    for (let x = 0; x < mapWidth; x++) {
+        for (let y = 0; y < mapHeight; y++) {
+            if ((x < 4 || x > 16) && (y < 8 || y > 22)) {
+                game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [128, 128, 128]); // false, true, true
+            }
+            else {
+                game._map._tiles[x][y] = new tiles_1.Tile('floor', '·', [0, 0, 0], [60, 60, 60]); //floor
+            }
+            if (x == 0 || x == mapWidth - 1 || y == 0 || y == mapHeight - 1) {
+                game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [128, 128, 128]);
+            }
+        }
+    }
+}
 function createCave(game) {
     let mapWidth = 120;
     let mapHeight = 88;

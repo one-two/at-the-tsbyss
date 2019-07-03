@@ -32,7 +32,7 @@ export class Sword extends Equipment {
             this.skill_bonus += (this.skill_bonus+(upgrades[1]/10))*item.skill_bonus;
             if (item.defense_bonus*100 > 13) this.defense_bonus += (Math.random()*2);
             this.defense_bonus += (this.defense_bonus+upgrades[2])*item.defense_bonus;
-            this.max_cooldown += Math.round((this.max_cooldown-(upgrades[3]*0.2))*item.max_cooldown);
+            this.max_cooldown -= Math.round((this.max_cooldown-(upgrades[3]*0.2))*item.max_cooldown);
             this.hp_bonus += upgrades[4]*5;
             this.fullname = item.prefix + this.name;
             this.glyph = new Glyph('ރ', [0,0,0], [item.alpha, item.alpha, 0]);

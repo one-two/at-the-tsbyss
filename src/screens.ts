@@ -10,6 +10,8 @@ import { Knife } from "./content/itens/knife";
 import { Display } from "../lib";
 import { generateDunMaze } from "./helper/dungeonMaze";
 import { CreateItem } from "./helper/createItens";
+import { Exit } from "./content/itens/exit";
+import { Glyph } from "./glyph";
 
 export function startScreen() {
     //Game.Screen.startScreen = {
@@ -228,7 +230,43 @@ export function debugScreen() {
 export function playScreen() {
     return {
         enter : (game : Game) => {
-            if (game.level <= 2) {
+            if (game.level == 0) {
+                createStart(game);
+
+                game._player.x = 10;
+                game._player.x2 = 10;
+                game._player.y = 28;
+                game._player.y2 = 28;
+                game._map._entities.push(game._player);
+                game._player._map = game._map;  
+                game._map._display = game._display;
+                game._map.messageLog = game.messageLog;
+                game.timer = true;
+                //game.startCountDown();
+                game._map.dungeon_level = game.level;
+                let exit = new Exit(game._map);
+                let newex = new Entity(10, 2, new Glyph("⍝", [0,0,0], [20,150,200]), "saida", 1, false, -1,2, undefined, undefined, false, undefined, undefined, undefined, exit);
+                game._map._entities.push(newex);
+                let posx = [6,10,14];
+                let posy = [12,10,12];
+                for (let i = 0; i < 3; i++) {
+
+                    let rd = randint(0,3);
+                    let item_choice = "";
+                    if (rd == 0) item_choice = 'potion';
+                    if (rd == 1) item_choice = 'knife';
+                    if (rd == 2) item_choice = 'dagger';
+                    if (rd == 3) item_choice = 'sword';
+                    console.log(item_choice);
+                    let q = CreateItem(item_choice, posx[i], posy[i], game.level);
+                    q._map = this;
+                    game._map._entities.push(q);
+                }
+
+                game._entities = game._map._entities;
+                return;
+            }
+            if (game.level > 0 && game.level <= 2) {
                 createCave(game);
             }
             if (game.level > 2 && game.level <= 4) {
@@ -348,6 +386,11 @@ export function playScreen() {
                     }
                 }
             }
+            if (game.level == 0) {
+                display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Arrow%c{}: move"); 
+                display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}Enter%c{}: pickup"); 
+                display.drawText((game._screenWidth/10),game._screenHeight-1, "%c{yellow}Space%c{}: skill"); 
+            }
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {
             if (inputType === 'keydown') {
@@ -416,6 +459,35 @@ export function playScreen() {
                 let yy = randint(-5, 5);
                 game._entities[0].move(xx, yy, game._map);
             }
+        }
+    }
+}
+
+function createStart(game: Game) {
+    let mapWidth = 21;
+    let mapHeight = 31;
+    game._map = new Map(mapWidth, mapHeight);
+    game._map.owner = game;
+    let emptyTile = new Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
+    console.log("Entered play screen.");
+    for (let x = 0; x < mapWidth; x++) {
+        // Create the nested array for the y values
+        game._map._tiles.push([]);
+        // Add all the tiles
+        for (let y = 0; y < mapHeight; y++) {
+            game._map._tiles[x].push(emptyTile);
+        }
+    }
+    for (let x = 0; x < mapWidth; x++) {
+        for (let y = 0; y < mapHeight; y++) {
+            if ((x < 4 || x > 16) && (y < 8 || y > 22)) {
+                game._map._tiles[x][y] = new Tile('wall', '#', [0, 0, 0], [128, 128, 128]); // false, true, true
+            } else {
+                game._map._tiles[x][y] = new Tile('floor', '·', [0, 0, 0], [60, 60, 60]); //floor
+            }
+            if (x == 0 || x == mapWidth-1 || y == 0 || y == mapHeight-1) {
+                game._map._tiles[x][y] = new Tile('wall', '#', [0, 0, 0], [128, 128, 128]);
+            } 
         }
     }
 }
