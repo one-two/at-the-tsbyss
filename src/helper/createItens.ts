@@ -67,7 +67,6 @@ export function CreateItem(item_choice: string, x: number, y: number, dungeon_le
 }
 
 export function CreateDropItem(item: Equipment, x: number, y: number): Entity{
-    console.log(item);
     let item_choice = item.name
     if (item_choice == 'knife') {
         let item_component = new Knife(item);

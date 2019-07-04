@@ -148,22 +148,14 @@ export function debugScreen() {
                         y - topLeftY,
                         cell.visitedTile.char, 
                         Color.toRGB(cell.tile.foreground), 
-                        Color.toRGB(cell.tile.background)) //:
-                    /* display.draw(
-                        x - topLeftX, 
-                        y - topLeftY,
-                        ' ', 
-                        Color.toRGB([0,0,0]), 
-                        Color.toRGB([0,0,0]));*/
+                        Color.toRGB(cell.tile.background))
                     
                 }
             }
-            //game._map.setupFov(topLeftX, topLeftY);
             removeExpiredDamage(game._entities)
             game._map._entities = entityRenderSort(game);
             game._entities = game._map._entities;
             for (let i = game._entities.length-1; i >= 0; i--) {
-                //console.log(game._entities[i]); 
                 let cell = game._map.getTile(game._entities[i].x, game._entities[i].y) as Tile;
                 if (cell.visibility != 0) { // 0
                     let dx = Math.pow(game._entities[0].x - game._entities[i].x, 2);
@@ -230,6 +222,7 @@ export function debugScreen() {
 export function playScreen() {
     return {
         enter : (game : Game) => {
+            let corr = 99;
             if (game.level == 0) {
                 createStart(game);
 
@@ -257,7 +250,6 @@ export function playScreen() {
                     if (rd == 1) item_choice = 'knife';
                     if (rd == 2) item_choice = 'dagger';
                     if (rd == 3) item_choice = 'sword';
-                    console.log(item_choice);
                     let q = CreateItem(item_choice, posx[i], posy[i], game.level);
                     q._map = this;
                     game._map._entities.push(q);
@@ -267,17 +259,18 @@ export function playScreen() {
                 return;
             }
             if (game.level > 0 && game.level <= 2) {
-                createCave(game);
+                corr = createCave(game);
+                if (game.level == 1) corr = 1;
             }
             if (game.level > 2 && game.level <= 4) {
                 if( Math.random()*100 < 51 ) {
-                    createCave(game);
+                    corr = createCave(game);
                 } else {
-                    createDungeon(game);
+                    corr = createDungeon(game);
                 }
             }
             if (game.level >= 5 && game.level < 7 ) {
-                createDungeon(game);
+                corr = createDungeon(game);
             }
             if (game.level == 7) {
                 game.switchScreen(winScreen);
@@ -314,8 +307,15 @@ export function playScreen() {
 
             game.timer = true;
             //game.startCountDown();
-            game._map.dungeon_level = game.level;
-            game._map.addEntityToMap();
+            if (corr) {
+                game._map.dungeon_level = game.level;
+                game._map.addEntityToMap();
+            } else {
+                game._map.dungeon_level = game.level+2;
+                game._map.addEntityToMap();
+                game._map.dungeon_level -= 2
+            }
+
             
             game._entities = game._map._entities;
         },
@@ -369,7 +369,6 @@ export function playScreen() {
             game._map._entities = entityRenderSort(game);
             game._entities = game._map._entities;
             for (let i = game._entities.length-1; i >= 0; i--) {
-                //console.log(game._entities[i]); 
                 let cell = game._map.getTile(game._entities[i].x, game._entities[i].y) as Tile;
                 if (cell.visibility > 0) {
                     let dx = Math.pow(game._entities[0].x - game._entities[i].x, 2);
@@ -493,9 +492,10 @@ function createStart(game: Game) {
     }
 }
 
-function createCave(game: Game) {
+function createCave(game: Game): number {//60,11,85 - //102,33,218
     let mapWidth = 120;
     let mapHeight = 88;
+    let corr = randint(0,9);
     game._map = new Map(mapWidth, mapHeight);
     game._map.owner = game;
     let emptyTile = new Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
@@ -518,18 +518,25 @@ function createCave(game: Game) {
     // Smoothen it one last time and then update our map
     generator.create((x, y, v) => {
         if (v === 1){ // || x == 0 || y == 0 || x == mapWidth - 1 || x == mapHeight - 1) {
-            game._map._tiles[x][y] = new Tile('floor', '.', [0, 0, 0], [84, 54, 11]); //floor
+            if (corr) game._map._tiles[x][y] = new Tile('floor', '.', [0, 0, 0], [84, 54, 11]); //floor
+            else game._map._tiles[x][y] = new Tile('floor', '.', [0, 0, 0], [60, 11, 85]);
         }
         else {
-            game._map._tiles[x][y] = new Tile('wall', '#', [0, 0, 0], [218, 165, 32]);
+            if (corr) game._map._tiles[x][y] = new Tile('wall', '#', [0, 0, 0], [218, 165, 32]);
+            else game._map._tiles[x][y] = new Tile('wall', '#', [0, 0, 0], [102, 33, 218]);
         }
-        if (x == 0 || y == 0 || x == mapWidth - 1 || y == mapHeight - 1) game._map._tiles[x][y] = new Tile('wall', '#', [0, 0, 0], [218, 165, 32]);
+        if (x == 0 || y == 0 || x == mapWidth - 1 || y == mapHeight - 1) {
+            if (corr) game._map._tiles[x][y] = new Tile('wall', '#', [0, 0, 0], [218, 165, 32]);
+            else game._map._tiles[x][y] = new Tile('wall', '#', [0, 0, 0], [102, 33, 218]);
+        }
     });
+    return(corr);
 }
 
-function createDungeon(game: Game) {
+function createDungeon(game: Game): number {
     let mapWidth = 120;
     let mapHeight = 88;
+    let corr = randint(0,9);
     game._map = new Map(mapWidth, mapHeight);
     game._map.owner = game;
     let emptyTile = new Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
@@ -551,16 +558,19 @@ function createDungeon(game: Game) {
             //     game._map._tiles[x][y] = new Tile('Floor', '.', [0,0,0] , [84, 54, 11], true, false); //floor
             // }
             if (generator[x][y] == 1) {
-                game._map._tiles[x][y] = new Tile('wall', '#', [0, 0, 0], [128, 128, 128]); // false, true, true
+                if (corr) game._map._tiles[x][y] = new Tile('wall', '#', [0, 0, 0], [128, 128, 128]); // false, true, true
+                else game._map._tiles[x][y] = new Tile('wall', '#', [0, 0, 0], [255, 30, 30]);
             }
             if (generator[x][y] == 0) {
-                game._map._tiles[x][y] = new Tile('floor', '·', [0, 0, 0], [60, 60, 60]); //floor
+                if (corr) game._map._tiles[x][y] = new Tile('floor', '·', [0, 0, 0], [60, 60, 60]); //floor
+                else game._map._tiles[x][y] = new Tile('floor', '·', [0, 0, 0], [106, 15, 15]);
             }
             if (generator[x][y] == 2) {
                 game._map._tiles[x][y] = new Tile('floor', 'E', [0, 0, 0], [200, 0, 0]);
             }
         }
     }
+    return(corr);
 }
 
 export function winScreen() {

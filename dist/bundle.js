@@ -7758,7 +7758,7 @@ class Game {
                 this._inventory.drawText(1, 10, "%c{rgb(230, 121, 70)}Base HP: %c{}" + this._player.fighter.base_max_hp.toFixed(2));
             }
             this._inventory.drawText(1, 12, "%c{rgb(140, 140, 160)}Rank: %c{}" + this._player.fighter.rank);
-            this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}" + this._player.fighter.current_exp + "/" + this._player.fighter.nextRank);
+            this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}" + this._player.fighter.current_exp.toFixed(2) + "/" + this._player.fighter.nextRank.toFixed(2));
             if (this._player.equipment != undefined) {
                 this._inventory.drawText(1, 15, "%c{rgb(140, 140, 160)}Main: %c{rgb(" + this._player.equipment.glyph.foreground.toString() + ")}" + this._player.equipment.name);
                 this._inventory.drawText(3, 16, "%c{rgb(140, 140, 160)}atk: %c{}" + this._player.equipment.power_bonus.toFixed(2));
@@ -9438,6 +9438,7 @@ exports.debugScreen = debugScreen;
 function playScreen() {
     return {
         enter: (game) => {
+            let corr = 99;
             if (game.level == 0) {
                 createStart(game);
                 game._player.x = 10;
@@ -9476,18 +9477,20 @@ function playScreen() {
                 return;
             }
             if (game.level > 0 && game.level <= 2) {
-                createCave(game);
+                corr = createCave(game);
+                if (game.level == 1)
+                    corr = 1;
             }
             if (game.level > 2 && game.level <= 4) {
                 if (Math.random() * 100 < 51) {
-                    createCave(game);
+                    corr = createCave(game);
                 }
                 else {
-                    createDungeon(game);
+                    corr = createDungeon(game);
                 }
             }
             if (game.level >= 5 && game.level < 7) {
-                createDungeon(game);
+                corr = createDungeon(game);
             }
             if (game.level == 7) {
                 game.switchScreen(winScreen);
@@ -9515,8 +9518,15 @@ function playScreen() {
             game._map.messageLog = game.messageLog;
             game.timer = true;
             //game.startCountDown();
-            game._map.dungeon_level = game.level;
-            game._map.addEntityToMap();
+            if (corr) {
+                game._map.dungeon_level = game.level;
+                game._map.addEntityToMap();
+            }
+            else {
+                game._map.dungeon_level = game.level + 2;
+                game._map.addEntityToMap();
+                game._map.dungeon_level -= 2;
+            }
             game._entities = game._map._entities;
         },
         exit: (game) => {
@@ -9631,6 +9641,7 @@ function playScreen() {
                             break;
                         case constants_1.KEYS.VK_D:
                             game._player.fighter.base_max_hp += 10;
+                            game._player.fighter.hp += 5;
                             game._player.fighter.unspentPoints -= 1;
                             break;
                         default:
@@ -9681,6 +9692,7 @@ function createStart(game) {
 function createCave(game) {
     let mapWidth = 120;
     let mapHeight = 88;
+    let corr = randint_1.randint(0, 9);
     game._map = new map_1.Map(mapWidth, mapHeight);
     game._map.owner = game;
     let emptyTile = new tiles_1.Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
@@ -9703,18 +9715,30 @@ function createCave(game) {
     // Smoothen it one last time and then update our map
     generator.create((x, y, v) => {
         if (v === 1) { // || x == 0 || y == 0 || x == mapWidth - 1 || x == mapHeight - 1) {
-            game._map._tiles[x][y] = new tiles_1.Tile('floor', '.', [0, 0, 0], [84, 54, 11]); //floor
+            if (corr)
+                game._map._tiles[x][y] = new tiles_1.Tile('floor', '.', [0, 0, 0], [84, 54, 11]); //floor
+            else
+                game._map._tiles[x][y] = new tiles_1.Tile('floor', '.', [0, 0, 0], [60, 11, 85]);
         }
         else {
-            game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [218, 165, 32]);
+            if (corr)
+                game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [218, 165, 32]);
+            else
+                game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [102, 33, 218]);
         }
-        if (x == 0 || y == 0 || x == mapWidth - 1 || y == mapHeight - 1)
-            game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [218, 165, 32]);
+        if (x == 0 || y == 0 || x == mapWidth - 1 || y == mapHeight - 1) {
+            if (corr)
+                game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [218, 165, 32]);
+            else
+                game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [102, 33, 218]);
+        }
     });
+    return (corr);
 }
 function createDungeon(game) {
     let mapWidth = 120;
     let mapHeight = 88;
+    let corr = randint_1.randint(0, 9);
     game._map = new map_1.Map(mapWidth, mapHeight);
     game._map.owner = game;
     let emptyTile = new tiles_1.Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
@@ -9736,16 +9760,23 @@ function createDungeon(game) {
             //     game._map._tiles[x][y] = new Tile('Floor', '.', [0,0,0] , [84, 54, 11], true, false); //floor
             // }
             if (generator[x][y] == 1) {
-                game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [128, 128, 128]); // false, true, true
+                if (corr)
+                    game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [128, 128, 128]); // false, true, true
+                else
+                    game._map._tiles[x][y] = new tiles_1.Tile('wall', '#', [0, 0, 0], [255, 30, 30]);
             }
             if (generator[x][y] == 0) {
-                game._map._tiles[x][y] = new tiles_1.Tile('floor', '·', [0, 0, 0], [60, 60, 60]); //floor
+                if (corr)
+                    game._map._tiles[x][y] = new tiles_1.Tile('floor', '·', [0, 0, 0], [60, 60, 60]); //floor
+                else
+                    game._map._tiles[x][y] = new tiles_1.Tile('floor', '·', [0, 0, 0], [106, 15, 15]);
             }
             if (generator[x][y] == 2) {
                 game._map._tiles[x][y] = new tiles_1.Tile('floor', 'E', [0, 0, 0], [200, 0, 0]);
             }
         }
     }
+    return (corr);
 }
 function winScreen() {
     return {
@@ -9878,10 +9909,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const randFromLevel_1 = __webpack_require__(/*! ../helper/randFromLevel */ "./src/helper/randFromLevel.ts");
 function monsterProbabilities(dungeon_level) {
     return {
-        'fungi': randFromLevel_1.from_dungeon_level([[5, 1], [15, 1]], dungeon_level),
+        'fungi': randFromLevel_1.from_dungeon_level([[15, 1]], dungeon_level),
         'orc': randFromLevel_1.from_dungeon_level([[40, 1], [20, 3], [10, 7]], dungeon_level),
         'troll': randFromLevel_1.from_dungeon_level([[10, 1], [20, 3], [30, 5], [60, 7]], dungeon_level),
-        'wyvern': randFromLevel_1.from_dungeon_level([[10, 1], [30, 2], [50, 5]], dungeon_level),
+        'wyvern': randFromLevel_1.from_dungeon_level([[5, 1], [20, 2], [30, 3], [50, 5]], dungeon_level),
         'ranger': randFromLevel_1.from_dungeon_level([[5, 1], [15, 2]], dungeon_level),
         'crawler': randFromLevel_1.from_dungeon_level([[10, 2], [20, 5]], dungeon_level),
         'dragon': randFromLevel_1.from_dungeon_level([[5, 3], [20, 7]], dungeon_level),

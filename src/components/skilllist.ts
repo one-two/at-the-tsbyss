@@ -199,26 +199,30 @@ export function bite(owner: Entity, target: Entity, damageMultiplier: number) {
     if (owner.face == 'n') {
         createDamageBlock(owner, owner.x-1, owner.y-1, nameAtk, damageMultiplier, '✖');
         createDamageBlock(owner, owner.x, owner.y-1, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x+1, owner.y-1, nameAtk, damageMultiplier, '✖');
+
         createDamageBlock(owner, owner.x, owner.y-2, nameAtk, damageMultiplier, '✖');
-        createDamageBlock(owner, owner.x-1, owner.y-1, nameAtk, damageMultiplier, '✖');
     }
     if (owner.face == 's') {
-        createDamageBlock(owner, owner.x, owner.y+2, nameAtk, damageMultiplier, '✖');
-        createDamageBlock(owner, owner.x-2, owner.y+1, nameAtk, damageMultiplier, '✖');
-        createDamageBlock(owner, owner.x+2, owner.y+1, nameAtk, damageMultiplier, '✖');
         createDamageBlock(owner, owner.x-1, owner.y+1, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x, owner.y+1, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x-1, owner.y+1, nameAtk, damageMultiplier, '✖');
+
+        createDamageBlock(owner, owner.x, owner.y+2, nameAtk, damageMultiplier, '✖');
     }
     if (owner.face == 'w') {
-        createDamageBlock(owner, owner.x-2, owner.y, nameAtk, damageMultiplier, '✖');
-        createDamageBlock(owner, owner.x-1, owner.y+2, nameAtk, damageMultiplier, '✖');
-        createDamageBlock(owner, owner.x-1, owner.y-2, nameAtk, damageMultiplier, '✖');
         createDamageBlock(owner, owner.x-1, owner.y+1, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x-1, owner.y, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x-1, owner.y-1, nameAtk, damageMultiplier, '✖');
+
+        createDamageBlock(owner, owner.x-2, owner.y, nameAtk, damageMultiplier, '✖');
     }
     if (owner.face == 'e') {
-        createDamageBlock(owner, owner.x+2, owner.y, nameAtk, damageMultiplier, '✖');
-        createDamageBlock(owner, owner.x+1, owner.y-2, nameAtk, damageMultiplier, '✖');
-        createDamageBlock(owner, owner.x+1, owner.y+2, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x+1, owner.y-1, nameAtk, damageMultiplier, '✖');
+        createDamageBlock(owner, owner.x+1, owner.y, nameAtk, damageMultiplier, '✖');
         createDamageBlock(owner, owner.x+1, owner.y+1, nameAtk, damageMultiplier, '✖');
+
+        createDamageBlock(owner, owner.x+2, owner.y, nameAtk, damageMultiplier, '✖');
     }
 }
 

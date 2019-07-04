@@ -191,8 +191,6 @@ export class Entity {
     }
 
     equip(item: Entity) {
-        console.log('item chao: ');
-        console.log(item); //item do chao
         if (item.item.type == "main") {
             if (this.equipment == undefined) {
                 this.equipment = item.item;
@@ -209,8 +207,6 @@ export class Entity {
                 item.item.expire = true;
                 this._map.messageLog.newMessage(this, 'switchEquip', droppedItem, item)
             }
-            console.log('this:');
-            console.log(this);
         }
         else if (item.item.type == "sub") {
             if (this.subequipment == undefined) {
