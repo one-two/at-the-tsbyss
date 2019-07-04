@@ -11,6 +11,7 @@ import { monsterProbabilities } from "./settings/monsterProbabilities";
 import { itemProbabilities } from "./settings/itemProbabilities";
 import { Game } from "./game";
 import { Exit } from "./content/itens/exit";
+import { CreateBoss } from "./helper/createBoss";
 
 export class Map {
     _display: Display;
@@ -178,6 +179,12 @@ export class Map {
         this._entities.push(newex);
 
         return null;
+    }
+
+    addBossToMap() {
+        let q = CreateBoss('angel', 10, 10, this.dungeon_level);
+        q._map = this;
+        this._entities.push(q);
     }
 
 

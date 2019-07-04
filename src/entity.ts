@@ -39,7 +39,7 @@ export class Entity {
     equipment: Equipment;
     subequipment: Equipment;
     exp: {amount: number, readonly base: number, gain: number}
-    // equippable
+    boss: any;
     owner: Entity;
     player: boolean;
     regen: any = undefined;
@@ -48,7 +48,7 @@ export class Entity {
     constructor(x:number, y:number, glyph: Glyph, name: string, size:number = 0, blocks: boolean = false, maxStamina:number=0,
                 render_order:number = 99, fighter: Fighter = undefined, ai: any = undefined, player: boolean = false,
                 item: Equipment = undefined, inventory: any = undefined, damage: DamageBlock = undefined, stairs: Exit = undefined, level: any = undefined, 
-                equipment: Equipment = undefined, equippable: any = undefined, _map: Map = undefined, _entities: Entity[] = undefined) {
+                equipment: Equipment = undefined, boss: any = undefined, _map: Map = undefined, _entities: Entity[] = undefined) {
         this.x = x;
         this.y = y;
         this.x2 = x+size-1;
@@ -71,6 +71,7 @@ export class Entity {
         this.item = item;
         this.inventory = 1;
         this.stairs = stairs;
+        this.boss = boss;
 
         if (this.player == true) {
             this.startMoveCountDown();
@@ -134,6 +135,37 @@ export class Entity {
             }
         } else {
         }
+    }
+
+    bossMove(dx: number, dy: number, map: Map): number[] {
+        let moveerror = this.changeFace(dx, dy);
+        if (this.player == true && this.stamina < this.maxStamina && moveerror ) return;
+        else if (this.player == true) this.stamina = 0
+        let tx = this.x + dx;
+        let tx2 = this.x2 + dx;
+        let ty = this.y + dy;
+        let ty2 = this.y2 + dy;
+        if (dx == 0 && dy == 0) return;
+        let targets: Entity[] = [];
+        targets = map.getEntitiesAt(tx+10, tx2+10, ty, ty2);
+        if (targets.length == 0) {
+            this.x = tx;
+            this.x2 = tx2;
+            this.y = ty;
+            this.y2 = ty2;
+        } else {
+            if (this.player == true) {
+                if (this.cooldown == 0) {
+                    this.attack(targets);
+                    this.cooldown = 5;
+                }
+            } else {
+                this.attack(targets);
+                return [-1,0]
+            }
+        }
+        if (this.x == 70-30) return [-1,0]
+        if (this.x == 2) return [1,0]
     }
 
     private changeFace(dx: number, dy: number):boolean {

@@ -275,6 +275,23 @@ export function playScreen() {
             if (game.level == 7) {
                 game.switchScreen(winScreen);
             }
+            if (game.level == 8) {
+                createArena(game);
+                game._player.x = 10;
+                game._player.x2 = 10;
+                game._player.y = 28;
+                game._player.y2 = 28;
+                game._map._entities.push(game._player);
+                game._player._map = game._map;  
+                game._map._display = game._display;
+                game._map.messageLog = game.messageLog;
+                game.timer = true;
+                //game.startCountDown();
+                game._map.dungeon_level = game.level;
+                game._map.addBossToMap();
+                game._entities = game._map._entities;
+                return;
+            }
             
             // Sync map and game variables
             game._map._entities = [];
@@ -344,37 +361,71 @@ export function playScreen() {
             let topLeftY = Math.max(0, player.y - (screenHeight / 2));
             // Make sure we still have enough space to fit an entire game screen
             topLeftY = Math.min(topLeftY, game._map._height - screenHeight);
-            for (let x = topLeftX; x < topLeftX + screenWidth; x++) {
-                for (let y = topLeftY; y < topLeftY + screenHeight; y++) {
-                    // Fetch the glyph for the tile and render it to the screen
-                    let cell = game._map.getTile(x, y) as Tile;
-                    cell.visited ?
-                    display.draw(
-                        x - topLeftX, 
-                        y - topLeftY,
-                        cell.visitedTile.char, 
-                        Color.toRGB(cell.visitedTile.foreground), 
-                        Color.toRGB(cell.visitedTile.background)) :
-                    display.draw(
-                        x - topLeftX, 
-                        y - topLeftY,
-                        ' ', 
-                        Color.toRGB([0,0,0]), 
-                        Color.toRGB([0,0,0]));
-                    
+
+            if (game.level % 8 != 0) {
+                for (let x = topLeftX; x < topLeftX + screenWidth; x++) {
+                    for (let y = topLeftY; y < topLeftY + screenHeight; y++) {
+                        // Fetch the glyph for the tile and render it to the screen
+                        let cell = game._map.getTile(x, y) as Tile;
+                        cell.visited ?
+                        display.draw(
+                            x - topLeftX, 
+                            y - topLeftY,
+                            cell.visitedTile.char, 
+                            Color.toRGB(cell.visitedTile.foreground), 
+                            Color.toRGB(cell.visitedTile.background)) :
+                        display.draw(
+                            x - topLeftX, 
+                            y - topLeftY,
+                            ' ', 
+                            Color.toRGB([0,0,0]), 
+                            Color.toRGB([0,0,0]));
+                        
+                    }
+                }
+                 game._map.setupFov(topLeftX, topLeftY);
+            } else {
+                for (let x = topLeftX; x < topLeftX + screenWidth; x++) {
+                    for (let y = topLeftY; y < topLeftY + screenHeight; y++) {
+                        // Fetch the glyph for the tile and render it to the screen
+                        let cell = game._map.getTile(x, y) as Tile;
+                        display.draw(
+                            x - topLeftX, 
+                            y - topLeftY,
+                            cell.baseTile.char, 
+                            Color.toRGB(cell.baseTile.foreground), 
+                            Color.toRGB(cell.baseTile.background))
+
+                    }
                 }
             }
-            game._map.setupFov(topLeftX, topLeftY);
+
+
             removeExpiredDamage(game._entities)
             game._map._entities = entityRenderSort(game);
             game._entities = game._map._entities;
-            for (let i = game._entities.length-1; i >= 0; i--) {
-                let cell = game._map.getTile(game._entities[i].x, game._entities[i].y) as Tile;
-                if (cell.visibility > 0) {
-                    let dx = Math.pow(game._entities[0].x - game._entities[i].x, 2);
-                    let dy = Math.pow(game._entities[0].y - game._entities[i].y, 2);
-                    let dist = Math.sqrt(dx+dy);
-                    if (dist == 0 || dist <= game._entities[0].sight) {
+
+            if (game.level % 8 != 0) {
+                for (let i = game._entities.length-1; i >= 0; i--) {
+                    let cell = game._map.getTile(game._entities[i].x, game._entities[i].y) as Tile;
+                    if (cell.visibility > 0) {
+                        let dx = Math.pow(game._entities[0].x - game._entities[i].x, 2);
+                        let dy = Math.pow(game._entities[0].y - game._entities[i].y, 2);
+                        let dist = Math.sqrt(dx+dy);
+                        if (dist == 0 || dist <= game._entities[0].sight) {
+                            display.draw(
+                                game._entities[i].x - topLeftX,
+                                game._entities[i].y - topLeftY,
+                                game._entities[i].glyph.char,
+                                Color.toRGB(game._entities[i].glyph.foreground),
+                                Color.toRGB(game._entities[i].glyph.background)
+                                );
+                        }
+                    }
+                }
+            } else {
+                for (let i = game._entities.length-1; i >= 0; i--) {
+                    if (game._entities[i].boss == undefined) {
                         display.draw(
                             game._entities[i].x - topLeftX,
                             game._entities[i].y - topLeftY,
@@ -382,9 +433,32 @@ export function playScreen() {
                             Color.toRGB(game._entities[i].glyph.foreground),
                             Color.toRGB(game._entities[i].glyph.background)
                             );
+                    } else {
+                        for (let line = 0; line < game._entities[i].boss.length-1; line++) {
+                            for (let letter = 0; letter < game._entities[i].boss[line].length; letter++) {
+                                let l = game._entities[i].boss[line][letter];
+                                if (l != "·") {
+                                    game._map._tiles[game._entities[i].x+letter][game._entities[i].y+line] = new Tile('wall', ' ');
+                                    display.draw(
+                                        game._entities[i].x+letter - topLeftX,
+                                        game._entities[i].y+line - topLeftY,
+                                        l,
+                                        Color.toRGB(game._entities[i].glyph.foreground),
+                                        Color.toRGB(game._entities[i].glyph.background)
+                                        );
+                                }
+                                else {
+                                    game._map._tiles[game._entities[i].x+letter][game._entities[i].y+line] = new Tile('floor', '·', [0, 0, 0], [66, 7, 7]);
+                                }
+
+                            }
+                        }
                     }
+
                 }
             }
+
+
             if (game.level == 0) {
                 display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Arrow%c{}: move"); 
                 display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}Enter%c{}: pickup"); 
@@ -563,7 +637,7 @@ function createDungeon(game: Game): number {
             }
             if (generator[x][y] == 0) {
                 if (corr) game._map._tiles[x][y] = new Tile('floor', '·', [0, 0, 0], [60, 60, 60]); //floor
-                else game._map._tiles[x][y] = new Tile('floor', '·', [0, 0, 0], [106, 15, 15]);
+                else game._map._tiles[x][y] = new Tile('floor', '·', [0, 0, 0], [80, 15, 15]);
             }
             if (generator[x][y] == 2) {
                 game._map._tiles[x][y] = new Tile('floor', 'E', [0, 0, 0], [200, 0, 0]);
@@ -571,6 +645,30 @@ function createDungeon(game: Game): number {
         }
     }
     return(corr);
+}
+
+export function createArena(game: Game) {
+    let mapWidth = 70;
+    let mapHeight = 38;
+    game._map = new Map(mapWidth, mapHeight);
+    game._map.owner = game;
+    let emptyTile = new Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
+    console.log("Entered play screen.");
+    for (let x = 0; x < mapWidth; x++) {
+        // Create the nested array for the y values
+        game._map._tiles.push([]);
+        // Add all the tiles
+        for (let y = 0; y < mapHeight; y++) {
+            game._map._tiles[x].push(emptyTile);
+        }
+    }
+    for (let x = 0; x < mapWidth; x++) {
+        for (let y = 0; y < mapHeight; y++) {
+            if (x == 0 || x == mapWidth-1 || y == 0 || y == mapHeight-1) {
+                game._map._tiles[x][y] = new Tile('wall', '#', [0, 0, 0], [128, 128, 128]);
+            } else game._map._tiles[x][y] = new Tile('floor', '·', [0, 0, 0], [66, 7, 7]);
+        }
+    }
 }
 
 export function winScreen() {

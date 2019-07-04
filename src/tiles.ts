@@ -27,8 +27,13 @@ export class Tile {
                 break;
             case 'floor':
                 walkable = true;
+                break;
             case 'empty':
                 walkable = true;
+                break;
+            case 'bossTile':
+                walkable = false;
+                break;
             default:
                 break;
         }

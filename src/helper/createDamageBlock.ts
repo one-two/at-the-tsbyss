@@ -6,6 +6,7 @@ export function createDamageBlock(creator: Entity, x:number, y:number, name: str
     let dir = creator.face;
     let dmg = new DamageBlock(multi, timeout);
     let attack:Entity = null;
+    if (!creator._map.getTile(x,y)._isWalkable) return;
     dmg.owner = creator;
     if (creator.player) attack = new Entity(x, y, new Glyph(glyph, [0,0,0], [creator.glyph.foreground[1], creator.glyph.foreground[1]/3, creator.glyph.foreground[2]/3]), name, 1, false, 0, 5, undefined, undefined, false, undefined, undefined, dmg);
     else attack = new Entity(x, y, new Glyph(glyph, [0,0,0], [150, creator.glyph.foreground[1]/3, creator.glyph.foreground[2]/3]), name, 1, false, 0, 5, undefined, undefined, false, undefined, undefined, dmg);
