@@ -117,7 +117,7 @@ export class Entity {
         if (dx == 0 && dy == 0) return;
         if (map.getMovableArea(tx, tx2, ty, ty2)) {
             let targets: Entity[] = [];
-            targets = map.getEntitiesAt(tx, tx2, ty, ty2);
+            targets = map.getEntitiesAt(tx, tx2, ty, ty2, this);
             if (targets.length == 0) {
                 this.x = tx;
                 this.x2 = tx2;
@@ -137,8 +137,9 @@ export class Entity {
         }
     }
 
-    bossMove(dx: number, dy: number, map: Map): number[] {
+    angelMove(dx: number, dy: number, map: Map): number[] {
         let moveerror = this.changeFace(dx, dy);
+        let nextDir = [dx,dy];
         if (this.player == true && this.stamina < this.maxStamina && moveerror ) return;
         else if (this.player == true) this.stamina = 0
         let tx = this.x + dx;
@@ -147,7 +148,7 @@ export class Entity {
         let ty2 = this.y2 + dy;
         if (dx == 0 && dy == 0) return;
         let targets: Entity[] = [];
-        targets = map.getEntitiesAt(tx+10, tx2+10, ty, ty2);
+        targets = map.getEntitiesAt(tx, tx2, ty, ty2, this);
         if (targets.length == 0) {
             this.x = tx;
             this.x2 = tx2;
@@ -161,11 +162,15 @@ export class Entity {
                 }
             } else {
                 this.attack(targets);
-                return [-1,0]
+                return [nextDir[0], nextDir[1]]
             }
         }
-        if (this.x == 70-30) return [-1,0]
-        if (this.x == 2) return [1,0]
+        if (this.x2 >= 55) nextDir = [-2,nextDir[1]]
+        if (this.x <= 10) nextDir = [2,nextDir[1]]
+        if (this.y <= 3) nextDir = [nextDir[0], 2] 
+        if (this.y2 >= 35) nextDir = [nextDir[0], -2]
+        console.log('x: ' +this.x + ' y: ' + this.y);
+        return nextDir
     }
 
     private changeFace(dx: number, dy: number):boolean {
@@ -326,7 +331,7 @@ export class Entity {
         let source = this;
         var path = new Path.AStar(target.x, target.y, function(x: number, y: number) {
             // If an entity is present at the tile, can't move there.
-            let entity = source._map.getEntitiesAt(this.x1, this.x2, this.y1, this.y2);
+            let entity = source._map.getEntitiesAt(this.x1, this.x2, this.y1, this.y2, this);
             if (entity.length > 0) {
                 return false;
             }
@@ -362,7 +367,7 @@ export class Entity {
         let targety = this.y - (target.y - this.y);
         var path = new Path.AStar(targetx, targety, function(x: number, y: number) {
             // If an entity is present at the tile, can't move there.
-            let entity = source._map.getEntitiesAt(this.x1, this.x2, this.y1, this.y2);
+            let entity = source._map.getEntitiesAt(this.x1, this.x2, this.y1, this.y2, this);
             if (entity.length > 0) {
                 return false;
             }

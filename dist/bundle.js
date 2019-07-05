@@ -5233,6 +5233,56 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ "./src/components/bossSkills.ts":
+/*!**************************************!*\
+  !*** ./src/components/bossSkills.ts ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const createDamageBlock_1 = __webpack_require__(/*! ../helper/createDamageBlock */ "./src/helper/createDamageBlock.ts");
+const randint_1 = __webpack_require__(/*! ../helper/randint */ "./src/helper/randint.ts");
+function angel_ring(owner, target, damageMultiplier) {
+    let nameAtk = 'angel ring';
+    let range = 0;
+    let rx = target.x;
+    let ry = target.y;
+    let hole = randint_1.randint(0, 7);
+    let ring = setInterval(() => {
+        if (hole != 0)
+            createDamageBlock_1.createDamageBlock(owner, rx, ry + 4 - range, nameAtk, damageMultiplier, "☼", 4);
+        if (hole != 1)
+            createDamageBlock_1.createDamageBlock(owner, rx, ry - 4 + range, nameAtk, damageMultiplier, "☼", 4);
+        if (hole != 2)
+            createDamageBlock_1.createDamageBlock(owner, rx - 4 + range, ry, nameAtk, damageMultiplier, "☼", 4);
+        if (hole != 3)
+            createDamageBlock_1.createDamageBlock(owner, rx + 4 - range, ry, nameAtk, damageMultiplier, "☼", 4);
+        if (hole != 4)
+            createDamageBlock_1.createDamageBlock(owner, rx - 4 + range, ry - 4 + range, nameAtk, damageMultiplier, "☼", 4);
+        if (hole != 5)
+            createDamageBlock_1.createDamageBlock(owner, rx + 4 - range, ry - 4 + range, nameAtk, damageMultiplier, "☼", 4);
+        if (hole != 6)
+            createDamageBlock_1.createDamageBlock(owner, rx - 4 + range, ry + 4 - range, nameAtk, damageMultiplier, "☼", 4);
+        if (hole != 7)
+            createDamageBlock_1.createDamageBlock(owner, rx + 4 - range, ry + 4 - range, nameAtk, damageMultiplier, "☼", 4);
+        range += 1;
+        if (range > 4)
+            clearInterval(ring);
+    }, 400);
+    // createDamageBlock(owner, target.x, target.y, nameAtk, damageMultiplier, "ꙮ");
+    // createDamageBlock(owner, target.x+1, target.y, nameAtk, damageMultiplier, "ꙮ");
+    // createDamageBlock(owner, target.x-1, target.y, nameAtk, damageMultiplier, "ꙮ");
+    // createDamageBlock(owner, target.x, target.y+1, nameAtk, damageMultiplier, "ꙮ");
+    // createDamageBlock(owner, target.x, target.y-1, nameAtk, damageMultiplier, "ꙮ");
+}
+exports.angel_ring = angel_ring;
+
+
+/***/ }),
+
 /***/ "./src/components/damageBlock.ts":
 /*!***************************************!*\
   !*** ./src/components/damageBlock.ts ***!
@@ -5263,7 +5313,7 @@ class DamageBlock {
             }
             if (counter == 0) {
                 clearInterval(interval);
-                let targets = this.owner._map.getEntitiesAt(this.owner.x, this.owner.x2, this.owner.y, this.owner.y2);
+                let targets = this.owner._map.getEntitiesAt(this.owner.x, this.owner.x2, this.owner.y, this.owner.y2, this.owner);
                 if (targets.length > 0) {
                     this.owner.skill(targets);
                 }
@@ -5769,20 +5819,21 @@ exports.firebreath = firebreath;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const deathFunction_1 = __webpack_require__(/*! ../../helper/deathFunction */ "./src/helper/deathFunction.ts");
+const bossSkills_1 = __webpack_require__(/*! ../../components/bossSkills */ "./src/components/bossSkills.ts");
 class Angel {
     constructor() {
         this.skill_bonus = 1;
         this.skills = [{
-                name: 'poison cloud',
-                cooldown: 10,
-                maxCooldown: 10
+                name: 'angel ring',
+                cooldown: 15,
+                maxCooldown: 15
             },
             {
-                name: 'poison shield',
-                cooldown: 20,
-                maxCooldown: 20
+                name: 'angel star',
+                cooldown: 5,
+                maxCooldown: 15
             }];
-        this.dir = [1, 1];
+        this.dir = [2, 2];
     }
     startCountDown(seconds) {
         var counter = seconds;
@@ -5811,7 +5862,11 @@ class Angel {
             return;
         let dist = Math.sqrt(Math.pow((player.x - this.owner.x), 2) + Math.pow((player.y - this.owner.y), 2));
         console.log('move boss');
-        this.dir = this.owner.bossMove(1, 0, this.owner._map);
+        this.dir = this.owner.angelMove(this.dir[0], this.dir[1], this.owner._map);
+        if (this.skills[0].cooldown >= this.skills[0].maxCooldown) {
+            bossSkills_1.angel_ring(this.owner, player, this.skill_bonus);
+            this.skills[0].cooldown = 0;
+        }
         // if (dist < this.owner.sight*1.4) {
         //     if (this.skills[0].cooldown >= this.skills[0].maxCooldown) {
         //         poison_cloud(this.owner, player, this.skill_bonus*0.5);
@@ -7455,7 +7510,7 @@ class Entity {
             return;
         if (map.getMovableArea(tx, tx2, ty, ty2)) {
             let targets = [];
-            targets = map.getEntitiesAt(tx, tx2, ty, ty2);
+            targets = map.getEntitiesAt(tx, tx2, ty, ty2, this);
             if (targets.length == 0) {
                 this.x = tx;
                 this.x2 = tx2;
@@ -7477,8 +7532,9 @@ class Entity {
         else {
         }
     }
-    bossMove(dx, dy, map) {
+    angelMove(dx, dy, map) {
         let moveerror = this.changeFace(dx, dy);
+        let nextDir = [dx, dy];
         if (this.player == true && this.stamina < this.maxStamina && moveerror)
             return;
         else if (this.player == true)
@@ -7490,7 +7546,7 @@ class Entity {
         if (dx == 0 && dy == 0)
             return;
         let targets = [];
-        targets = map.getEntitiesAt(tx + 10, tx2 + 10, ty, ty2);
+        targets = map.getEntitiesAt(tx, tx2, ty, ty2, this);
         if (targets.length == 0) {
             this.x = tx;
             this.x2 = tx2;
@@ -7506,13 +7562,19 @@ class Entity {
             }
             else {
                 this.attack(targets);
-                return [-1, 0];
+                return [nextDir[0], nextDir[1] * -1];
             }
         }
-        if (this.x == 70 - 30)
-            return [-1, 0];
-        if (this.x == 2)
-            return [1, 0];
+        if (this.x2 >= 60)
+            nextDir = [-2, nextDir[1]];
+        if (this.x <= 10)
+            nextDir = [2, nextDir[1]];
+        if (this.y <= 3)
+            nextDir = [nextDir[0], 2];
+        if (this.y2 >= 35)
+            nextDir = [nextDir[0], -2];
+        console.log('x: ' + this.x + ' y: ' + this.y);
+        return nextDir;
     }
     changeFace(dx, dy) {
         if (dx == -1) {
@@ -7668,7 +7730,7 @@ class Entity {
         let source = this;
         var path = new lib_1.Path.AStar(target.x, target.y, function (x, y) {
             // If an entity is present at the tile, can't move there.
-            let entity = source._map.getEntitiesAt(this.x1, this.x2, this.y1, this.y2);
+            let entity = source._map.getEntitiesAt(this.x1, this.x2, this.y1, this.y2, this);
             if (entity.length > 0) {
                 return false;
             }
@@ -7702,7 +7764,7 @@ class Entity {
         let targety = this.y - (target.y - this.y);
         var path = new lib_1.Path.AStar(targetx, targety, function (x, y) {
             // If an entity is present at the tile, can't move there.
-            let entity = source._map.getEntitiesAt(this.x1, this.x2, this.y1, this.y2);
+            let entity = source._map.getEntitiesAt(this.x1, this.x2, this.y1, this.y2, this);
             if (entity.length > 0) {
                 return false;
             }
@@ -8092,7 +8154,7 @@ function CreateBoss(monster_choice, x, y, dungeon_level) {
     let fighter_component = new fighter_1.Fighter(1, 1, 1, 1);
     let skin = boss_1.Boss();
     let ai_component = new angel_1.Angel(); //new Fungi();
-    let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('!', [0, 0, 0], [0, 200, 0]), 'angel', 10, true, 6, 2, fighter_component, ai_component, false, undefined, undefined, undefined, undefined, undefined, undefined, skin);
+    let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('!', [0, 0, 0], [0, 200, 0]), 'angel', 10, true, 3, 2, fighter_component, ai_component, false, undefined, undefined, undefined, undefined, undefined, undefined, skin);
     return monster;
 }
 exports.CreateBoss = CreateBoss;
@@ -9103,12 +9165,15 @@ class Map {
         }
         return moveable;
     }
-    getEntitiesAt(x, x2, y, y2) {
+    getEntitiesAt(x, x2, y, y2, self) {
         let targets = [];
         for (let index = 0; index < this._entities.length; index++) {
             for (let i = x; i <= x2; i++) {
                 for (let j = y; j <= y2; j++) {
-                    if (this._entities[index].x == i && this._entities[index].y == j && this._entities[index].blocks == true) {
+                    if (((this._entities[index].x == i || this._entities[index].x2 == i) && (this._entities[index].y == j || this._entities[index].y2 == j)
+                        || (this._entities[index].x <= i && this._entities[index].x2 >= i) && (this._entities[index].y <= j && this._entities[index].y2 >= j))
+                        && this._entities[index].blocks == true
+                        && this._entities[index] != self) {
                         targets.push(this._entities[index]);
                     }
                 }
@@ -9747,6 +9812,8 @@ function playScreen() {
                     for (let y = topLeftY; y < topLeftY + screenHeight; y++) {
                         // Fetch the glyph for the tile and render it to the screen
                         let cell = game._map.getTile(x, y);
+                        if (cell.name == 'bossTile')
+                            game._map._tiles[x][y] = new tiles_1.Tile('floor', '·', [0, 0, 0], [66, 7, 7]);
                         display.draw(x - topLeftX, y - topLeftY, cell.baseTile.char, Color.toRGB(cell.baseTile.foreground), Color.toRGB(cell.baseTile.background));
                     }
                 }
@@ -9773,12 +9840,18 @@ function playScreen() {
                         display.draw(game._entities[i].x - topLeftX, game._entities[i].y - topLeftY, game._entities[i].glyph.char, Color.toRGB(game._entities[i].glyph.foreground), Color.toRGB(game._entities[i].glyph.background));
                     }
                     else {
+                        for (let xhitbox = game._entities[i].x; xhitbox < game._entities[i].x2; xhitbox++) {
+                            for (let yhitbox = game._entities[i].y; yhitbox < game._entities[i].y2; yhitbox++) {
+                                game._map._tiles[xhitbox][yhitbox] = new tiles_1.Tile('bossTile', ' ');
+                            }
+                        }
                         for (let line = 0; line < game._entities[i].boss.length - 1; line++) {
                             for (let letter = 0; letter < game._entities[i].boss[line].length; letter++) {
                                 let l = game._entities[i].boss[line][letter];
-                                if (l != "·") {
-                                    game._map._tiles[game._entities[i].x + letter][game._entities[i].y + line] = new tiles_1.Tile('wall', ' ');
-                                    display.draw(game._entities[i].x + letter - topLeftX, game._entities[i].y + line - topLeftY, l, Color.toRGB(game._entities[i].glyph.foreground), Color.toRGB(game._entities[i].glyph.background));
+                                let cell = game._map.getTile(game._entities[i].x + letter, game._entities[i].y + line);
+                                if (l != "·" && cell.name != 'wall') {
+                                    //game._map._tiles[game._entities[i].x+letter-10][game._entities[i].y+line] = new Tile('bossTile', ' ');
+                                    display.draw(game._entities[i].x + letter - topLeftX - 10, game._entities[i].y + line - topLeftY, l, Color.toRGB(game._entities[i].glyph.foreground), Color.toRGB(game._entities[i].glyph.background));
                                 }
                                 else {
                                     game._map._tiles[game._entities[i].x + letter][game._entities[i].y + line] = new tiles_1.Tile('floor', '·', [0, 0, 0], [66, 7, 7]);

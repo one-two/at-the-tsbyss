@@ -53,12 +53,16 @@ export class Map {
         return moveable;
     }
 
-    getEntitiesAt(x: number, x2: number, y:number, y2: number): Entity[] {
+    getEntitiesAt(x: number, x2: number, y:number, y2: number, self: Entity): Entity[] {
         let targets: Entity[] = [];
         for (let index = 0; index < this._entities.length; index++) {
             for (let i = x; i <= x2; i++) {
                 for (let j = y; j <= y2; j++) {
-                    if (this._entities[index].x == i && this._entities[index].y == j && this._entities[index].blocks == true) {
+                    if (((this._entities[index].x == i || this._entities[index].x2 == i ) && (this._entities[index].y == j ||  this._entities[index].y2 == j )
+                        || (this._entities[index].x <= i && this._entities[index].x2 >= i) && (this._entities[index].y <= j && this._entities[index].y2 >= j)
+                        ) 
+                        && this._entities[index].blocks == true
+                        && this._entities[index] != self) {
                         targets.push(this._entities[index]);
                     }
                 }

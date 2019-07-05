@@ -389,6 +389,7 @@ export function playScreen() {
                     for (let y = topLeftY; y < topLeftY + screenHeight; y++) {
                         // Fetch the glyph for the tile and render it to the screen
                         let cell = game._map.getTile(x, y) as Tile;
+                        if (cell.name == 'bossTile') game._map._tiles[x][y] = new Tile('floor', '·', [0, 0, 0], [66, 7, 7]);
                         display.draw(
                             x - topLeftX, 
                             y - topLeftY,
@@ -434,13 +435,19 @@ export function playScreen() {
                             Color.toRGB(game._entities[i].glyph.background)
                             );
                     } else {
+                        for (let xhitbox = game._entities[i].x; xhitbox < game._entities[i].x2; xhitbox++) {
+                            for (let yhitbox = game._entities[i].y; yhitbox < game._entities[i].y2; yhitbox++) {
+                                game._map._tiles[xhitbox][yhitbox] = new Tile('bossTile', ' ');
+                            }
+                        }
                         for (let line = 0; line < game._entities[i].boss.length-1; line++) {
                             for (let letter = 0; letter < game._entities[i].boss[line].length; letter++) {
                                 let l = game._entities[i].boss[line][letter];
-                                if (l != "·") {
-                                    game._map._tiles[game._entities[i].x+letter][game._entities[i].y+line] = new Tile('wall', ' ');
+                                let cell = game._map.getTile(game._entities[i].x+letter, game._entities[i].y+line) as Tile;
+                                if (l != "·" && cell.name != 'wall') {
+                                    //game._map._tiles[game._entities[i].x+letter-10][game._entities[i].y+line] = new Tile('bossTile', ' ');
                                     display.draw(
-                                        game._entities[i].x+letter - topLeftX,
+                                        game._entities[i].x+letter - topLeftX - 10,
                                         game._entities[i].y+line - topLeftY,
                                         l,
                                         Color.toRGB(game._entities[i].glyph.foreground),
@@ -450,11 +457,9 @@ export function playScreen() {
                                 else {
                                     game._map._tiles[game._entities[i].x+letter][game._entities[i].y+line] = new Tile('floor', '·', [0, 0, 0], [66, 7, 7]);
                                 }
-
                             }
                         }
                     }
-
                 }
             }
 

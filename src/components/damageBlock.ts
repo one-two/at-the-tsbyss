@@ -27,7 +27,7 @@ export class DamageBlock {
             }
             if (counter == 0 ) {
                 clearInterval(interval);
-                let targets = this.owner._map.getEntitiesAt(this.owner.x, this.owner.x2, this.owner.y, this.owner.y2);
+                let targets = this.owner._map.getEntitiesAt(this.owner.x, this.owner.x2, this.owner.y, this.owner.y2, this.owner);
                 if (targets.length > 0) {
                     this.owner.skill(targets);
                 }
