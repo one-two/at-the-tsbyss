@@ -27,8 +27,9 @@ Todo list to fill the void of our souls (but i really want to make it web)
 - [X] Level path for floors
 - [X] Random quality drops (except potions)
 - [X] Defensive skills
-- [ ] Equipments/spell/stuff for progress
+- [X] Equipments/spell/stuff for progress
 - [X] Monster attack patterns
-- [ ] Boss fights! 
+- [E] Boss fights! 
+- [ ] Dummy fight on level zero
 - [ ] Switch screen animation
 - [ ] Leaderboards!
