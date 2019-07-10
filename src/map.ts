@@ -99,7 +99,7 @@ export class Map {
         return player;
     }
 
-    addEntityToMap(): void {
+    addEntityToMap(mapType: string): void {
         let max_monsters_per_room = from_dungeon_level([[30, 1], [40, 4], [40, 6]], this.dungeon_level)
         let max_items_per_room = from_dungeon_level([[10, 1], [15, 4]], this.dungeon_level)
 
@@ -129,6 +129,11 @@ export class Map {
 
             if (emptyspace == true) {
                 let monster_choice = random_choice_from_dict(monster_chances);
+                if (mapType == 'dungeon') {
+                    while (monster_choice == 'fungi' || monster_choice == 'ranger') {
+                        monster_choice = random_choice_from_dict(monster_chances);
+                    }
+                }
                 let q = CreateMonster(monster_choice, x, y, this.dungeon_level);
                 q._map = this;
                 this._entities.push(q);

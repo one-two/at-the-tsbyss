@@ -12,6 +12,7 @@ import { generateDunMaze } from "./helper/dungeonMaze";
 import { CreateItem } from "./helper/createItens";
 import { Exit } from "./content/itens/exit";
 import { Glyph } from "./glyph";
+import { CreateMonster } from "./helper/createMonters";
 
 export function startScreen() {
     //Game.Screen.startScreen = {
@@ -23,7 +24,7 @@ export function startScreen() {
             console.log("Exited start screen."); 
         },
         render : (display : any, game: Game) => {
-            display.drawText(0,0, "%c{rgb(50, 50, 50)}Alpha: v.1971");
+            display.drawText(0,0, "%c{rgb(50, 50, 50)}Alpha: v.190710");
             let y = 8;
             for (const line of game.logo) {
                 display.drawText(10,y, line);
@@ -43,9 +44,10 @@ export function startScreen() {
             if (game.mainmenuOpt == 0) display.drawText((game._screenWidth/2)-1,game._screenHeight-5, "%c{yellow}>Eng%c{}      Port");
             if (game.mainmenuOpt == 1) display.drawText((game._screenWidth/2),game._screenHeight-5, "Eng     %c{yellow}>Port%c{}"); 
 
-            display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Arrow%c{}: move"); 
-            display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}Enter%c{}: pickup"); 
-            display.drawText((game._screenWidth/10),game._screenHeight-1, "%c{yellow}Space%c{}: skill"); 
+            display.drawText((game._screenWidth/10),game._screenHeight-4, "%c{yellow}Arrow%c{}: move"); 
+            display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Enter%c{}: pickup"); 
+            display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}Space%c{}: skill"); 
+            display.drawText((game._screenWidth/10),game._screenHeight-1, "%c{yellow}P Key%c{}: use potion"); 
             
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {
@@ -119,7 +121,7 @@ export function debugScreen() {
 
             game.timer = true;
             //game.startCountDown();
-            game._map.addEntityToMap();
+            game._map.addEntityToMap('cave');
             
             game._entities = game._map._entities;
 
@@ -240,6 +242,9 @@ export function playScreen() {
                 let exit = new Exit(game._map);
                 let newex = new Entity(10, 2, new Glyph("⍝", [0,0,0], [20,150,200]), "saida", 1, false, -1,2, undefined, undefined, false, undefined, undefined, undefined, exit);
                 game._map._entities.push(newex);
+                let dummy = CreateMonster('dummy', 10, 5, 1);
+                dummy._map = game._map;
+                game._map._entities.push(dummy);
                 let posx = [6,10,14];
                 let posy = [12,10,12];
                 for (let i = 0; i < 3; i++) {
@@ -258,24 +263,29 @@ export function playScreen() {
                 game._entities = game._map._entities;
                 return;
             }
+            let mapType = '';
             if (game.level > 0 && game.level <= 2) {
                 corr = createCave(game);
+                mapType = 'cave';
                 if (game.level == 1) corr = 1;
             }
             if (game.level > 2 && game.level <= 4) {
                 if( Math.random()*100 < 51 ) {
                     corr = createCave(game);
+                    mapType = 'cave';
                 } else {
                     corr = createDungeon(game);
+                    mapType = 'dungeon';
                 }
             }
             if (game.level >= 5 && game.level < 7 ) {
                 corr = createDungeon(game);
-            }
-            if (game.level == 7) {
-                game.switchScreen(winScreen);
+                mapType = 'dungeon';
             }
             if (game.level == 8) {
+                game.switchScreen(winScreen);
+            }
+            if (game.level == 7) {
                 createArena(game);
                 game._player.x = 10;
                 game._player.x2 = 10;
@@ -326,10 +336,10 @@ export function playScreen() {
             //game.startCountDown();
             if (corr) {
                 game._map.dungeon_level = game.level;
-                game._map.addEntityToMap();
+                game._map.addEntityToMap(mapType);
             } else {
                 game._map.dungeon_level = game.level+2;
-                game._map.addEntityToMap();
+                game._map.addEntityToMap(mapType);
                 game._map.dungeon_level -= 2
             }
 
@@ -362,7 +372,7 @@ export function playScreen() {
             // Make sure we still have enough space to fit an entire game screen
             topLeftY = Math.min(topLeftY, game._map._height - screenHeight);
 
-            if (game.level % 8 != 0) {
+            if (game.level % 7 != 0) {
                 for (let x = topLeftX; x < topLeftX + screenWidth; x++) {
                     for (let y = topLeftY; y < topLeftY + screenHeight; y++) {
                         // Fetch the glyph for the tile and render it to the screen
@@ -406,7 +416,7 @@ export function playScreen() {
             game._map._entities = entityRenderSort(game);
             game._entities = game._map._entities;
 
-            if (game.level % 8 != 0) {
+            if (game.level % 7 != 0) {
                 for (let i = game._entities.length-1; i >= 0; i--) {
                     let cell = game._map.getTile(game._entities[i].x, game._entities[i].y) as Tile;
                     if (cell.visibility > 0) {
@@ -465,9 +475,10 @@ export function playScreen() {
 
 
             if (game.level == 0) {
-                display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Arrow%c{}: move"); 
-                display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}Enter%c{}: pickup"); 
-                display.drawText((game._screenWidth/10),game._screenHeight-1, "%c{yellow}Space%c{}: skill"); 
+                display.drawText((game._screenWidth/10),game._screenHeight-4, "%c{yellow}Arrow%c{}: move"); 
+                display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Enter%c{}: pickup"); 
+                display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}Space%c{}: skill"); 
+                display.drawText((game._screenWidth/10),game._screenHeight-1, "%c{yellow}P Key%c{}: use potion"); 
             }
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {

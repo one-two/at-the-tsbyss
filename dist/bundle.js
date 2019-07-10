@@ -86,201 +86,6 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "../../../AppData/Roaming/npm/node_modules/webpack/node_modules/process/browser.js":
-/*!*************************************************!*\
-  !*** (webpack)/node_modules/process/browser.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-
-/***/ }),
-
 /***/ "./lib/color.js":
 /*!**********************!*\
   !*** ./lib/color.js ***!
@@ -1414,7 +1219,7 @@ class Term extends _backend_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     computeSize() { return [process.stdout.columns, process.stdout.rows]; }
 }
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../AppData/Roaming/npm/node_modules/webpack/node_modules/process/browser.js */ "../../../AppData/Roaming/npm/node_modules/webpack/node_modules/process/browser.js")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../node_modules/process/browser.js */ "./node_modules/process/browser.js")))
 
 /***/ }),
 
@@ -5233,6 +5038,201 @@ exports.Logo = Logo;
 
 /***/ }),
 
+/***/ "./node_modules/process/browser.js":
+/*!*****************************************!*\
+  !*** ./node_modules/process/browser.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+
+/***/ }),
+
 /***/ "./src/components/bossSkills.ts":
 /*!**************************************!*\
   !*** ./src/components/bossSkills.ts ***!
@@ -5275,37 +5275,47 @@ function angel_ring(owner, target, damageMultiplier) {
 }
 exports.angel_ring = angel_ring;
 function angel_tri(owner, target, damageMultiplier) {
+    let mapWidth = 70;
+    let mapHeight = 38;
     let nameAtk = 'angel lance';
     let range = 0;
     let rx = target.x;
     let ry = target.y;
-    let ownerx = owner.x;
-    let ownery = owner.y;
-    let slope = (ry - ownery) / (rx - ownerx);
+    let ownerx = owner.x + 5;
+    let ownery = owner.y + 5;
+    if (rx == ownerx || ry == ownery)
+        return;
+    let slope = ((ry - ownery) / (rx - ownerx));
     let b = ry - (rx * slope);
     let image = [];
-    let hole = randint_1.randint(0, 7);
-    let ring = setInterval(() => {
-        if (hole != 0)
-            createDamageBlock_1.createDamageBlock(owner, rx, ry + 4 - range, nameAtk, damageMultiplier, "☼", 4);
-        if (hole != 1)
-            createDamageBlock_1.createDamageBlock(owner, rx, ry - 4 + range, nameAtk, damageMultiplier, "☼", 4);
-        if (hole != 2)
-            createDamageBlock_1.createDamageBlock(owner, rx - 4 + range, ry, nameAtk, damageMultiplier, "☼", 4);
-        if (hole != 3)
-            createDamageBlock_1.createDamageBlock(owner, rx + 4 - range, ry, nameAtk, damageMultiplier, "☼", 4);
-        if (hole != 4)
-            createDamageBlock_1.createDamageBlock(owner, rx - 4 + range, ry - 4 + range, nameAtk, damageMultiplier, "☼", 4);
-        if (hole != 5)
-            createDamageBlock_1.createDamageBlock(owner, rx + 4 - range, ry - 4 + range, nameAtk, damageMultiplier, "☼", 4);
-        if (hole != 6)
-            createDamageBlock_1.createDamageBlock(owner, rx - 4 + range, ry + 4 - range, nameAtk, damageMultiplier, "☼", 4);
-        if (hole != 7)
-            createDamageBlock_1.createDamageBlock(owner, rx + 4 - range, ry + 4 - range, nameAtk, damageMultiplier, "☼", 4);
-        range += 1;
-        if (range > 4)
-            clearInterval(ring);
-    }, 400);
+    let dist = Math.sqrt(Math.pow((ownerx - rx), 2) + Math.pow((ownery - ry), 2));
+    let passo = ((ownerx - rx) / dist) * -1;
+    let anteriory = -99;
+    let anteriorx = -99;
+    for (let dom = 0; Math.abs(dom) < dist * 2; dom = dom + passo) {
+        let newImagey = Math.round(((ownerx + dom) * slope) + b);
+        let newImagex = Math.round(ownerx + dom);
+        if (newImagey != anteriory || newImagex != anteriorx)
+            image.push([newImagex, newImagey]);
+        anteriory = newImagey;
+        anteriorx = newImagex;
+        if ((newImagex < 3 || newImagex > (mapWidth - 3) || newImagey < 3 || newImagey > (mapHeight - 3)))
+            dom = 9999999;
+    }
+    console.log(image);
+    // distancia vai ser iterações de x na formula linear (arredondar para cima)
+    // rodar até (y || x) == (fim da tela)
+    // tratar casos colineares ry = oy e rx = ox
+    for (let index = 0; index < image.length; index++) {
+        createDamageBlock_1.createDamageBlock(owner, image[index][0], image[index][1], nameAtk, damageMultiplier, "☽", 6);
+        createDamageBlock_1.createDamageBlock(owner, image[index][0] + 3, image[index][1] + 3, nameAtk, damageMultiplier, "☽", 6);
+        createDamageBlock_1.createDamageBlock(owner, image[index][0] - 3, image[index][1] - 3, nameAtk, damageMultiplier, "☽", 6);
+    }
+    // let spike = setInterval(() => {
+    //     createDamageBlock(owner, image[range][0], image[range][1], nameAtk, damageMultiplier, "$", 4);
+    //     range+=1;
+    //     if (range >= image.length) clearInterval(spike);
+    // }, 400)
 }
 exports.angel_tri = angel_tri;
 
@@ -5572,6 +5582,34 @@ function poison_shield(owner, target, damageMultiplier) {
     createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y + 1, nameAtk, damageMultiplier);
 }
 exports.poison_shield = poison_shield;
+function hug(owner, target, damageMultiplier) {
+    let nameAtk = 'hug';
+    if (owner.face == 'n') {
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 1, nameAtk, damageMultiplier, '❤');
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 2, nameAtk, damageMultiplier, '❤');
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 3, nameAtk, damageMultiplier, '❤');
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y - 4, nameAtk, damageMultiplier, '❤');
+    }
+    if (owner.face == 's') {
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 1, nameAtk, damageMultiplier, '❤');
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 2, nameAtk, damageMultiplier, '❤');
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 3, nameAtk, damageMultiplier, '❤');
+        createDamageBlock_1.createDamageBlock(owner, owner.x, owner.y + 4, nameAtk, damageMultiplier, '❤');
+    }
+    if (owner.face == 'w') {
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 1, owner.y, nameAtk, damageMultiplier, '❤');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 2, owner.y, nameAtk, damageMultiplier, '❤');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 3, owner.y, nameAtk, damageMultiplier, '❤');
+        createDamageBlock_1.createDamageBlock(owner, owner.x - 4, owner.y, nameAtk, damageMultiplier, '❤');
+    }
+    if (owner.face == 'e') {
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 1, owner.y, nameAtk, damageMultiplier, '❤');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 2, owner.y, nameAtk, damageMultiplier, '❤');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 3, owner.y, nameAtk, damageMultiplier, '❤');
+        createDamageBlock_1.createDamageBlock(owner, owner.x + 4, owner.y, nameAtk, damageMultiplier, '❤');
+    }
+}
+exports.hug = hug;
 function punch(owner, target, damageMultiplier) {
     let nameAtk = 'smite';
     if (owner.face == 'n') {
@@ -5851,14 +5889,14 @@ const deathFunction_1 = __webpack_require__(/*! ../../helper/deathFunction */ ".
 const bossSkills_1 = __webpack_require__(/*! ../../components/bossSkills */ "./src/components/bossSkills.ts");
 class Angel {
     constructor() {
-        this.skill_bonus = 1;
+        this.skill_bonus = 3;
         this.skills = [{
                 name: 'angel ring',
                 cooldown: 15,
                 maxCooldown: 15
             },
             {
-                name: 'angel star',
+                name: 'angel lance',
                 cooldown: 5,
                 maxCooldown: 15
             }];
@@ -5890,11 +5928,14 @@ class Angel {
         if (player == undefined)
             return;
         let dist = Math.sqrt(Math.pow((player.x - this.owner.x), 2) + Math.pow((player.y - this.owner.y), 2));
-        console.log('move boss');
         this.dir = this.owner.angelMove(this.dir[0], this.dir[1], this.owner._map);
         if (this.skills[0].cooldown >= this.skills[0].maxCooldown) {
             bossSkills_1.angel_ring(this.owner, player, this.skill_bonus);
             this.skills[0].cooldown = 0;
+        }
+        if (this.skills[1].cooldown >= this.skills[1].maxCooldown) {
+            bossSkills_1.angel_tri(this.owner, player, this.skill_bonus);
+            this.skills[1].cooldown = 0;
         }
         // if (dist < this.owner.sight*1.4) {
         //     if (this.skills[0].cooldown >= this.skills[0].maxCooldown) {
@@ -7103,6 +7144,69 @@ exports.Dragon = Dragon;
 
 /***/ }),
 
+/***/ "./src/content/monsters/dummyTarget.ts":
+/*!*********************************************!*\
+  !*** ./src/content/monsters/dummyTarget.ts ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const deathFunction_1 = __webpack_require__(/*! ../../helper/deathFunction */ "./src/helper/deathFunction.ts");
+const skilllist_1 = __webpack_require__(/*! ../../components/skilllist */ "./src/components/skilllist.ts");
+class DummyTarget {
+    constructor() {
+        this.skill_bonus = 0;
+        this.skills = [{
+                name: 'hug',
+                cooldown: 20,
+                maxCooldown: 20
+            }];
+    }
+    startCountDown(seconds) {
+        var counter = seconds;
+        var interval = setInterval(() => {
+            counter--;
+            this.skills.forEach(element => {
+                if (element.cooldown < element.maxCooldown)
+                    element.cooldown++;
+            });
+            if (counter < 0) {
+                // code here will run when the counter reaches zero.
+                if (this.owner.fighter.hp == 0) {
+                    clearInterval(interval);
+                    deathFunction_1.deathFunction(this.owner);
+                }
+                else {
+                    counter = this.owner.maxStamina;
+                    this.act();
+                }
+            }
+        }, 100);
+    }
+    act() {
+        let player = this.owner._map.getPlayer();
+        if (player == undefined)
+            return;
+        let dist = Math.sqrt(Math.pow((player.x - this.owner.x), 2) + Math.pow((player.y - this.owner.y), 2));
+        if (dist < this.owner.sight) {
+            this.owner.hunt(player);
+            if (dist <= 5 && (this.owner.x == player.x || this.owner.y == player.y)) {
+                skilllist_1.hug(this.owner, player, 0);
+            }
+        }
+        else {
+            this.owner.wander();
+        }
+    }
+}
+exports.DummyTarget = DummyTarget;
+
+
+/***/ }),
+
 /***/ "./src/content/monsters/fungi.ts":
 /*!***************************************!*\
   !*** ./src/content/monsters/fungi.ts ***!
@@ -7858,7 +7962,7 @@ class Game {
         this._screenHeight = 40;
         this._entities = [];
         this.timer = true;
-        this.level = 5;
+        this.level = 0;
         this.blinkLevel = 0;
         this.lang = "En";
         this.mainmenuOpt = 0;
@@ -8180,7 +8284,7 @@ const fighter_1 = __webpack_require__(/*! ../components/fighter */ "./src/compon
 const boss_1 = __webpack_require__(/*! ../../logo/boss */ "./logo/boss.ts");
 const angel_1 = __webpack_require__(/*! ../content/bosses/angel */ "./src/content/bosses/angel.ts");
 function CreateBoss(monster_choice, x, y, dungeon_level) {
-    let fighter_component = new fighter_1.Fighter(1, 1, 1, 1);
+    let fighter_component = new fighter_1.Fighter(1000, 1, 10, 1000);
     let skin = boss_1.Boss();
     let ai_component = new angel_1.Angel(); //new Fungi();
     let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('!', [0, 0, 0], [0, 153, 255]), 'angel', 10, true, 3, 2, fighter_component, ai_component, false, undefined, undefined, undefined, undefined, undefined, undefined, skin);
@@ -8389,6 +8493,7 @@ const wyvern_1 = __webpack_require__(/*! ../content/monsters/wyvern */ "./src/co
 const dragon_1 = __webpack_require__(/*! ../content/monsters/dragon */ "./src/content/monsters/dragon.ts");
 const randperc_1 = __webpack_require__(/*! ./randperc */ "./src/helper/randperc.ts");
 const crawler_1 = __webpack_require__(/*! ../content/monsters/crawler */ "./src/content/monsters/crawler.ts");
+const dummyTarget_1 = __webpack_require__(/*! ../content/monsters/dummyTarget */ "./src/content/monsters/dummyTarget.ts");
 function CreateMonster(monster_choice, x, y, dungeon_level) {
     let dl = dungeon_level / 10;
     let qHp = randperc_1.randperc(100) + 0.2 + dl;
@@ -8406,6 +8511,12 @@ function CreateMonster(monster_choice, x, y, dungeon_level) {
         let fighter_component = new fighter_1.Fighter(40 + 40 * qHp, 2 + 2 * qDef, 4 + 4 * qAtk, 35 + 35 * qExp);
         let ai_component = new orc_1.Orc();
         let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', [0, 0, 0], [0, 128, 0]), 'Orc', 1, true, 4, 2, fighter_component, ai_component);
+        return monster;
+    }
+    else if (monster_choice == 'dummy') {
+        let fighter_component = new fighter_1.Fighter(40 + 40 * qHp, 0, 0 * qAtk, 0);
+        let ai_component = new dummyTarget_1.DummyTarget();
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('☺', [0, 0, 0], [128, 128, 0]), 'Dummy', 1, true, 4, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'troll') {
@@ -9237,7 +9348,7 @@ class Map {
         }
         return player;
     }
-    addEntityToMap() {
+    addEntityToMap(mapType) {
         let max_monsters_per_room = randFromLevel_1.from_dungeon_level([[30, 1], [40, 4], [40, 6]], this.dungeon_level);
         let max_items_per_room = randFromLevel_1.from_dungeon_level([[10, 1], [15, 4]], this.dungeon_level);
         let number_of_monsters = randint_1.randint(Math.ceil(max_monsters_per_room / (1.5)), max_monsters_per_room);
@@ -9259,6 +9370,11 @@ class Map {
             }
             if (emptyspace == true) {
                 let monster_choice = randFromLevel_1.random_choice_from_dict(monster_chances);
+                if (mapType == 'dungeon') {
+                    while (monster_choice == 'fungi' || monster_choice == 'ranger') {
+                        monster_choice = randFromLevel_1.random_choice_from_dict(monster_chances);
+                    }
+                }
                 let q = createMonters_1.CreateMonster(monster_choice, x, y, this.dungeon_level);
                 q._map = this;
                 this._entities.push(q);
@@ -9496,6 +9612,7 @@ const dungeonMaze_1 = __webpack_require__(/*! ./helper/dungeonMaze */ "./src/hel
 const createItens_1 = __webpack_require__(/*! ./helper/createItens */ "./src/helper/createItens.ts");
 const exit_1 = __webpack_require__(/*! ./content/itens/exit */ "./src/content/itens/exit.ts");
 const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
+const createMonters_1 = __webpack_require__(/*! ./helper/createMonters */ "./src/helper/createMonters.ts");
 function startScreen() {
     //Game.Screen.startScreen = {
     return {
@@ -9527,9 +9644,10 @@ function startScreen() {
                 display.drawText((game._screenWidth / 2) - 1, game._screenHeight - 5, "%c{yellow}>Eng%c{}      Port");
             if (game.mainmenuOpt == 1)
                 display.drawText((game._screenWidth / 2), game._screenHeight - 5, "Eng     %c{yellow}>Port%c{}");
-            display.drawText((game._screenWidth / 10), game._screenHeight - 3, "%c{yellow}Arrow%c{}: move");
-            display.drawText((game._screenWidth / 10), game._screenHeight - 2, "%c{yellow}Enter%c{}: pickup");
-            display.drawText((game._screenWidth / 10), game._screenHeight - 1, "%c{yellow}Space%c{}: skill");
+            display.drawText((game._screenWidth / 10), game._screenHeight - 4, "%c{yellow}Arrow%c{}: move");
+            display.drawText((game._screenWidth / 10), game._screenHeight - 3, "%c{yellow}Enter%c{}: pickup");
+            display.drawText((game._screenWidth / 10), game._screenHeight - 2, "%c{yellow}Space%c{}: skill");
+            display.drawText((game._screenWidth / 10), game._screenHeight - 1, "%c{yellow}P Key%c{}: use potion");
         },
         handleInput: (inputType, inputData, game) => {
             // When [Enter] is pressed, go to the play screen
@@ -9601,7 +9719,7 @@ function debugScreen() {
             //let knifeItem = new Entity()
             game.timer = true;
             //game.startCountDown();
-            game._map.addEntityToMap();
+            game._map.addEntityToMap('cave');
             game._entities = game._map._entities;
         },
         exit: () => {
@@ -9708,6 +9826,9 @@ function playScreen() {
                 let exit = new exit_1.Exit(game._map);
                 let newex = new entity_1.Entity(10, 2, new glyph_1.Glyph("⍝", [0, 0, 0], [20, 150, 200]), "saida", 1, false, -1, 2, undefined, undefined, false, undefined, undefined, undefined, exit);
                 game._map._entities.push(newex);
+                let dummy = createMonters_1.CreateMonster('dummy', 10, 5, 1);
+                dummy._map = game._map;
+                game._map._entities.push(dummy);
                 let posx = [6, 10, 14];
                 let posy = [12, 10, 12];
                 for (let i = 0; i < 3; i++) {
@@ -9728,21 +9849,26 @@ function playScreen() {
                 game._entities = game._map._entities;
                 return;
             }
+            let mapType = '';
             if (game.level > 0 && game.level <= 2) {
                 corr = createCave(game);
+                mapType = 'cave';
                 if (game.level == 1)
                     corr = 1;
             }
             if (game.level > 2 && game.level <= 4) {
                 if (Math.random() * 100 < 51) {
                     corr = createCave(game);
+                    mapType = 'cave';
                 }
                 else {
                     corr = createDungeon(game);
+                    mapType = 'dungeon';
                 }
             }
             if (game.level >= 5 && game.level < 7) {
                 corr = createDungeon(game);
+                mapType = 'dungeon';
             }
             if (game.level == 7) {
                 game.switchScreen(winScreen);
@@ -9789,11 +9915,11 @@ function playScreen() {
             //game.startCountDown();
             if (corr) {
                 game._map.dungeon_level = game.level;
-                game._map.addEntityToMap();
+                game._map.addEntityToMap(mapType);
             }
             else {
                 game._map.dungeon_level = game.level + 2;
-                game._map.addEntityToMap();
+                game._map.addEntityToMap(mapType);
                 game._map.dungeon_level -= 2;
             }
             game._entities = game._map._entities;
@@ -9891,9 +10017,10 @@ function playScreen() {
                 }
             }
             if (game.level == 0) {
-                display.drawText((game._screenWidth / 10), game._screenHeight - 3, "%c{yellow}Arrow%c{}: move");
-                display.drawText((game._screenWidth / 10), game._screenHeight - 2, "%c{yellow}Enter%c{}: pickup");
-                display.drawText((game._screenWidth / 10), game._screenHeight - 1, "%c{yellow}Space%c{}: skill");
+                display.drawText((game._screenWidth / 10), game._screenHeight - 4, "%c{yellow}Arrow%c{}: move");
+                display.drawText((game._screenWidth / 10), game._screenHeight - 3, "%c{yellow}Enter%c{}: pickup");
+                display.drawText((game._screenWidth / 10), game._screenHeight - 2, "%c{yellow}Space%c{}: skill");
+                display.drawText((game._screenWidth / 10), game._screenHeight - 1, "%c{yellow}P Key%c{}: use potion");
             }
         },
         handleInput: (inputType, inputData, game) => {

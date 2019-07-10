@@ -5,10 +5,10 @@ import { deathFunction } from "../../helper/deathFunction";
 import { DamageBlock } from "../../components/damageBlock";
 import { createDamageBlock } from "../../helper/createDamageBlock";
 import { skilllist, poison_cloud, poison_shield } from "../../components/skilllist"
-import { angel_ring } from "../../components/bossSkills";
+import { angel_ring, angel_tri } from "../../components/bossSkills";
 
 export class Angel implements Enemy {
-    skill_bonus: number = 1;
+    skill_bonus: number = 3;
     owner: Entity;
     skills: skilllist[];
     dir: number[];
@@ -20,7 +20,7 @@ export class Angel implements Enemy {
             maxCooldown: 15
         },
         {
-            name: 'angel star',
+            name: 'angel lance',
             cooldown: 5,
             maxCooldown: 15
         }]
@@ -53,11 +53,15 @@ export class Angel implements Enemy {
         let player = this.owner._map.getPlayer();
         if (player == undefined) return;
         let dist = Math.sqrt( (player.x - this.owner.x)**2+(player.y - this.owner.y)**2 );
-        console.log('move boss');
         this.dir = this.owner.angelMove(this.dir[0], this.dir[1], this.owner._map);
         if (this.skills[0].cooldown >= this.skills[0].maxCooldown) {
             angel_ring(this.owner, player, this.skill_bonus);
-            this.skills[0].cooldown = 0
+            this.skills[0].cooldown = 0;
+        }
+
+        if (this.skills[1].cooldown >= this.skills[1].maxCooldown) {
+            angel_tri(this.owner, player, this.skill_bonus);
+            this.skills[1].cooldown = 0;
         }
         // if (dist < this.owner.sight*1.4) {
         //     if (this.skills[0].cooldown >= this.skills[0].maxCooldown) {

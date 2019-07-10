@@ -9,6 +9,7 @@ import { Wyvern } from "../content/monsters/wyvern";
 import { Dragon } from "../content/monsters/dragon";
 import { randperc } from "./randperc";
 import { Crawler } from "../content/monsters/crawler";
+import { DummyTarget } from "../content/monsters/dummyTarget";
 
 export function CreateMonster(monster_choice: string, x: number, y: number, dungeon_level: number): Entity{
     let dl = dungeon_level/10;
@@ -28,6 +29,12 @@ export function CreateMonster(monster_choice: string, x: number, y: number, dung
         let fighter_component = new Fighter(40+40*qHp, 2+2*qDef, 4+4*qAtk, 35+35*qExp)
         let ai_component = new Orc();
         let monster = new Entity(x, y, new Glyph('o', [0,0,0], [0, 128, 0]), 'Orc', 1, true, 4, 2, fighter_component, ai_component);
+        return monster;
+    }
+    else if (monster_choice == 'dummy') {
+        let fighter_component = new Fighter(40+40*qHp, 0, 0*qAtk, 0)
+        let ai_component = new DummyTarget();
+        let monster = new Entity(x, y, new Glyph('☺', [0,0,0], [128, 128, 0]), 'Dummy', 1, true, 4, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'troll') {
