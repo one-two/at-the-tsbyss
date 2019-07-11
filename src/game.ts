@@ -201,13 +201,8 @@ export class Game {
 			} else {
 				this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Potions: %c{}"+ this._player.inventory + " [p]");
 			}
-			this._inventory.drawText(1, 29, "%c{rgb(140, 140, 160)}posdebug: %c{}"+ this._player.x + " " + this._player.y);
-			this._inventory.drawText(1, 30, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
-			this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}exit: %c{}"+ this._map.dungeon_level);
-			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}32: %c{}"+ this._map.dungeon_level);
-			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
-			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
-			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
+			//this._inventory.drawText(1, 29, "%c{rgb(140, 140, 160)}posdebug: %c{}"+ this._player.x + " " + this._player.y);
+			this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
 		}
 		else if (this.lang = "Pt") {
 			this._inventory.drawText(1, 3, "%c{rgb(255,0,0)}PV: %c{}" +hp + "/" +max_hp);
@@ -257,8 +252,8 @@ export class Game {
 				this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Poções: %c{}"+ this._player.inventory + " [p]");
 			}
 
-			this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Pos: %c{}"+ this._player.x + " " + this._player.y);
-			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
+			//this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Pos: %c{}"+ this._player.x + " " + this._player.y);
+			this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
 		}
 		
 	}

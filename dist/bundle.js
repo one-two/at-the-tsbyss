@@ -7955,13 +7955,9 @@ exports.Entity = Entity;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = __webpack_require__(/*! ../lib/index */ "./lib/index.js");
-const entity_1 = __webpack_require__(/*! ./entity */ "./src/entity.ts");
 const screens_1 = __webpack_require__(/*! ./screens */ "./src/screens.ts");
-const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
-const fighter_1 = __webpack_require__(/*! ./components/fighter */ "./src/components/fighter.ts");
 const messages_1 = __webpack_require__(/*! ./messages */ "./src/messages.ts");
 const logo_1 = __webpack_require__(/*! ../logo/logo */ "./logo/logo.ts");
-const createItens_1 = __webpack_require__(/*! ./helper/createItens */ "./src/helper/createItens.ts");
 class Game {
     constructor() {
         this._messageBoxSize = 10;
@@ -8121,13 +8117,8 @@ class Game {
             else {
                 this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Potions: %c{}" + this._player.inventory + " [p]");
             }
-            this._inventory.drawText(1, 29, "%c{rgb(140, 140, 160)}posdebug: %c{}" + this._player.x + " " + this._player.y);
-            this._inventory.drawText(1, 30, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
-            this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}exit: %c{}" + this._map.dungeon_level);
-            this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}32: %c{}" + this._map.dungeon_level);
-            this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
-            this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
-            this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
+            //this._inventory.drawText(1, 29, "%c{rgb(140, 140, 160)}posdebug: %c{}"+ this._player.x + " " + this._player.y);
+            this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
         }
         else if (this.lang = "Pt") {
             this._inventory.drawText(1, 3, "%c{rgb(255,0,0)}PV: %c{}" + hp + "/" + max_hp);
@@ -8174,8 +8165,8 @@ class Game {
             else {
                 this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Poções: %c{}" + this._player.inventory + " [p]");
             }
-            this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Pos: %c{}" + this._player.x + " " + this._player.y);
-            this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
+            //this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Pos: %c{}"+ this._player.x + " " + this._player.y);
+            this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
         }
     }
     switchScreen(screen) {
@@ -8222,16 +8213,6 @@ exports.Game = Game;
 window.onload = function () {
     let game = new Game();
     // Initialize the game
-    let fighter = new fighter_1.Fighter(100, 1, 4, 0);
-    let player = new entity_1.Entity(60, 45, new glyph_1.Glyph('@', [0, 0, 0], [0, 191, 255]), 'The Princess', 1, true, 1, 1, fighter, undefined, true);
-    player.fighter.unspentPoints = 2;
-    game._player = player;
-    game._entities = [game._player];
-    //let knife = new Knife();
-    //knife.owner = game._player;
-    //game._player.equipment = CreateItem('knife', game._player.x, game._player.y).item;
-    game._player.equipStart(createItens_1.CreateItem('knife', game._player.x, game._player.y, 1));
-    game._player.equipment.owner = game._player;
     game.init();
     // Add the container to our HTML page
     let doc = document.getElementById("game");
@@ -8519,7 +8500,7 @@ function CreateMonster(monster_choice, x, y, dungeon_level) {
         return monster;
     }
     else if (monster_choice == 'dummy') {
-        let fighter_component = new fighter_1.Fighter(40 + 40 * qHp, 0, 100 + 100 * qAtk, 0);
+        let fighter_component = new fighter_1.Fighter(40 + 40 * qHp, 0, 0 + 0 * qAtk, 0);
         let ai_component = new dummyTarget_1.DummyTarget();
         let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('☺', [0, 0, 0], [128, 128, 0]), 'Dummy', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
@@ -9639,7 +9620,7 @@ function startScreen() {
             console.log("Exited start screen.");
         },
         render: (display, game) => {
-            display.drawText(0, 0, "%c{rgb(50, 50, 50)}Alpha: v.190710");
+            display.drawText(0, 0, "%c{rgb(70, 70, 70)}Beta: v.190711");
             let y = 8;
             for (const line of game.logo) {
                 display.drawText(10, y, line);
@@ -9660,9 +9641,9 @@ function startScreen() {
                 display.drawText((game._screenWidth / 2) - 1, game._screenHeight - 5, "%c{yellow}>Eng%c{}      Port");
             if (game.mainmenuOpt == 1)
                 display.drawText((game._screenWidth / 2), game._screenHeight - 5, "Eng     %c{yellow}>Port%c{}");
-            display.drawText((game._screenWidth / 10), game._screenHeight - 4, "%c{yellow}Arrow%c{}: move");
-            display.drawText((game._screenWidth / 10), game._screenHeight - 3, "%c{yellow}Enter%c{}: pickup");
-            display.drawText((game._screenWidth / 10), game._screenHeight - 2, "%c{yellow}Space%c{}: skill");
+            display.drawText((game._screenWidth / 10), game._screenHeight - 4, "%c{yellow}Arrow%c{}: move/attack");
+            display.drawText((game._screenWidth / 10), game._screenHeight - 3, "%c{yellow}Enter%c{}: pickup itens/open door");
+            display.drawText((game._screenWidth / 10), game._screenHeight - 2, "%c{yellow}Space%c{}: use weapon skill");
             display.drawText((game._screenWidth / 10), game._screenHeight - 1, "%c{yellow}P Key%c{}: use potion");
         },
         handleInput: (inputType, inputData, game) => {
@@ -10033,9 +10014,9 @@ function playScreen() {
                 }
             }
             if (game.level == 0) {
-                display.drawText((game._screenWidth / 10), game._screenHeight - 4, "%c{yellow}Arrow%c{}: move");
-                display.drawText((game._screenWidth / 10), game._screenHeight - 3, "%c{yellow}Enter%c{}: pickup");
-                display.drawText((game._screenWidth / 10), game._screenHeight - 2, "%c{yellow}Space%c{}: skill");
+                display.drawText((game._screenWidth / 10), game._screenHeight - 4, "%c{yellow}Arrow%c{}: move/attack");
+                display.drawText((game._screenWidth / 10), game._screenHeight - 3, "%c{yellow}Enter%c{}: pickup itens/open door");
+                display.drawText((game._screenWidth / 10), game._screenHeight - 2, "%c{yellow}Space%c{}: use weapon skill");
                 display.drawText((game._screenWidth / 10), game._screenHeight - 1, "%c{yellow}P Key%c{}: use potion");
             }
         },

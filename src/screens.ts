@@ -55,9 +55,9 @@ export function startScreen() {
             if (game.mainmenuOpt == 0) display.drawText((game._screenWidth/2)-1,game._screenHeight-5, "%c{yellow}>Eng%c{}      Port");
             if (game.mainmenuOpt == 1) display.drawText((game._screenWidth/2),game._screenHeight-5, "Eng     %c{yellow}>Port%c{}"); 
 
-            display.drawText((game._screenWidth/10),game._screenHeight-4, "%c{yellow}Arrow%c{}: move"); 
-            display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Enter%c{}: pickup"); 
-            display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}Space%c{}: skill"); 
+            display.drawText((game._screenWidth/10),game._screenHeight-4, "%c{yellow}Arrow%c{}: move/attack"); 
+            display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Enter%c{}: pickup itens/open door"); 
+            display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}Space%c{}: use weapon skill"); 
             display.drawText((game._screenWidth/10),game._screenHeight-1, "%c{yellow}P Key%c{}: use potion"); 
             
         },
@@ -486,9 +486,9 @@ export function playScreen() {
 
 
             if (game.level == 0) {
-                display.drawText((game._screenWidth/10),game._screenHeight-4, "%c{yellow}Arrow%c{}: move"); 
-                display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Enter%c{}: pickup"); 
-                display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}Space%c{}: skill"); 
+                display.drawText((game._screenWidth/10),game._screenHeight-4, "%c{yellow}Arrow%c{}: move/attack"); 
+                display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Enter%c{}: pickup itens/open door"); 
+                display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}Space%c{}: use weapon skill"); 
                 display.drawText((game._screenWidth/10),game._screenHeight-1, "%c{yellow}P Key%c{}: use potion"); 
             }
         },
