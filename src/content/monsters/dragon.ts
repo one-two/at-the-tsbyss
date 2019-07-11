@@ -14,8 +14,8 @@ export class Dragon implements Enemy {
     constructor() {
         this.skills = [{
             name: 'fire breath',
-            cooldown: 10,
-            maxCooldown: 10
+            cooldown: 12,
+            maxCooldown: 12
         },
         {
             name: 'flamestrike',

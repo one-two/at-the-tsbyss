@@ -37,6 +37,9 @@ export class Game {
 	blinkLevel: number = 0;
 	lang: string = "En";
 	mainmenuOpt:number = 0;
+	endMessage: string= "[A] n d  s o . . . w e  f a l l  a g a i n . . .";
+	iControl:number = 0;
+	clr = 255;
 
 	constructor() {
 		this._centerX = 0;
@@ -254,12 +257,7 @@ export class Game {
 				this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Poções: %c{}"+ this._player.inventory + " [p]");
 			}
 
-			this._inventory.drawText(1, 29, "%c{rgb(140, 140, 160)}29: %c{}"+ this._player.x + " " + this._player.y);
-			this._inventory.drawText(1, 30, "%c{rgb(140, 140, 160)}30: %c{}"+ this._map.dungeon_level);
-			this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}31: %c{}"+ this._map.dungeon_level);
-			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}32: %c{}"+ this._map.dungeon_level);
-			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
-			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
+			this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Pos: %c{}"+ this._player.x + " " + this._player.y);
 			this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
 		}
 		
@@ -312,16 +310,7 @@ export class Game {
 window.onload = function() {
 	let game = new Game();
 	// Initialize the game
-	let fighter = new Fighter(100, 1, 4, 0);
-	let player = new Entity(60, 45, new Glyph('@', [0,0,0], [0, 191, 255]), 'The Princess', 1, true, 1, 1, fighter, undefined, true);
-	player.fighter.unspentPoints = 2;
-	game._player = player
-	game._entities = [game._player];
-	//let knife = new Knife();
-	//knife.owner = game._player;
-	//game._player.equipment = CreateItem('knife', game._player.x, game._player.y).item;
-	game._player.equipStart(CreateItem('knife', game._player.x, game._player.y, 1));
-	game._player.equipment.owner = game._player;
+
 	game.init();
 	// Add the container to our HTML page
 	let doc = document.getElementById("game");

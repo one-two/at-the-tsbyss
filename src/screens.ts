@@ -13,18 +13,29 @@ import { CreateItem } from "./helper/createItens";
 import { Exit } from "./content/itens/exit";
 import { Glyph } from "./glyph";
 import { CreateMonster } from "./helper/createMonters";
+import { Fighter } from "./components/fighter";
 
 export function startScreen() {
     //Game.Screen.startScreen = {
     return {
-        enter : () => {
+        enter : (game: Game) => {
+            let fighter = new Fighter(100, 1, 4, 0);
+            let player = new Entity(60, 45, new Glyph('@', [0,0,0], [0, 191, 255]), 'The Princess', 1, true, 1, 1, fighter, undefined, true);
+            player.fighter.unspentPoints = 2;
+            game._player = player
+            game._entities = [game._player];
+            //let knife = new Knife();
+            //knife.owner = game._player;
+            //game._player.equipment = CreateItem('knife', game._player.x, game._player.y).item;
+            game._player.equipStart(CreateItem('knife', game._player.x, game._player.y, 1));
+            game._player.equipment.owner = game._player;
             console.log('enter');
         },
         exit : () => { 
             console.log("Exited start screen."); 
         },
         render : (display : any, game: Game) => {
-            display.drawText(0,0, "%c{rgb(50, 50, 50)}Alpha: v.190710");
+            display.drawText(0,0, "%c{rgb(70, 70, 70)}Beta: v.190711");
             let y = 8;
             for (const line of game.logo) {
                 display.drawText(10,y, line);
@@ -712,14 +723,32 @@ export function loseScreen() {
     return {
         enter : () => {    console.log("Entered lose screen."); },
         exit : () => { console.log("Exited lose screen."); },
-        render : (display: any) => {
+        render : (display: Display, game: Game) => {
             // Render our prompt to the screen
-            for (var i = 0; i < 22; i++) {
-                display.drawText(2, i + 1, "%b{red}You lose! :(");
+            let message = "[A] n d  s o . . . w e  f a l l  a g a i n . . . ?";
+            for (let index = 0; index < game.iControl; index++) {
+                display.draw(index+15, 10+( index > 18? 1 : 0 )*20, message[index], Color.toRGB([game.clr, game.clr, game.clr]), Color.toRGB([0,0,0]))
+                game.clr -= 5;
             }
+            if (game.iControl <= message.length) {
+                game.iControl += 1;
+            }
+            game.clr = 255;
+
+
+
+            // for (var i = 0; i < 22; i++) {
+            //     display.drawText(2, i + 1, "%b{red}You lose! :(");
+            // }
         },
-        handleInput : (inputType: any, inputData: any) => {
-            // Nothing to do here      
+        handleInput : (inputType: any, inputData: any, game: Game) => {
+            if (inputType === "keydown") {
+                if (inputData.keyCode === KEYS.VK_A || inputData.keyCode === KEYS.VK_R || inputData.keyCode === KEYS.VK_RETURN) {
+                    game.switchScreen(game.Screen.startScreen);
+                    game.clr = 255;
+                    game.iControl = 0;
+                }
+            }     
         }
     }
 }

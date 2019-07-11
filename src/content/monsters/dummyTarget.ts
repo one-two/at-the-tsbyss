@@ -12,8 +12,8 @@ export class DummyTarget implements Enemy {
     constructor() {
         this.skills = [{
             name: 'hug',
-            cooldown: 20,
-            maxCooldown: 20
+            cooldown: 10,
+            maxCooldown: 10
         }]
     }
 
@@ -46,7 +46,10 @@ export class DummyTarget implements Enemy {
         if (dist < this.owner.sight) {
             this.owner.hunt(player);
             if (dist <= 5 && (this.owner.x == player.x || this.owner.y == player.y)) {
-                hug(this.owner, player, 0);
+                if (this.skills[0].cooldown >= this.skills[0].maxCooldown) { 
+                    hug(this.owner, player, 0);
+                    this.skills[0].cooldown = 0;
+                }
             }
         } else {
             this.owner.wander();

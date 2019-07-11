@@ -14,8 +14,8 @@ export class Fungi implements Enemy {
     constructor() {
         this.skills = [{
             name: 'poison cloud',
-            cooldown: 10,
-            maxCooldown: 10
+            cooldown: 14,
+            maxCooldown: 14
         },
         {
             name: 'poison shield',

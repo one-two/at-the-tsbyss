@@ -12,8 +12,8 @@ export class Wyvern implements Enemy {
     constructor() {
         this.skills = [{
             name: 'windBlow',
-            cooldown: 8,
-            maxCooldown: 8
+            cooldown: 12,
+            maxCooldown: 12
         }]
     }
 

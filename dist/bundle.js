@@ -7085,8 +7085,8 @@ class Dragon {
         this.skill_bonus = 5;
         this.skills = [{
                 name: 'fire breath',
-                cooldown: 10,
-                maxCooldown: 10
+                cooldown: 12,
+                maxCooldown: 12
             },
             {
                 name: 'flamestrike',
@@ -7161,8 +7161,8 @@ class DummyTarget {
         this.skill_bonus = 0;
         this.skills = [{
                 name: 'hug',
-                cooldown: 20,
-                maxCooldown: 20
+                cooldown: 10,
+                maxCooldown: 10
             }];
     }
     startCountDown(seconds) {
@@ -7194,7 +7194,10 @@ class DummyTarget {
         if (dist < this.owner.sight) {
             this.owner.hunt(player);
             if (dist <= 5 && (this.owner.x == player.x || this.owner.y == player.y)) {
-                skilllist_1.hug(this.owner, player, 0);
+                if (this.skills[0].cooldown >= this.skills[0].maxCooldown) {
+                    skilllist_1.hug(this.owner, player, 0);
+                    this.skills[0].cooldown = 0;
+                }
             }
         }
         else {
@@ -7224,8 +7227,8 @@ class Fungi {
         this.skill_bonus = 1;
         this.skills = [{
                 name: 'poison cloud',
-                cooldown: 10,
-                maxCooldown: 10
+                cooldown: 14,
+                maxCooldown: 14
             },
             {
                 name: 'poison shield',
@@ -7449,8 +7452,8 @@ class Troll {
         this.skill_bonus = 1.5;
         this.skills = [{
                 name: 'smash',
-                cooldown: 12,
-                maxCooldown: 12
+                cooldown: 16,
+                maxCooldown: 16
             }];
     }
     startCountDown(seconds) {
@@ -7512,8 +7515,8 @@ class Wyvern {
         this.skill_bonus = 1.5;
         this.skills = [{
                 name: 'windBlow',
-                cooldown: 8,
-                maxCooldown: 8
+                cooldown: 12,
+                maxCooldown: 12
             }];
     }
     startCountDown(seconds) {
@@ -7610,6 +7613,7 @@ class Entity {
             this.ai.owner = this;
             this.ai.startCountDown(this.maxStamina);
             this.sight = 10;
+            this.startAttackCountDown();
         }
         else
             this.sight = 12; //12
@@ -7658,7 +7662,10 @@ class Entity {
                     }
                 }
                 else {
-                    this.attack(targets);
+                    if (this.cooldown == 0) {
+                        this.attack(targets);
+                        this.cooldown = 20;
+                    }
                 }
             }
         }
@@ -7966,6 +7973,9 @@ class Game {
         this.blinkLevel = 0;
         this.lang = "En";
         this.mainmenuOpt = 0;
+        this.endMessage = "[A] n d  s o . . . w e  f a l l  a g a i n . . .";
+        this.iControl = 0;
+        this.clr = 255;
         this._centerX = 0;
         this._centerY = 0;
         this._display = null;
@@ -8164,12 +8174,7 @@ class Game {
             else {
                 this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Poções: %c{}" + this._player.inventory + " [p]");
             }
-            this._inventory.drawText(1, 29, "%c{rgb(140, 140, 160)}29: %c{}" + this._player.x + " " + this._player.y);
-            this._inventory.drawText(1, 30, "%c{rgb(140, 140, 160)}30: %c{}" + this._map.dungeon_level);
-            this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}31: %c{}" + this._map.dungeon_level);
-            this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}32: %c{}" + this._map.dungeon_level);
-            this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
-            this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
+            this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Pos: %c{}" + this._player.x + " " + this._player.y);
             this._inventory.drawText(1, 32, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
         }
     }
@@ -8504,37 +8509,37 @@ function CreateMonster(monster_choice, x, y, dungeon_level) {
     if (monster_choice == 'fungi') {
         let fighter_component = new fighter_1.Fighter(30 + 30 * qHp, 2 + 2 * qDef, 4 + 4 * qAtk, 25 + 25 * qExp);
         let ai_component = new fungi_1.Fungi();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('f', [0, 0, 0], [0, 200, 0]), 'Fungi', 1, true, 6, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('f', [0, 0, 0], [0, 200, 0]), 'Fungi', 1, true, 8, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'orc') {
         let fighter_component = new fighter_1.Fighter(40 + 40 * qHp, 2 + 2 * qDef, 4 + 4 * qAtk, 35 + 35 * qExp);
         let ai_component = new orc_1.Orc();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', [0, 0, 0], [0, 128, 0]), 'Orc', 1, true, 4, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', [0, 0, 0], [0, 128, 0]), 'Orc', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'dummy') {
-        let fighter_component = new fighter_1.Fighter(40 + 40 * qHp, 0, 0 * qAtk, 0);
+        let fighter_component = new fighter_1.Fighter(40 + 40 * qHp, 0, 100 + 100 * qAtk, 0);
         let ai_component = new dummyTarget_1.DummyTarget();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('☺', [0, 0, 0], [128, 128, 0]), 'Dummy', 1, true, 4, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('☺', [0, 0, 0], [128, 128, 0]), 'Dummy', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'troll') {
         let fighter_component = new fighter_1.Fighter(90 + 90 * qHp, 3 + 3 * qDef, 8 + 8 * qAtk, 60 + 60 * qExp);
         let ai_component = new troll_1.Troll();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('t', [0, 0, 0], [128, 0, 128]), 'Troll', 1, true, 4, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('t', [0, 0, 0], [128, 0, 128]), 'Troll', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'wyvern') {
         let fighter_component = new fighter_1.Fighter(30 + 30 * qHp, 2 + 2 * qDef, 5 + 5 * qAtk, 20 + 20 * qExp);
         let ai_component = new wyvern_1.Wyvern();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('w', [0, 0, 0], [148, 0, 211]), 'Wyvern', 1, true, 3, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('w', [0, 0, 0], [148, 0, 211]), 'Wyvern', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'ranger') {
         let fighter_component = new fighter_1.Fighter(40 + 40 * qHp, 3 + 3 * qDef, 8 + 8 * qAtk, 40 + 40 * qExp);
         let ai_component = new ranger_1.Ranger(); //Ranger()
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('r', [0, 0, 0], [233, 150, 122]), 'Ranger', 1, true, 3, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('r', [0, 0, 0], [233, 150, 122]), 'Ranger', 1, true, 5, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'crawler') {
@@ -9613,17 +9618,28 @@ const createItens_1 = __webpack_require__(/*! ./helper/createItens */ "./src/hel
 const exit_1 = __webpack_require__(/*! ./content/itens/exit */ "./src/content/itens/exit.ts");
 const glyph_1 = __webpack_require__(/*! ./glyph */ "./src/glyph.ts");
 const createMonters_1 = __webpack_require__(/*! ./helper/createMonters */ "./src/helper/createMonters.ts");
+const fighter_1 = __webpack_require__(/*! ./components/fighter */ "./src/components/fighter.ts");
 function startScreen() {
     //Game.Screen.startScreen = {
     return {
-        enter: () => {
+        enter: (game) => {
+            let fighter = new fighter_1.Fighter(100, 1, 4, 0);
+            let player = new entity_1.Entity(60, 45, new glyph_1.Glyph('@', [0, 0, 0], [0, 191, 255]), 'The Princess', 1, true, 1, 1, fighter, undefined, true);
+            player.fighter.unspentPoints = 2;
+            game._player = player;
+            game._entities = [game._player];
+            //let knife = new Knife();
+            //knife.owner = game._player;
+            //game._player.equipment = CreateItem('knife', game._player.x, game._player.y).item;
+            game._player.equipStart(createItens_1.CreateItem('knife', game._player.x, game._player.y, 1));
+            game._player.equipment.owner = game._player;
             console.log('enter');
         },
         exit: () => {
             console.log("Exited start screen.");
         },
         render: (display, game) => {
-            display.drawText(0, 0, "%c{rgb(50, 50, 50)}Alpha: v.1971");
+            display.drawText(0, 0, "%c{rgb(50, 50, 50)}Alpha: v.190710");
             let y = 8;
             for (const line of game.logo) {
                 display.drawText(10, y, line);
@@ -9870,10 +9886,10 @@ function playScreen() {
                 corr = createDungeon(game);
                 mapType = 'dungeon';
             }
-            if (game.level == 7) {
+            if (game.level == 8) {
                 game.switchScreen(winScreen);
             }
-            if (game.level == 8) {
+            if (game.level == 7) {
                 createArena(game);
                 game._player.x = 10;
                 game._player.x2 = 10;
@@ -9950,7 +9966,7 @@ function playScreen() {
             let topLeftY = Math.max(0, player.y - (screenHeight / 2));
             // Make sure we still have enough space to fit an entire game screen
             topLeftY = Math.min(topLeftY, game._map._height - screenHeight);
-            if (game.level % 8 != 0) {
+            if (game.level % 7 != 0) {
                 for (let x = topLeftX; x < topLeftX + screenWidth; x++) {
                     for (let y = topLeftY; y < topLeftY + screenHeight; y++) {
                         // Fetch the glyph for the tile and render it to the screen
@@ -9976,7 +9992,7 @@ function playScreen() {
             removeExpiredDamage(game._entities);
             game._map._entities = entityRenderSort(game);
             game._entities = game._map._entities;
-            if (game.level % 8 != 0) {
+            if (game.level % 7 != 0) {
                 for (let i = game._entities.length - 1; i >= 0; i--) {
                     let cell = game._map.getTile(game._entities[i].x, game._entities[i].y);
                     if (cell.visibility > 0) {
@@ -10265,14 +10281,29 @@ function loseScreen() {
     return {
         enter: () => { console.log("Entered lose screen."); },
         exit: () => { console.log("Exited lose screen."); },
-        render: (display) => {
+        render: (display, game) => {
             // Render our prompt to the screen
-            for (var i = 0; i < 22; i++) {
-                display.drawText(2, i + 1, "%b{red}You lose! :(");
+            let message = "[A] n d  s o . . . w e  f a l l  a g a i n . . . ?";
+            for (let index = 0; index < game.iControl; index++) {
+                display.draw(index + 15, 10 + (index > 18 ? 1 : 0) * 20, message[index], Color.toRGB([game.clr, game.clr, game.clr]), Color.toRGB([0, 0, 0]));
+                game.clr -= 5;
             }
+            if (game.iControl <= message.length) {
+                game.iControl += 1;
+            }
+            game.clr = 255;
+            // for (var i = 0; i < 22; i++) {
+            //     display.drawText(2, i + 1, "%b{red}You lose! :(");
+            // }
         },
-        handleInput: (inputType, inputData) => {
-            // Nothing to do here      
+        handleInput: (inputType, inputData, game) => {
+            if (inputType === "keydown") {
+                if (inputData.keyCode === constants_1.KEYS.VK_A || inputData.keyCode === constants_1.KEYS.VK_R || inputData.keyCode === constants_1.KEYS.VK_RETURN) {
+                    game.switchScreen(game.Screen.startScreen);
+                    game.clr = 255;
+                    game.iControl = 0;
+                }
+            }
         }
     };
 }
@@ -10373,12 +10404,12 @@ const randFromLevel_1 = __webpack_require__(/*! ../helper/randFromLevel */ "./sr
 function monsterProbabilities(dungeon_level) {
     return {
         'fungi': randFromLevel_1.from_dungeon_level([[15, 1]], dungeon_level),
-        'orc': randFromLevel_1.from_dungeon_level([[40, 1], [20, 3], [10, 7]], dungeon_level),
-        'troll': randFromLevel_1.from_dungeon_level([[10, 1], [20, 3], [30, 5], [60, 7]], dungeon_level),
+        'orc': randFromLevel_1.from_dungeon_level([[40, 1], [20, 3], [10, 6]], dungeon_level),
+        'troll': randFromLevel_1.from_dungeon_level([[10, 1], [20, 3], [30, 5], [60, 6]], dungeon_level),
         'wyvern': randFromLevel_1.from_dungeon_level([[5, 1], [20, 2], [30, 3], [50, 5]], dungeon_level),
         'ranger': randFromLevel_1.from_dungeon_level([[5, 1], [15, 2]], dungeon_level),
         'crawler': randFromLevel_1.from_dungeon_level([[10, 2], [20, 5]], dungeon_level),
-        'dragon': randFromLevel_1.from_dungeon_level([[5, 3], [20, 7]], dungeon_level),
+        'dragon': randFromLevel_1.from_dungeon_level([[5, 3], [20, 6]], dungeon_level),
     };
 }
 exports.monsterProbabilities = monsterProbabilities;

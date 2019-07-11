@@ -82,6 +82,7 @@ export class Entity {
             this.ai.owner = this;
             this.ai.startCountDown(this.maxStamina);
             this.sight = 10;
+            this.startAttackCountDown();
         } else this.sight = 12; //12
 
         if (this.fighter != undefined) {
@@ -130,7 +131,10 @@ export class Entity {
                         this.cooldown = 5;
                     }
                 } else {
-                    this.attack(targets);
+                    if (this.cooldown == 0) {
+                        this.attack(targets);
+                        this.cooldown = 20;
+                    }
                 }
             }
         } else {

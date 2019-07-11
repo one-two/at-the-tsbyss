@@ -12,8 +12,8 @@ export class Troll implements Enemy {
     constructor() {
         this.skills = [{
             name: 'smash',
-            cooldown: 12,
-            maxCooldown: 12
+            cooldown: 16,
+            maxCooldown: 16
         }]
     }
 
