@@ -5,15 +5,15 @@ import { deathFunction } from "../../helper/deathFunction";
 import { skilllist, punch } from "../../components/skilllist";
 
 export class Orc implements Enemy {
-    skill_bonus: number = 1.5;
+    skill_bonus: number = 1.1;
     owner: Entity;
     skills: skilllist[];
 
     constructor() {
         this.skills = [{
             name: 'punch',
-            cooldown: 12,
-            maxCooldown: 12
+            cooldown: 18,
+            maxCooldown: 18
         }]
     }
 

@@ -1,7 +1,7 @@
 import { Display, Color } from "../lib/index";
 import { Tile } from "./tiles";
 import { Entity } from "./entity";
-import { playScreen, startScreen, winScreen, loseScreen, debugScreen } from "./screens";
+import { playScreen, startScreen, winScreen, loseScreen, debugScreen, scoreScreen } from "./screens";
 import { KEYS } from "../lib/constants";
 import { Objeto } from "./interface/objeto";
 import { Glyph } from "./glyph";
@@ -40,6 +40,7 @@ export class Game {
 	endMessage: string= "[A] n d  s o . . . w e  f a l l  a g a i n . . .";
 	iControl:number = 0;
 	clr = 255;
+	scores: {name: string, score: string}[] = [];
 
 	constructor() {
 		this._centerX = 0;
@@ -51,7 +52,8 @@ export class Game {
 			debugScreen : debugScreen(),
 			playScreen : playScreen(),
 			winScreen : winScreen(),
-			loseScreen : loseScreen()
+			loseScreen : loseScreen(),
+			scoreScreen : scoreScreen()
 		}
 		this._map = null;
 		this._entities = new Array<Entity>();

@@ -7299,11 +7299,11 @@ const deathFunction_1 = __webpack_require__(/*! ../../helper/deathFunction */ ".
 const skilllist_1 = __webpack_require__(/*! ../../components/skilllist */ "./src/components/skilllist.ts");
 class Orc {
     constructor() {
-        this.skill_bonus = 1.5;
+        this.skill_bonus = 1.1;
         this.skills = [{
                 name: 'punch',
-                cooldown: 12,
-                maxCooldown: 12
+                cooldown: 18,
+                maxCooldown: 18
             }];
     }
     startCountDown(seconds) {
@@ -7449,11 +7449,11 @@ const deathFunction_1 = __webpack_require__(/*! ../../helper/deathFunction */ ".
 const skilllist_1 = __webpack_require__(/*! ../../components/skilllist */ "./src/components/skilllist.ts");
 class Troll {
     constructor() {
-        this.skill_bonus = 1.5;
+        this.skill_bonus = 1.3;
         this.skills = [{
                 name: 'smash',
-                cooldown: 16,
-                maxCooldown: 16
+                cooldown: 20,
+                maxCooldown: 20
             }];
     }
     startCountDown(seconds) {
@@ -7972,6 +7972,7 @@ class Game {
         this.endMessage = "[A] n d  s o . . . w e  f a l l  a g a i n . . .";
         this.iControl = 0;
         this.clr = 255;
+        this.scores = [];
         this._centerX = 0;
         this._centerY = 0;
         this._display = null;
@@ -7981,7 +7982,8 @@ class Game {
             debugScreen: screens_1.debugScreen(),
             playScreen: screens_1.playScreen(),
             winScreen: screens_1.winScreen(),
-            loseScreen: screens_1.loseScreen()
+            loseScreen: screens_1.loseScreen(),
+            scoreScreen: screens_1.scoreScreen()
         };
         this._map = null;
         this._entities = new Array();
@@ -9615,6 +9617,18 @@ function startScreen() {
             game._player.equipStart(createItens_1.CreateItem('knife', game._player.x, game._player.y, 1));
             game._player.equipment.owner = game._player;
             console.log('enter');
+            var http = new XMLHttpRequest();
+            var url = 'http://localhost:3333/api/leaderboard';
+            http.open('GET', url, true);
+            //Send the proper header information along with the request
+            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            http.onreadystatechange = function () {
+                if (http.readyState == 4 && http.status == 200) {
+                    game.scores = JSON.parse(http.responseText).docs;
+                    console.log(game.scores);
+                }
+            };
+            http.send('');
         },
         exit: () => {
             console.log("Exited start screen.");
@@ -9688,6 +9702,20 @@ function startScreen() {
                 }
                 if (inputData.keyCode == 32 && game._entities[0].name.length > 0)
                     game._entities[0].name = game._entities[0].name + " ";
+                if (inputData.keyCode == constants_1.KEYS.VK_Q) {
+                    game.switchScreen(game.Screen.scoreScreen);
+                    // var http = new XMLHttpRequest();
+                    // var url = 'http://localhost:3333/api/leaderboard';
+                    // http.open('GET', url, true);
+                    // //Send the proper header information along with the request
+                    // http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                    // http.onreadystatechange = function() {//Call a function when the state changes.
+                    //     if(http.readyState == 4 && http.status == 200) {
+                    //         alert(http.responseText);
+                    //     }
+                    // }
+                    // http.send('');
+                }
             }
         }
     };
@@ -10260,7 +10288,20 @@ exports.winScreen = winScreen;
 // Define our winning screen
 function loseScreen() {
     return {
-        enter: () => { console.log("Entered lose screen."); },
+        enter: (game) => {
+            console.log("Entered lose screen.");
+            var http = new XMLHttpRequest();
+            var url = 'http://localhost:3333/api/score';
+            http.open('POST', url, true);
+            //Send the proper header information along with the request
+            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            http.onreadystatechange = function () {
+                if (http.readyState == 4 && http.status == 200) {
+                    console.log(JSON.parse(http.responseText));
+                }
+            };
+            http.send("name=" + game._player.name + "&score=" + game._player.fighter.xp);
+        },
         exit: () => { console.log("Exited lose screen."); },
         render: (display, game) => {
             // Render our prompt to the screen
@@ -10289,6 +10330,32 @@ function loseScreen() {
     };
 }
 exports.loseScreen = loseScreen;
+// Define our leaderboards screen
+function scoreScreen() {
+    return {
+        enter: () => { console.log("Entered score screen."); },
+        exit: () => { console.log("Exited score screen."); },
+        render: (display, game) => {
+            // Render our prompt to the screen
+            display.drawText(18, 2, "Name:");
+            display.drawText(48, 2, "Score:");
+            for (let i = 0; i < game.scores.length; i++) {
+                display.drawText(20, 3 + i, game.scores[i].name);
+                display.drawText(50, 3 + i, game.scores[i].score);
+            }
+        },
+        handleInput: (inputType, inputData, game) => {
+            if (inputType === "keydown") {
+                if (inputData.keyCode === constants_1.KEYS.VK_A || inputData.keyCode === constants_1.KEYS.VK_R || inputData.keyCode === constants_1.KEYS.VK_RETURN) {
+                    game.switchScreen(game.Screen.startScreen);
+                    game.clr = 255;
+                    game.iControl = 0;
+                }
+            }
+        }
+    };
+}
+exports.scoreScreen = scoreScreen;
 function entityRenderSort(game) {
     return game._entities.sort(function (a, b) {
         if (a.render_order == b.render_order)

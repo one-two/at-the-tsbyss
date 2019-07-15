@@ -5,15 +5,15 @@ import { deathFunction } from "../../helper/deathFunction";
 import { skilllist, punch, smash } from "../../components/skilllist";
 
 export class Troll implements Enemy {
-    skill_bonus: number = 1.5;
+    skill_bonus: number = 1.3;
     owner: Entity;
     skills: skilllist[];
 
     constructor() {
         this.skills = [{
             name: 'smash',
-            cooldown: 16,
-            maxCooldown: 16
+            cooldown: 20,
+            maxCooldown: 20
         }]
     }
 

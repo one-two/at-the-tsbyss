@@ -30,6 +30,20 @@ export function startScreen() {
             game._player.equipStart(CreateItem('knife', game._player.x, game._player.y, 1));
             game._player.equipment.owner = game._player;
             console.log('enter');
+            var http = new XMLHttpRequest();
+            var url = 'http://localhost:3333/api/leaderboard';
+            http.open('GET', url, true);
+
+            //Send the proper header information along with the request
+            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+            http.onreadystatechange = function() {//Call a function when the state changes.
+                if(http.readyState == 4 && http.status == 200) {
+                    game.scores = JSON.parse(http.responseText).docs;
+                    console.log(game.scores);
+                }
+            }
+            http.send('');
         },
         exit : () => { 
             console.log("Exited start screen."); 
@@ -99,6 +113,22 @@ export function startScreen() {
                     game._entities[0].name = game._entities[0].name.slice(0,-1);
                 }
                 if (inputData.keyCode == 32 && game._entities[0].name.length > 0) game._entities[0].name = game._entities[0].name + " ";
+                if (inputData.keyCode == KEYS.VK_Q) {
+                    game.switchScreen(game.Screen.scoreScreen);
+                    // var http = new XMLHttpRequest();
+                    // var url = 'http://localhost:3333/api/leaderboard';
+                    // http.open('GET', url, true);
+
+                    // //Send the proper header information along with the request
+                    // http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+                    // http.onreadystatechange = function() {//Call a function when the state changes.
+                    //     if(http.readyState == 4 && http.status == 200) {
+                    //         alert(http.responseText);
+                    //     }
+                    // }
+                    // http.send('');
+                }
             }
         }
     }
@@ -721,7 +751,22 @@ export function winScreen() {
 // Define our winning screen
 export function loseScreen() {
     return {
-        enter : () => {    console.log("Entered lose screen."); },
+        enter : (game: Game) => {    
+            console.log("Entered lose screen."); 
+            var http = new XMLHttpRequest();
+            var url = 'http://localhost:3333/api/score';
+            http.open('POST', url, true);
+
+            //Send the proper header information along with the request
+            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+            http.onreadystatechange = function() {//Call a function when the state changes.
+                if(http.readyState == 4 && http.status == 200) {
+                    console.log(JSON.parse(http.responseText));
+                }
+            }
+            http.send("name=" + game._player.name + "&score=" + game._player.fighter.xp);
+        },
         exit : () => { console.log("Exited lose screen."); },
         render : (display: Display, game: Game) => {
             // Render our prompt to the screen
@@ -740,6 +785,35 @@ export function loseScreen() {
             // for (var i = 0; i < 22; i++) {
             //     display.drawText(2, i + 1, "%b{red}You lose! :(");
             // }
+        },
+        handleInput : (inputType: any, inputData: any, game: Game) => {
+            if (inputType === "keydown") {
+                if (inputData.keyCode === KEYS.VK_A || inputData.keyCode === KEYS.VK_R || inputData.keyCode === KEYS.VK_RETURN) {
+                    game.switchScreen(game.Screen.startScreen);
+                    game.clr = 255;
+                    game.iControl = 0;
+                }
+            }     
+        }
+    }
+}
+
+// Define our leaderboards screen
+export function scoreScreen() {
+    return {
+        enter : () => {    console.log("Entered score screen."); },
+        exit : () => { console.log("Exited score screen."); },
+        render : (display: Display, game: Game) => {
+            // Render our prompt to the screen
+            display.drawText(18, 2, "Name:");
+            display.drawText(48, 2, "Score:");
+            for (let i = 0; i < game.scores.length; i++) {
+                display.drawText(20, 3+i, game.scores[i].name);
+                display.drawText(50, 3+i, game.scores[i].score);
+            }
+
+            
+
         },
         handleInput : (inputType: any, inputData: any, game: Game) => {
             if (inputType === "keydown") {
