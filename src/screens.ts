@@ -739,8 +739,8 @@ export function winScreen() {
         render : (display: any) => {
             // Render our prompt to the screen
 
-            display.drawText(2, 16, "%c{rgb(200,200,200)}your future is not yet reachable");
-            display.drawText(25, 17, "%c{rgb(30,30,30)}under development.....");
+            display.drawText(2, 16, "%c{rgb(200,200,200)}your future is here, welcome");
+            display.drawText(25, 17, "%c{rgb(120,120,120)}l o o k a r o u n d");
         },
         handleInput : (inputType: any, inputData: any) => {
             // Nothing to do here      

@@ -62,7 +62,7 @@ export function CreateMonster(monster_choice: string, x: number, y: number, dung
         return monster
     }
     else if (monster_choice == 'dragon') {
-        let fighter_component = new Fighter(100+100*qHp, 6+6*qDef, 14+14*qAtk, 300+300*qExp)
+        let fighter_component = new Fighter(100+100*qHp, 6+6*qDef, 10+10*qAtk, 300+300*qExp)
         let ai_component = new Dragon()
         let monster = new Entity(x,y, new Glyph('Đ', [0,0,0], [220, 20, 60]), 'Dragon', 1, true, 5, 2, fighter_component, ai_component);
         return monster 

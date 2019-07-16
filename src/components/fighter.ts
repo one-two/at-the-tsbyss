@@ -148,7 +148,7 @@ export class Fighter {
         this.current_exp += amount;
         while (this.current_exp >= this.nextRank) {
             this.rank += 1;
-            this.nextRank += (this.nextRank + 10)
+            this.nextRank += (this.nextRank + 10)/2
             this.unspentPoints += 1;
         }
     }
