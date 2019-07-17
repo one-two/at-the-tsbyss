@@ -14,6 +14,7 @@ import { Exit } from "./content/itens/exit";
 import { Glyph } from "./glyph";
 import { CreateMonster } from "./helper/createMonters";
 import { Fighter } from "./components/fighter";
+const axios = require('axios');
 
 export function startScreen() {
     //Game.Screen.startScreen = {
@@ -30,20 +31,21 @@ export function startScreen() {
             game._player.equipStart(CreateItem('knife', game._player.x, game._player.y, 1));
             game._player.equipment.owner = game._player;
             console.log('enter');
-            var http = new XMLHttpRequest();
-            var url = 'http://localhost:3333/api/leaderboard';
-            http.open('GET', url, true);
 
-            //Send the proper header information along with the request
-            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-            http.onreadystatechange = function() {//Call a function when the state changes.
-                if(http.readyState == 4 && http.status == 200) {
-                    game.scores = JSON.parse(http.responseText).docs;
-                    console.log(game.scores);
-                }
-            }
-            http.send('');
+            //Get Leaderboard
+            axios.get('http://localhost:3333/api/leaderboard')
+                .then(function (response: any) {
+                    // handle success
+                    console.log(response);
+                })
+                .catch(function (error: any) {
+                    // handle error
+                    console.log(error);
+                })
+                .finally(function () {
+                    // always executed
+                });
+            
         },
         exit : () => { 
             console.log("Exited start screen."); 
