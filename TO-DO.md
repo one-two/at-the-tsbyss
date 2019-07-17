@@ -29,7 +29,7 @@ Todo list to fill the void of our souls (but i really want to make it web)
 - [X] Defensive skills
 - [X] Equipments/spell/stuff for progress
 - [X] Monster attack patterns
-- [E] Boss fights! 
-- [ ] Dummy fight on level zero
+- [X] Boss fights! 
+- [X] Dummy fight on level zero
 - [ ] Switch screen animation
 - [ ] Leaderboards!

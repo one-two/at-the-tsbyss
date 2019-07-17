@@ -113,7 +113,7 @@ export function startScreen() {
                     game._entities[0].name = game._entities[0].name.slice(0,-1);
                 }
                 if (inputData.keyCode == 32 && game._entities[0].name.length > 0) game._entities[0].name = game._entities[0].name + " ";
-                if (inputData.keyCode == KEYS.VK_Q) {
+                if (inputData.keyCode == KEYS.VK_UNDERSCORE) {
                     game.switchScreen(game.Screen.scoreScreen);
                     // var http = new XMLHttpRequest();
                     // var url = 'http://localhost:3333/api/leaderboard';
@@ -575,8 +575,8 @@ export function playScreen() {
                             game._player.fighter.unspentPoints -= 1;
                             break;
                         case KEYS.VK_D:
-                            game._player.fighter.base_max_hp += 10;
-                            game._player.fighter.hp += 5;
+                            game._player.fighter.base_max_hp += 30;
+                            game._player.fighter.hp += 20;
                             game._player.fighter.unspentPoints -= 1;
                             break;
                         default:
@@ -751,7 +751,8 @@ export function winScreen() {
 // Define our winning screen
 export function loseScreen() {
     return {
-        enter : (game: Game) => {    
+        enter : (game: Game) => { 
+            game.level = 0;   
             console.log("Entered lose screen."); 
             var http = new XMLHttpRequest();
             var url = 'http://localhost:3333/api/score';
