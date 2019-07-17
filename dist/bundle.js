@@ -7234,14 +7234,15 @@ class Fighter {
                 this.owner.lastxp = this.current_exp;
                 this.owner.killedby = attacker;
             }
-            let msg = {
-                message: "%c{0}" + this.owner.name + "%c{1} morreu",
-                type: 'death',
-                color0: this.owner.glyph.foreground,
-                color1: [255, 255, 255],
-                color2: [255, 255, 255]
-            };
-            this.owner._map.messageLog.addMessage(msg); //"%c{"+ this.owner.glyph.foreground +"}" + this.owner.name + "%c{} morreu")
+            this.owner._map.messageLog.newMessage(this.owner, 'death', this.owner, undefined);
+            // let msg: MessageType = {
+            //     message: "%c{0}" +this.owner.name + "%c{1} died",
+            //     type: 'death',
+            //     color0: this.owner.glyph.foreground,
+            //     color1: [255,255,255],
+            //     color2: [255,255,255]
+            // };
+            // this.owner._map.messageLog.addMessage(msg);
             deathFunction_1.deathFunction(this.owner);
             return true;
         }
@@ -9937,7 +9938,7 @@ class Game {
                 this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Poções: %c{}" + this._player.inventory + " [p]");
             }
             //this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Pos: %c{}"+ this._player.x + " " + this._player.y);
-            this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Floor: %c{}" + this._map.dungeon_level);
+            this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Andar: %c{}" + this._map.dungeon_level);
         }
     }
     switchScreen(screen) {
@@ -11315,6 +11316,9 @@ class Messagelog {
                     newMessage.color1 = [0, 255, 120];
                     newMessage.message = "%c{0}" + actor.name + "%c{base} have no %c{1}Potion%c{base} to use!";
                 }
+                if (type == 'death') {
+                    newMessage.message = "%c{0}" + actor.name + "%c{1} died";
+                }
                 break;
             case "Pt":
                 if (type == 'pickup') {
@@ -11344,6 +11348,9 @@ class Messagelog {
                 if (type == 'potionZero') {
                     newMessage.color1 = [0, 255, 120];
                     newMessage.message = "%c{0}" + actor.name + "%c{base} não tem %c{1}Poção%c{base} pra usar!";
+                }
+                if (type == 'death') {
+                    newMessage.message = "%c{0}" + actor.name + "%c{1} morreu";
                 }
                 break;
             default:
@@ -11831,10 +11838,18 @@ function playScreen() {
                 }
             }
             if (game.level == 0) {
-                display.drawText((game._screenWidth / 10), game._screenHeight - 4, "%c{yellow}Arrow%c{}: move/attack");
-                display.drawText((game._screenWidth / 10), game._screenHeight - 3, "%c{yellow}Enter%c{}: pickup itens/open door");
-                display.drawText((game._screenWidth / 10), game._screenHeight - 2, "%c{yellow}Space%c{}: use weapon skill");
-                display.drawText((game._screenWidth / 10), game._screenHeight - 1, "%c{yellow}P Key%c{}: use potion");
+                if (game.lang == "En") {
+                    display.drawText((game._screenWidth / 10), game._screenHeight - 4, "%c{yellow}Arrow%c{}: move/attack");
+                    display.drawText((game._screenWidth / 10), game._screenHeight - 3, "%c{yellow}Enter%c{}: pickup itens/open door");
+                    display.drawText((game._screenWidth / 10), game._screenHeight - 2, "%c{yellow}Space%c{}: use weapon skill");
+                    display.drawText((game._screenWidth / 10), game._screenHeight - 1, "%c{yellow}P Key%c{}: use potion");
+                }
+                if (game.lang == "Pt") {
+                    display.drawText((game._screenWidth / 10), game._screenHeight - 4, "%c{yellow}Arrow%c{}: mover/atacar");
+                    display.drawText((game._screenWidth / 10), game._screenHeight - 3, "%c{yellow}Enter%c{}: pegar itens/abrir porta");
+                    display.drawText((game._screenWidth / 10), game._screenHeight - 2, "%c{yellow}Space%c{}: usar habilidade da arma");
+                    display.drawText((game._screenWidth / 10), game._screenHeight - 1, "%c{yellow}P Key%c{}: usar poção");
+                }
             }
         },
         handleInput: (inputType, inputData, game) => {

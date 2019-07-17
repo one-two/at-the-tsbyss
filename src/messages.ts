@@ -64,6 +64,9 @@ export class Messagelog {
                         newMessage.color1 = [0,255,120];
                         newMessage.message = "%c{0}" + actor.name + "%c{base} have no %c{1}Potion%c{base} to use!";
                     }
+                    if (type == 'death') {
+                        newMessage.message = "%c{0}" + actor.name + "%c{1} died";
+                    }
 
                 break;
             case "Pt":
@@ -94,6 +97,9 @@ export class Messagelog {
                     if (type == 'potionZero') {
                         newMessage.color1 = [0,255,120];
                         newMessage.message = "%c{0}" + actor.name + "%c{base} não tem %c{1}Poção%c{base} pra usar!";
+                    }
+                    if (type == 'death') {
+                        newMessage.message = "%c{0}" + actor.name + "%c{1} morreu";
                     }
                 break;
             default:

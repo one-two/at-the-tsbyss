@@ -525,10 +525,18 @@ export function playScreen() {
 
 
             if (game.level == 0) {
-                display.drawText((game._screenWidth/10),game._screenHeight-4, "%c{yellow}Arrow%c{}: move/attack"); 
-                display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Enter%c{}: pickup itens/open door"); 
-                display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}Space%c{}: use weapon skill"); 
-                display.drawText((game._screenWidth/10),game._screenHeight-1, "%c{yellow}P Key%c{}: use potion"); 
+                if (game.lang == "En") {
+                    display.drawText((game._screenWidth/10),game._screenHeight-4, "%c{yellow}Arrow%c{}: move/attack"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Enter%c{}: pickup itens/open door"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}Space%c{}: use weapon skill"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-1, "%c{yellow}P Key%c{}: use potion"); 
+                }
+                if (game.lang == "Pt") {
+                    display.drawText((game._screenWidth/10),game._screenHeight-4, "%c{yellow}Arrow%c{}: mover/atacar"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Enter%c{}: pegar itens/abrir porta"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}Space%c{}: usar habilidade da arma"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-1, "%c{yellow}P Key%c{}: usar poção");                     
+                }
             }
         },
         handleInput : (inputType : any, inputData : any, game : Game) => {

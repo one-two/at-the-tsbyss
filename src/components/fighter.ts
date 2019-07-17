@@ -76,14 +76,15 @@ export class Fighter {
                 this.owner.lastxp = this.current_exp;
                 this.owner.killedby = attacker;
             }
-            let msg: MessageType = {
-                message: "%c{0}" +this.owner.name + "%c{1} morreu",
-                type: 'death',
-                color0: this.owner.glyph.foreground,
-                color1: [255,255,255],
-                color2: [255,255,255]
-            };
-            this.owner._map.messageLog.addMessage(msg);//"%c{"+ this.owner.glyph.foreground +"}" + this.owner.name + "%c{} morreu")
+            this.owner._map.messageLog.newMessage(this.owner, 'death', this.owner, undefined);
+            // let msg: MessageType = {
+            //     message: "%c{0}" +this.owner.name + "%c{1} died",
+            //     type: 'death',
+            //     color0: this.owner.glyph.foreground,
+            //     color1: [255,255,255],
+            //     color2: [255,255,255]
+            // };
+            // this.owner._map.messageLog.addMessage(msg);
             deathFunction(this.owner)
             return true;
         }

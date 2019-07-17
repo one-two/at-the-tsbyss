@@ -255,7 +255,7 @@ export class Game {
 			}
 
 			//this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Pos: %c{}"+ this._player.x + " " + this._player.y);
-			this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Floor: %c{}"+ this._map.dungeon_level);
+			this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Andar: %c{}"+ this._map.dungeon_level);
 		}
 		
 	}
