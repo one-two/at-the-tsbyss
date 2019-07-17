@@ -102,19 +102,6 @@ export function startScreen() {
                 if (inputData.keyCode == 32 && game._entities[0].name.length > 0) game._entities[0].name = game._entities[0].name + " ";
                 if (inputData.keyCode == KEYS.VK_Q) {
                     game.switchScreen(game.Screen.scoreScreen);
-                    // var http = new XMLHttpRequest();
-                    // var url = 'http://localhost:3333/api/leaderboard';
-                    // http.open('GET', url, true);
-
-                    // //Send the proper header information along with the request
-                    // http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-                    // http.onreadystatechange = function() {//Call a function when the state changes.
-                    //     if(http.readyState == 4 && http.status == 200) {
-                    //         alert(http.responseText);
-                    //     }
-                    // }
-                    // http.send('');
                 }
             }
         }
