@@ -34,6 +34,7 @@ export function startScreen() {
 
                         //Get Leaderboard
             axios.get('https://at-the-tsbyss-leaderboard.herokuapp.com/api/leaderboard?page=1&limit=30')
+            //axios.get('http://localhost:3333/api/leaderboard?page=1&limit=30')
             .then(function (response: any) {
                 // handle success
                 //console.log(response);
@@ -55,7 +56,7 @@ export function startScreen() {
             console.log("Exited start screen."); 
         },
         render : (display : any, game: Game) => {
-            display.drawText(0,0, "%c{rgb(70, 70, 70)}Beta: v.190711");
+            display.drawText(1,1, "%c{rgb(100, 100, 100)}Beta: v.190717");
             let y = 8;
             for (const line of game.logo) {
                 display.drawText(10,y, line);
@@ -70,12 +71,12 @@ export function startScreen() {
             game.blinkLevel += 1;
 
              // Render our prompt to the screen
-            display.drawText((game._screenWidth/2),game._screenHeight-10, "%c{rgb(0, 191, 255)}We are lost...");
-            display.drawText((game._screenWidth/2)-5,game._screenHeight-7, "%c{rgb(0, 191, 255)}Who are you? %c{}"+ game._entities[0].name + blink +"_");
-            if (game.mainmenuOpt == 0) display.drawText((game._screenWidth/2)-1,game._screenHeight-5, "%c{yellow}>Eng%c{}      Port");
-            if (game.mainmenuOpt == 1) display.drawText((game._screenWidth/2),game._screenHeight-5, "Eng     %c{yellow}>Port%c{}"); 
+            display.drawText((game._screenWidth/2)-3,game._screenHeight-13, "%c{rgb(0, 191, 255)}So... you are awake...");
+            display.drawText((game._screenWidth/2)-5,game._screenHeight-11, "%c{rgb(0, 191, 255)}Who are you? %c{}"+ game._entities[0].name + blink +"_");
+            if (game.mainmenuOpt == 0) display.drawText((game._screenWidth/2)-1,game._screenHeight-8, "%c{yellow}>Eng%c{}      Port");
+            if (game.mainmenuOpt == 1) display.drawText((game._screenWidth/2),game._screenHeight-8, "Eng     %c{yellow}>Port%c{}"); 
 
-            display.drawText((game._screenWidth/10),game._screenHeight-5, "%c{yellow}Ctrlkey%c{}: leaderboards"); 
+            display.drawText((game._screenWidth/2)+15,game._screenHeight-1, "%c{yellow}Ctrlkey%c{}: leaderboards"); 
             display.drawText((game._screenWidth/10),game._screenHeight-4, "%c{yellow}Arrow%c{}: move/attack"); 
             display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Enter%c{}: pickup itens/open door"); 
             display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}Space%c{}: use weapon skill"); 
@@ -738,8 +739,20 @@ export function createArena(game: Game) {
 
 export function winScreen() {
     return {
-        enter : () => {    
+        enter : (game: Game) => {    
             console.log("Entered win screen."); 
+            axios.post('https://at-the-tsbyss-leaderboard.herokuapp.com/api/score', {
+                name: game._player.name,
+                score: (game._player.lastxp*game.level).toFixed(2).toString(),
+                killedby: game._player.killedby,
+            })
+            .then(function (response) {
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+            game.level = 0; 
         },
         exit : () => { 
             console.log("Exited win screen."); 
@@ -816,12 +829,29 @@ export function scoreScreen() {
             display.drawText(34, 2, "Score:");
             display.drawText(50, 2, "Killed by:");
             for (let i = 0; i < game.scores.length; i++) {
-                if (i == 0) display.drawText(4, 3+i, "%c{gold}"+game.scores[i].name);
-                if (i == 1) display.drawText(4, 3+i, "%c{#D7D7D7}"+game.scores[i].name);
-                if (i == 2) display.drawText(4, 3+i, "%c{#CD7F32}"+game.scores[i].name);
-                if (i > 2)  display.drawText(4, 3+i, "%c{#A7A7AD}"+game.scores[i].name);
-                display.drawText(36, 3+i, game.scores[i].score);
-                display.drawText(53, 3+i, game.scores[i].killedby);
+                if (i == 0) {
+                    display.drawText(4, 3+i, "%c{gold}"+game.scores[i].name);
+                    display.drawText(36, 3+i, "%c{gold}"+game.scores[i].score);
+                    if (game.scores[i].killedby != undefined) display.drawText(53, 3+i, "%c{gold}"+game.scores[i].killedby);
+                }
+                if (i == 1) {
+                    display.drawText(4, 3+i, "%c{#D7D7D7}"+game.scores[i].name);
+                    display.drawText(36, 3+i, "%c{#D7D7D7}"+game.scores[i].score);
+                    if (game.scores[i].killedby != undefined) display.drawText(53, 3+i, "%c{#D7D7D7}"+game.scores[i].killedby);
+                } 
+                
+                if (i == 2) {
+                    display.drawText(4, 3+i, "%c{#CD7F32}"+game.scores[i].name);
+                    display.drawText(36, 3+i, "%c{#CD7F32}"+game.scores[i].score);
+                    if (game.scores[i].killedby != undefined) display.drawText(53, 3+i, "%c{#CD7F32}"+game.scores[i].killedby);
+                }
+                if (i > 2) {
+                    display.drawText(4, 3+i, "%c{#A7A7AD}"+game.scores[i].name);
+                    display.drawText(36, 3+i, "%c{#A7A7AD}"+game.scores[i].score);
+                    if (game.scores[i].killedby != undefined) display.drawText(53, 3+i, "%c{#A7A7AD}"+game.scores[i].killedby);
+                } 
+                
+                
             }
 
             
