@@ -14,7 +14,7 @@ import { Exit } from "./content/itens/exit";
 import { Glyph } from "./glyph";
 import { CreateMonster } from "./helper/createMonters";
 import { Fighter } from "./components/fighter";
-const axios = require('axios');
+import api from "./services/leaderboardApi";
 
 export function startScreen() {
     //Game.Screen.startScreen = {
@@ -33,10 +33,11 @@ export function startScreen() {
             console.log('enter');
 
             //Get Leaderboard
-            axios.get('http://localhost:3333/api/leaderboard')
+            api.get('leaderboard?limit=15')
                 .then(function (response: any) {
                     // handle success
-                    console.log(response);
+                    console.log(response.data);
+                    game.scores = response.data.docs;
                 })
                 .catch(function (error: any) {
                     // handle error
@@ -45,7 +46,6 @@ export function startScreen() {
                 .finally(function () {
                     // always executed
                 });
-            
         },
         exit : () => { 
             console.log("Exited start screen."); 
