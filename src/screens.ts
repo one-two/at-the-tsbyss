@@ -31,21 +31,6 @@ export function startScreen() {
             game._player.equipStart(CreateItem('knife', game._player.x, game._player.y, 1));
             game._player.equipment.owner = game._player;
             console.log('enter');
-
-            //Get Leaderboard
-            api.get('leaderboard?limit=15')
-                .then(function (response: any) {
-                    // handle success
-                    console.log(response.data);
-                    game.scores = response.data.docs;
-                })
-                .catch(function (error: any) {
-                    // handle error
-                    console.log(error);
-                })
-                .finally(function () {
-                    // always executed
-                });
         },
         exit : () => { 
             console.log("Exited start screen."); 
@@ -754,20 +739,8 @@ export function winScreen() {
 export function loseScreen() {
     return {
         enter : (game: Game) => {    
-            console.log("Entered lose screen."); 
-            var http = new XMLHttpRequest();
-            var url = 'http://localhost:3333/api/score';
-            http.open('POST', url, true);
-
-            //Send the proper header information along with the request
-            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-            http.onreadystatechange = function() {//Call a function when the state changes.
-                if(http.readyState == 4 && http.status == 200) {
-                    console.log(JSON.parse(http.responseText));
-                }
-            }
-            http.send("name=" + game._player.name + "&score=" + game._player.fighter.xp);
+            console.log("Entered lose screen.");
+            api.post('/score', { name: game._player.name, score: game._player.fighter.xp });
         },
         exit : () => { console.log("Exited lose screen."); },
         render : (display: Display, game: Game) => {
@@ -803,7 +776,23 @@ export function loseScreen() {
 // Define our leaderboards screen
 export function scoreScreen() {
     return {
-        enter : () => {    console.log("Entered score screen."); },
+        enter : (game: Game) => {    
+            console.log("Entered score screen."); 
+            // Update Leaderboard
+            console.log("Updating leaderboard.");
+            api.get('leaderboard?limit=15')
+                .then(function (response: any) {
+                    // handle success - set game.scores with the response data from the leaderboard.
+                    game.scores = response.data.docs;
+                })
+                .catch(function (error: any) {
+                    // handle error - just letting you know
+                    console.log(error);
+                })
+                .finally(function () {
+                    // always executed
+                });
+        },
         exit : () => { console.log("Exited score screen."); },
         render : (display: Display, game: Game) => {
             // Render our prompt to the screen
