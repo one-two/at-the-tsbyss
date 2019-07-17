@@ -40,7 +40,7 @@ export class Game {
 	endMessage: string= "[A] n d  s o . . . w e  f a l l  a g a i n . . .";
 	iControl:number = 0;
 	clr = 255;
-	scores: {name: string, score: string}[] = [];
+	scores: {name: string, score: string, killedby: string}[] = [];
 
 	constructor() {
 		this._centerX = 0;
@@ -229,7 +229,7 @@ export class Game {
 			}
 
 			this._inventory.drawText(1, 12, "%c{rgb(140, 140, 160)}Rank: %c{}"+ this._player.fighter.rank);
-			this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}"+ this._player.fighter.current_exp + "/" + this._player.fighter.nextRank);
+			this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}"+ this._player.fighter.current_exp.toFixed(2) + "/" + this._player.fighter.nextRank.toFixed(0));
 
 			if ( this._player.equipment != undefined) {
 				this._inventory.drawText(1, 15, "%c{rgb(140, 140, 160)}Principal: %c{rgb("+this._player.equipment.glyph.foreground.toString()+")}"+ this._player.equipment.name);

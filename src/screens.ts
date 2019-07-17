@@ -14,6 +14,7 @@ import { Exit } from "./content/itens/exit";
 import { Glyph } from "./glyph";
 import { CreateMonster } from "./helper/createMonters";
 import { Fighter } from "./components/fighter";
+import axios from 'axios';
 
 export function startScreen() {
     //Game.Screen.startScreen = {
@@ -30,20 +31,25 @@ export function startScreen() {
             game._player.equipStart(CreateItem('knife', game._player.x, game._player.y, 1));
             game._player.equipment.owner = game._player;
             console.log('enter');
-            var http = new XMLHttpRequest();
-            var url = 'http://localhost:3333/api/leaderboard';
-            http.open('GET', url, true);
 
-            //Send the proper header information along with the request
-            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-            http.onreadystatechange = function() {//Call a function when the state changes.
-                if(http.readyState == 4 && http.status == 200) {
-                    game.scores = JSON.parse(http.responseText).docs;
-                    console.log(game.scores);
-                }
-            }
-            http.send('');
+                        //Get Leaderboard
+            axios.get('https://at-the-tsbyss-leaderboard.herokuapp.com/api/leaderboard?page=1&limit=30')
+            .then(function (response: any) {
+                // handle success
+                //console.log(response);
+                response.data.docs.sort((a: any, b: any) => {
+                    return b.score - a.score;
+                });
+                game.scores = response.data.docs;
+            })
+            .catch(function (error: any) {
+                // handle error
+                console.log(error);
+                game.scores.push({name: "failed to connect to leaderboads", score: "", killedby: ""})
+            })
+            .finally(function () {
+                // always executed
+            });
         },
         exit : () => { 
             console.log("Exited start screen."); 
@@ -69,6 +75,7 @@ export function startScreen() {
             if (game.mainmenuOpt == 0) display.drawText((game._screenWidth/2)-1,game._screenHeight-5, "%c{yellow}>Eng%c{}      Port");
             if (game.mainmenuOpt == 1) display.drawText((game._screenWidth/2),game._screenHeight-5, "Eng     %c{yellow}>Port%c{}"); 
 
+            display.drawText((game._screenWidth/10),game._screenHeight-5, "%c{yellow}Ctrlkey%c{}: leaderboards"); 
             display.drawText((game._screenWidth/10),game._screenHeight-4, "%c{yellow}Arrow%c{}: move/attack"); 
             display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Enter%c{}: pickup itens/open door"); 
             display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}Space%c{}: use weapon skill"); 
@@ -78,6 +85,7 @@ export function startScreen() {
         handleInput : (inputType : any, inputData : any, game : Game) => {
             // When [Enter] is pressed, go to the play screen
             if (inputType === "keydown") {
+                //console.log(inputData);
                 // if (inputData.keyCode === KEYS.VK_E) {
                 //     game.lang = "En";
                 //     game.switchScreen(game.Screen.playScreen);
@@ -108,12 +116,12 @@ export function startScreen() {
                     if (game.mainmenuOpt > 1) game.mainmenuOpt = 1;
                 }
 
-                if (inputData.keyCode >= 65 && inputData.keyCode <= 90) game._entities[0].name = game._entities[0].name + inputData.key;
+                if (inputData.keyCode >= 65 && inputData.keyCode <= 90 && game._entities[0].name.length <= 20) game._entities[0].name = game._entities[0].name + inputData.key;
                 if (inputData.keyCode == 8 && game._entities[0].name.length > 0) {
                     game._entities[0].name = game._entities[0].name.slice(0,-1);
                 }
                 if (inputData.keyCode == 32 && game._entities[0].name.length > 0) game._entities[0].name = game._entities[0].name + " ";
-                if (inputData.keyCode == KEYS.VK_UNDERSCORE) {
+                if (inputData.keyCode == 17) {
                     game.switchScreen(game.Screen.scoreScreen);
                     // var http = new XMLHttpRequest();
                     // var url = 'http://localhost:3333/api/leaderboard';
@@ -752,21 +760,19 @@ export function winScreen() {
 export function loseScreen() {
     return {
         enter : (game: Game) => { 
-            game.level = 0;   
             console.log("Entered lose screen."); 
-            var http = new XMLHttpRequest();
-            var url = 'http://localhost:3333/api/score';
-            http.open('POST', url, true);
-
-            //Send the proper header information along with the request
-            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-            http.onreadystatechange = function() {//Call a function when the state changes.
-                if(http.readyState == 4 && http.status == 200) {
-                    console.log(JSON.parse(http.responseText));
-                }
-            }
-            http.send("name=" + game._player.name + "&score=" + game._player.fighter.xp);
+            axios.post('https://at-the-tsbyss-leaderboard.herokuapp.com/api/score', {
+                name: game._player.name,
+                score: (game._player.lastxp*game.level).toFixed(2).toString(),
+                killedby: game._player.killedby,
+            })
+            .then(function (response) {
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+            game.level = 0;   
         },
         exit : () => { console.log("Exited lose screen."); },
         render : (display: Display, game: Game) => {
@@ -774,7 +780,7 @@ export function loseScreen() {
             let message = "[A] n d  s o . . . w e  f a l l  a g a i n . . . ?";
             for (let index = 0; index < game.iControl; index++) {
                 display.draw(index+15, 10+( index > 18? 1 : 0 )*20, message[index], Color.toRGB([game.clr, game.clr, game.clr]), Color.toRGB([0,0,0]))
-                game.clr -= 5;
+                game.clr -= 4;
             }
             if (game.iControl <= message.length) {
                 game.iControl += 1;
@@ -806,11 +812,16 @@ export function scoreScreen() {
         exit : () => { console.log("Exited score screen."); },
         render : (display: Display, game: Game) => {
             // Render our prompt to the screen
-            display.drawText(18, 2, "Name:");
-            display.drawText(48, 2, "Score:");
+            display.drawText(2, 2, "Name:");
+            display.drawText(34, 2, "Score:");
+            display.drawText(50, 2, "Killed by:");
             for (let i = 0; i < game.scores.length; i++) {
-                display.drawText(20, 3+i, game.scores[i].name);
-                display.drawText(50, 3+i, game.scores[i].score);
+                if (i == 0) display.drawText(4, 3+i, "%c{gold}"+game.scores[i].name);
+                if (i == 1) display.drawText(4, 3+i, "%c{#D7D7D7}"+game.scores[i].name);
+                if (i == 2) display.drawText(4, 3+i, "%c{#CD7F32}"+game.scores[i].name);
+                if (i > 2)  display.drawText(4, 3+i, "%c{#A7A7AD}"+game.scores[i].name);
+                display.drawText(36, 3+i, game.scores[i].score);
+                display.drawText(53, 3+i, game.scores[i].killedby);
             }
 
             

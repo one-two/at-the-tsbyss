@@ -65,13 +65,17 @@ export class Fighter {
         return this.base_max_hp + bonus
     }
 
-    takeDamage(amount: number): boolean{
+    takeDamage(amount: number, attacker: string): boolean{
         if (this.owner.player == true && this.owner.subequipment != undefined) {
             amount = this.owner.subequipment.defend(amount);
         }
         this.hp -= amount
         if (this.hp <= 0) {
             this.hp = 0
+            if (this.owner.player == true) {
+                this.owner.lastxp = this.current_exp;
+                this.owner.killedby = attacker;
+            }
             let msg: MessageType = {
                 message: "%c{0}" +this.owner.name + "%c{1} morreu",
                 type: 'death',
@@ -107,7 +111,7 @@ export class Fighter {
             // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
-            let death = target.fighter.takeDamage(damage)
+            let death = target.fighter.takeDamage(damage, this.owner.name);
             if (death) this.getExp(target.fighter.xp);
             this.owner._map.messageLog.newMessage(this.owner, 'fight', target, undefined, damage.toString());
             //result.message = this.owner.name + " bateu em um %c{0}" + target.name + "%c{1} com "+ damage + " de dano! (" +target.fighter.hp.toFixed(2) +")";
@@ -133,7 +137,7 @@ export class Fighter {
             // results.append({'message': Message('{0} ataca {1} e mandou {2} de dano.'.format(
             //     this.owner.name.capitalize(), target.name, str(round(damage))), libtcod.white)})
             // results.extend(target.fighter.take_damage(damage))
-            let death = target.fighter.takeDamage(damage)
+            let death = target.fighter.takeDamage(damage, this.owner.name);
             if (death) this.getExp(target.fighter.xp);
             this.owner._map.messageLog.newMessage(this.owner, 'skill', target, dmgBlock, damage.toString());
             //result.message = this.owner.name + " usou uma " + dmgBlock.name + " em um %c{0}" + target.name + "%c{1} com "+ damage + " de dano! (" +target.fighter.hp.toFixed(2) +")";

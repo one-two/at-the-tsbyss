@@ -50,7 +50,6 @@ export function angel_tri(owner: Entity, target: Entity, damageMultiplier: numbe
         anteriorx = newImagex;
         if ((newImagex < 3 || newImagex > (mapWidth-3) || newImagey < 3 || newImagey > (mapHeight-3))) dom = 9999999;
     }
-    console.log(image);
     // distancia vai ser iterações de x na formula linear (arredondar para cima)
     // rodar até (y || x) == (fim da tela)
     // tratar casos colineares ry = oy e rx = ox

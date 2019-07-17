@@ -44,6 +44,8 @@ export class Entity {
     player: boolean;
     regen: any = undefined;
     regenMax: number = 10;
+    lastxp: number =0;
+    killedby: string = '';
 
     constructor(x:number, y:number, glyph: Glyph, name: string, size:number = 0, blocks: boolean = false, maxStamina:number=0,
                 render_order:number = 99, fighter: Fighter = undefined, ai: any = undefined, player: boolean = false,
@@ -173,7 +175,6 @@ export class Entity {
         if (this.x <= 10) nextDir = [2,nextDir[1]]
         if (this.y <= 3) nextDir = [nextDir[0], 2] 
         if (this.y2 >= 35) nextDir = [nextDir[0], -2]
-        console.log('x: ' +this.x + ' y: ' + this.y);
         return nextDir
     }
 

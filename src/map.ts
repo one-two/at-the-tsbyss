@@ -115,6 +115,15 @@ export class Map {
         for (let index = 0; index < number_of_monsters; index++) {
             let x = randint(0, this._width - 1)
             let y = randint(0, this._height - 1)
+            let tooClose = true;
+            while(tooClose) {
+                let dist = Math.sqrt( (this._entities[0].x - x)**2+(this._entities[0].y - y)**2 );
+                if (dist > 20) tooClose = false;
+                else {
+                    x = randint(0, this._width - 1);
+                    y = randint(0, this._height - 1);
+                }
+            }
             let emptyspace = true;
             for (let index = 0; index < this._entities.length; index++) {
                 if (this._entities[index].x == x && this._entities[index].y == y) {
