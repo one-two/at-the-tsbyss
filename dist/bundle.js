@@ -10262,7 +10262,9 @@ function CreateMonster(monster_choice, x, y, dungeon_level) {
     let dl = dungeon_level / 10;
     let qHp = randperc_1.randperc(100) + 0.2 + dl;
     let qAtk = randperc_1.randperc(50) + dl;
-    let qDef = randperc_1.randperc(30) + dl;
+    let qDef = 0.5;
+    if (dungeon_level < 10)
+        qDef = randperc_1.randperc(30) + dl;
     let qExp = (qHp > 0 ? qHp : qHp * 0.5) + (qAtk > 0 ? qAtk * 2 : qAtk * 0.5) + (qDef > 0 ? qDef * 3 : qDef * 0.5);
     qExp = qExp / 3;
     if (monster_choice == 'fungi') {
@@ -11488,9 +11490,9 @@ function startScreen() {
                     game._entities[0].glyph.foreground[2] = Color.fromString(hash)[2];
                     game.switchScreen(game.Screen.playScreen);
                 }
-                if (inputData.keyCode === constants_1.KEYS.VK_COMMA) {
-                    game.switchScreen(game.Screen.debugScreen);
-                }
+                // if (inputData.keyCode === KEYS.VK_COMMA) {
+                //     game.switchScreen(game.Screen.winScreen);
+                // }
                 if (inputData.keyCode === constants_1.KEYS.VK_LEFT) {
                     game.mainmenuOpt -= 1;
                     if (game.mainmenuOpt < 0)
@@ -11687,7 +11689,7 @@ function playScreen() {
                 if (game.level == 1)
                     corr = 1;
             }
-            if (game.level > 2 && game.level <= 4) {
+            if ((game.level > 2 && game.level <= 4) || (game.level > 10 && game.level.toString()[game.level.toString().length - 1] != "7")) {
                 if (Math.random() * 100 < 51) {
                     corr = createCave(game);
                     mapType = 'cave';
@@ -11704,7 +11706,7 @@ function playScreen() {
             if (game.level == 8) {
                 game.switchScreen(winScreen);
             }
-            if (game.level == 7) {
+            if (game.level.toString()[game.level.toString().length - 1] == "7") {
                 createArena(game);
                 game._player.x = 10;
                 game._player.x2 = 10;
@@ -11969,6 +11971,8 @@ function createCave(game) {
     let mapWidth = 120;
     let mapHeight = 88;
     let corr = randint_1.randint(0, 9);
+    if (game.level > 10)
+        corr = randint_1.randint(0, 1);
     game._map = new map_1.Map(mapWidth, mapHeight);
     game._map.owner = game;
     let emptyTile = new tiles_1.Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
@@ -12015,6 +12019,8 @@ function createDungeon(game) {
     let mapWidth = 120;
     let mapHeight = 88;
     let corr = randint_1.randint(0, 9);
+    if (game.level > 10)
+        corr = randint_1.randint(0, 1);
     game._map = new map_1.Map(mapWidth, mapHeight);
     game._map.owner = game;
     let emptyTile = new tiles_1.Tile('empty', ' ', [0, 0, 0], [255, 255, 255]);
@@ -12086,7 +12092,7 @@ function winScreen() {
             console.log("Entered win screen.");
             axios_1.default.post('https://at-the-tsbyss-leaderboard.herokuapp.com/api/score', {
                 name: game._player.name,
-                score: (game._player.lastxp * game.level).toFixed(2).toString(),
+                score: (game._player.lastxp * (game.level > 8 ? 10 : game.level)).toFixed(2).toString(),
                 killedby: game._player.killedby,
             })
                 .then(function (response) {
@@ -12095,18 +12101,39 @@ function winScreen() {
                 .catch(function (error) {
                 console.log(error);
             });
-            game.level = 0;
         },
         exit: () => {
             console.log("Exited win screen.");
         },
-        render: (display) => {
+        render: (display, game) => {
             // Render our prompt to the screen
             display.drawText(2, 16, "%c{rgb(200,200,200)}your future is here, welcome");
-            display.drawText(25, 17, "%c{rgb(120,120,120)}l o o k a r o u n d");
+            display.drawText(35, 18, "%c{rgb(120,120,120)}l o o k a r o u n d");
+            let message = "or... do you want to [P]ress on...?";
+            for (let index = 0; index < game.iControl; index++) {
+                display.draw(index + 20, 30, message[index], Color.toRGB([game.clr, game.clr, game.clr]), Color.toRGB([0, 0, 0]));
+                game.clr -= 4;
+            }
+            if (game.iControl <= message.length) {
+                game.iControl += 1;
+            }
+            game.clr = 255;
         },
-        handleInput: (inputType, inputData) => {
-            // Nothing to do here      
+        handleInput: (inputType, inputData, game) => {
+            if (inputType === "keydown") {
+                if (inputData.keyCode === constants_1.KEYS.VK_A || inputData.keyCode === constants_1.KEYS.VK_R || inputData.keyCode === constants_1.KEYS.VK_RETURN) {
+                    game.switchScreen(game.Screen.startScreen);
+                    game.clr = 255;
+                    game.iControl = 0;
+                    game.level = 0;
+                }
+                if (inputData.keyCode === constants_1.KEYS.VK_P) {
+                    game.clr = 255;
+                    game.iControl = 0;
+                    game.level += 13;
+                    game.switchScreen(game.Screen.playScreen);
+                }
+            }
         }
     };
 }
@@ -12118,7 +12145,7 @@ function loseScreen() {
             console.log("Entered lose screen.");
             axios_1.default.post('https://at-the-tsbyss-leaderboard.herokuapp.com/api/score', {
                 name: game._player.name,
-                score: (game._player.lastxp * game.level).toFixed(2).toString(),
+                score: (game._player.lastxp * (game.level > 8 ? 8 : game.level)).toFixed(2).toString(),
                 killedby: game._player.killedby,
             })
                 .then(function (response) {

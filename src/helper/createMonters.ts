@@ -15,7 +15,8 @@ export function CreateMonster(monster_choice: string, x: number, y: number, dung
     let dl = dungeon_level/10;
     let qHp = randperc(100)+0.2+dl;
     let qAtk = randperc(50)+dl;
-    let qDef = randperc(30)+dl;
+    let qDef = 0.5;
+    if (dungeon_level < 10 ) qDef = randperc(30)+dl;
     let qExp = (qHp > 0 ? qHp : qHp*0.5)+(qAtk > 0 ? qAtk*2 : qAtk*0.5)+(qDef > 0 ? qDef*3 : qDef*0.5);
     qExp = qExp/3;
 
