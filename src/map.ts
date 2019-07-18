@@ -43,6 +43,9 @@ export class Map {
 
     getMovableArea(x: number, x2: number, y:number, y2: number): boolean {
         let moveable = true;
+        if (x > this._width || x2 > this._width || x < 0 || x2 < 0 ) return false; 
+        if (y > this._height || y2 > this._height || y < 0 || y2 < 0 ) return false;
+
         for (let i = x; i <= x2; i++) {
             for (let j = y; j <= y2; j++) {
                 if (!this.getTile(i,j)._isWalkable) {
@@ -55,6 +58,7 @@ export class Map {
 
     getEntitiesAt(x: number, x2: number, y:number, y2: number, self: Entity): Entity[] {
         let targets: Entity[] = [];
+
         for (let index = 0; index < this._entities.length; index++) {
             for (let i = x; i <= x2; i++) {
                 for (let j = y; j <= y2; j++) {

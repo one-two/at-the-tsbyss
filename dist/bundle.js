@@ -7309,7 +7309,7 @@ class Fighter {
         this.current_exp += amount;
         while (this.current_exp >= this.nextRank) {
             this.rank += 1;
-            this.nextRank += (this.nextRank + 10) / 2;
+            this.nextRank += (this.nextRank + 40) / 2.9;
             this.unspentPoints += 1;
         }
     }
@@ -9127,6 +9127,7 @@ exports.Orc = Orc;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const randint_1 = __webpack_require__(/*! ../../helper/randint */ "./src/helper/randint.ts");
 const deathFunction_1 = __webpack_require__(/*! ../../helper/deathFunction */ "./src/helper/deathFunction.ts");
 const skilllist_1 = __webpack_require__(/*! ../../components/skilllist */ "./src/components/skilllist.ts");
 class Ranger {
@@ -9170,33 +9171,34 @@ class Ranger {
                 skilllist_1.snipe(this.owner, player, 1.2);
             }
         }
-        else if (dist < 12) {
+        else if (dist < 12 && dist > 5) {
             let dx = player.x - this.owner.x;
             let dy = player.y - this.owner.y;
             if (Math.abs(dx) > Math.abs(dy)) {
                 if (dy > 0) {
-                    this.owner.move(0, 1, this.owner._map);
+                    this.owner.move(0, randint_1.randint(1, 2), this.owner._map);
                 }
                 else {
-                    this.owner.move(0, -1, this.owner._map);
+                    this.owner.move(0, randint_1.randint(-2, -1), this.owner._map);
                 }
             }
             else {
                 if (dx > 0) {
-                    this.owner.move(1, 0, this.owner._map);
+                    this.owner.move(randint_1.randint(1, 2), 0, this.owner._map);
                 }
                 else {
-                    this.owner.move(-1, 0, this.owner._map);
+                    this.owner.move(randint_1.randint(-2, -1), 0, this.owner._map);
                 }
             }
-            if (dist < 5) {
-                this.owner.kite(player);
-            }
-            skilllist_1.snipe(this.owner, player, 1.2);
+        }
+        else if (dist <= 5) {
+            this.owner.kite(player);
         }
         else {
             this.owner.wander();
         }
+        if (dist < 12)
+            skilllist_1.snipe(this.owner, player, 1);
     }
 }
 exports.Ranger = Ranger;
@@ -9674,6 +9676,10 @@ class Entity {
         let targety = this.y - (target.y - this.y);
         var path = new lib_1.Path.AStar(targetx, targety, function (x, y) {
             // If an entity is present at the tile, can't move there.
+            if (targetx > this._width - 1 || targetx < 1)
+                return false;
+            if (targety > this._height - 1 || targety < 1)
+                return false;
             let entity = source._map.getEntitiesAt(this.x1, this.x2, this.y1, this.y2, this);
             if (entity.length > 0) {
                 return false;
@@ -11054,6 +11060,10 @@ class Map {
     }
     getMovableArea(x, x2, y, y2) {
         let moveable = true;
+        if (x > this._width || x2 > this._width || x < 0 || x2 < 0)
+            return false;
+        if (y > this._height || y2 > this._height || y < 0 || y2 < 0)
+            return false;
         for (let i = x; i <= x2; i++) {
             for (let j = y; j <= y2; j++) {
                 if (!this.getTile(i, j)._isWalkable) {

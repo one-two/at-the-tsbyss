@@ -48,28 +48,27 @@ export class Ranger implements Enemy {
             if (dist <= 9 && (this.owner.x == player.x || this.owner.y == player.y)) {
                 snipe(this.owner, player, 1.2);
             }
-        } else if(dist < 12) {
+        } else if(dist < 12 && dist > 5) {
             let dx = player.x - this.owner.x;
             let dy = player.y - this.owner.y;
             if (Math.abs(dx) > Math.abs(dy)) {
                 if (dy > 0) {
-                    this.owner.move(0, 1, this.owner._map);
+                    this.owner.move(0, randint(1,2), this.owner._map);
                 } else {
-                    this.owner.move(0, -1, this.owner._map);
+                    this.owner.move(0, randint(-2, -1), this.owner._map);
                 }
             } else {
                 if (dx > 0) {
-                    this.owner.move(1, 0, this.owner._map);
+                    this.owner.move(randint(1,2), 0, this.owner._map);
                 } else {
-                    this.owner.move(-1, 0, this.owner._map);
+                    this.owner.move(randint(-2, -1), 0, this.owner._map);
                 }
             }
-            if (dist < 5) {
-                this.owner.kite(player);
-            }
-            snipe(this.owner, player, 1.2);
+        } else if (dist <= 5) {
+            this.owner.kite(player);
         } else {
             this.owner.wander();
         }
+        if (dist < 12) snipe(this.owner, player, 1);
     }
 }

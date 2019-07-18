@@ -372,6 +372,9 @@ export class Entity {
         let targety = this.y - (target.y - this.y);
         var path = new Path.AStar(targetx, targety, function(x: number, y: number) {
             // If an entity is present at the tile, can't move there.
+            if (targetx > this._width-1 || targetx < 1 ) return false; 
+            if (targety > this._height-1 || targety < 1 ) return false;
+
             let entity = source._map.getEntitiesAt(this.x1, this.x2, this.y1, this.y2, this);
             if (entity.length > 0) {
                 return false;
