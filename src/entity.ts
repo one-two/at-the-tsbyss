@@ -111,8 +111,9 @@ export class Entity {
 
     move(dx: number, dy: number, map: Map) {
         let moveerror = this.changeFace(dx, dy);
-        if (this.player == true && this.stamina < this.maxStamina && moveerror ) return;
-        else if (this.player == true) this.stamina = 0
+        //if (moveerror) return;
+        //if (this.player == true && this.stamina < this.maxStamina && moveerror ) return;
+        //else if (this.player == true && this.stamina >= this.maxStamina) this.stamina = 0;
         let tx = this.x + dx;
         let tx2 = this.x2 + dx;
         let ty = this.y + dy;
@@ -240,7 +241,6 @@ export class Entity {
                 item.item.expire = true;
                 this._map.messageLog.newMessage(this, 'pickup', item)
             } else {
-                // colocar na backpack
                 let drop = CreateDropItem(this.equipment, this.x, this.y);
                 let droppedItem = new Entity(this.x, this.y, drop.item.glyph, drop.item.fullname, 1, false, 5, 2, undefined, undefined, false, drop.item); //cria entidade para dropar
                 this._map._entities.push(droppedItem);
@@ -257,14 +257,13 @@ export class Entity {
                 item.item.expire = true;
                 this._map.messageLog.newMessage(this, 'pickup', item)
             } else {
-                // colocar na backpack
                 let drop = CreateDropItem(this.subequipment, this.x, this.y);
                 let droppedItem = new Entity(this.x, this.y, drop.item.glyph, drop.item.fullname, 1, false, 5, 2, undefined, undefined, false, drop.item); //cria entidade para dropar
                 this._map._entities.push(droppedItem);
                 this.subequipment = item.item;
                 this.subequipment.owner = this;
                 item.item.expire = true;
-                this._map.messageLog.newMessage(this, 'switchEquip', item, this);
+                this._map.messageLog.newMessage(this, 'switchEquip', droppedItem, item);
             }
         }
         else if (item.item.type == "bag") {

@@ -261,11 +261,6 @@ export function debugScreen() {
                         break;
                 }
             }
-            if (inputType === 'click') {
-                let xx = randint(-5, 5);
-                let yy = randint(-5, 5);
-                game._entities[0].move(xx, yy, game._map);
-            }
         }
     }
 }
@@ -564,16 +559,28 @@ export function playScreen() {
                         }
                         break;
                     case KEYS.VK_LEFT:
-                        game._entities[0].move(-1, 0, game._map);
+                        if (game._entities[0].stamina >= game._entities[0].maxStamina) {
+                            game._entities[0].stamina = 0;
+                            game._entities[0].move(-1, 0, game._map);
+                        }
                         break;
                     case KEYS.VK_DOWN:
-                        game._entities[0].move(0, 1, game._map);
+                        if (game._entities[0].stamina >= game._entities[0].maxStamina) {
+                            game._entities[0].stamina = 0;
+                            game._entities[0].move(0, 1, game._map);
+                        }
                         break;
                     case KEYS.VK_UP:
-                        game._entities[0].move(0, -1, game._map);
+                        if (game._entities[0].stamina >= game._entities[0].maxStamina) {
+                            game._entities[0].stamina = 0;
+                            game._entities[0].move(0, -1, game._map);
+                        }
                         break;
                     case KEYS.VK_RIGHT:
-                        game._entities[0].move(1, 0, game._map);
+                        if (game._entities[0].stamina >= game._entities[0].maxStamina) {
+                            game._entities[0].stamina = 0;
+                            game._entities[0].move(1, 0, game._map);
+                        }
                         break;
                     case KEYS.VK_P:
                         game._entities[0].usePotion();
@@ -601,11 +608,6 @@ export function playScreen() {
                     }
                     if (game._player.fighter.unspentPoints < 0) game._player.fighter.unspentPoints = 0;
                 }
-            }
-            if (inputType === 'click') {
-                let xx = randint(-5, 5);
-                let yy = randint(-5, 5);
-                game._entities[0].move(xx, yy, game._map);
             }
         }
     }

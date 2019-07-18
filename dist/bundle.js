@@ -9408,10 +9408,9 @@ class Entity {
     }
     move(dx, dy, map) {
         let moveerror = this.changeFace(dx, dy);
-        if (this.player == true && this.stamina < this.maxStamina && moveerror)
-            return;
-        else if (this.player == true)
-            this.stamina = 0;
+        //if (moveerror) return;
+        //if (this.player == true && this.stamina < this.maxStamina && moveerror ) return;
+        //else if (this.player == true && this.stamina >= this.maxStamina) this.stamina = 0;
         let tx = this.x + dx;
         let tx2 = this.x2 + dx;
         let ty = this.y + dy;
@@ -9552,7 +9551,6 @@ class Entity {
                 this._map.messageLog.newMessage(this, 'pickup', item);
             }
             else {
-                // colocar na backpack
                 let drop = createItens_1.CreateDropItem(this.equipment, this.x, this.y);
                 let droppedItem = new Entity(this.x, this.y, drop.item.glyph, drop.item.fullname, 1, false, 5, 2, undefined, undefined, false, drop.item); //cria entidade para dropar
                 this._map._entities.push(droppedItem);
@@ -9570,14 +9568,13 @@ class Entity {
                 this._map.messageLog.newMessage(this, 'pickup', item);
             }
             else {
-                // colocar na backpack
                 let drop = createItens_1.CreateDropItem(this.subequipment, this.x, this.y);
                 let droppedItem = new Entity(this.x, this.y, drop.item.glyph, drop.item.fullname, 1, false, 5, 2, undefined, undefined, false, drop.item); //cria entidade para dropar
                 this._map._entities.push(droppedItem);
                 this.subequipment = item.item;
                 this.subequipment.owner = this;
                 item.item.expire = true;
-                this._map.messageLog.newMessage(this, 'switchEquip', item, this);
+                this._map.messageLog.newMessage(this, 'switchEquip', droppedItem, item);
             }
         }
         else if (item.item.type == "bag") {
@@ -10276,7 +10273,7 @@ function CreateMonster(monster_choice, x, y, dungeon_level) {
     else if (monster_choice == 'orc') {
         let fighter_component = new fighter_1.Fighter(40 + 40 * qHp, 2 + 2 * qDef, 4 + 4 * qAtk, 35 + 35 * qExp);
         let ai_component = new orc_1.Orc();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', [0, 0, 0], [0, 128, 0]), 'Orc', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('o', [0, 0, 0], [0, 128, 0]), 'Orc', 1, true, 7, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'dummy') {
@@ -10288,13 +10285,13 @@ function CreateMonster(monster_choice, x, y, dungeon_level) {
     else if (monster_choice == 'troll') {
         let fighter_component = new fighter_1.Fighter(90 + 90 * qHp, 3 + 3 * qDef, 8 + 8 * qAtk, 60 + 60 * qExp);
         let ai_component = new troll_1.Troll();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('t', [0, 0, 0], [128, 0, 128]), 'Troll', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('t', [0, 0, 0], [128, 0, 128]), 'Troll', 1, true, 7, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'wyvern') {
         let fighter_component = new fighter_1.Fighter(30 + 30 * qHp, 2 + 2 * qDef, 5 + 5 * qAtk, 20 + 20 * qExp);
         let ai_component = new wyvern_1.Wyvern();
-        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('w', [0, 0, 0], [148, 0, 211]), 'Wyvern', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new entity_1.Entity(x, y, new glyph_1.Glyph('w', [0, 0, 0], [148, 0, 211]), 'Wyvern', 1, true, 6, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'ranger') {
@@ -11630,11 +11627,6 @@ function debugScreen() {
                         break;
                 }
             }
-            if (inputType === 'click') {
-                let xx = randint_1.randint(-5, 5);
-                let yy = randint_1.randint(-5, 5);
-                game._entities[0].move(xx, yy, game._map);
-            }
         }
     };
 }
@@ -11891,16 +11883,28 @@ function playScreen() {
                         }
                         break;
                     case constants_1.KEYS.VK_LEFT:
-                        game._entities[0].move(-1, 0, game._map);
+                        if (game._entities[0].stamina >= game._entities[0].maxStamina) {
+                            game._entities[0].stamina = 0;
+                            game._entities[0].move(-1, 0, game._map);
+                        }
                         break;
                     case constants_1.KEYS.VK_DOWN:
-                        game._entities[0].move(0, 1, game._map);
+                        if (game._entities[0].stamina >= game._entities[0].maxStamina) {
+                            game._entities[0].stamina = 0;
+                            game._entities[0].move(0, 1, game._map);
+                        }
                         break;
                     case constants_1.KEYS.VK_UP:
-                        game._entities[0].move(0, -1, game._map);
+                        if (game._entities[0].stamina >= game._entities[0].maxStamina) {
+                            game._entities[0].stamina = 0;
+                            game._entities[0].move(0, -1, game._map);
+                        }
                         break;
                     case constants_1.KEYS.VK_RIGHT:
-                        game._entities[0].move(1, 0, game._map);
+                        if (game._entities[0].stamina >= game._entities[0].maxStamina) {
+                            game._entities[0].stamina = 0;
+                            game._entities[0].move(1, 0, game._map);
+                        }
                         break;
                     case constants_1.KEYS.VK_P:
                         game._entities[0].usePotion();
@@ -11928,11 +11932,6 @@ function playScreen() {
                     if (game._player.fighter.unspentPoints < 0)
                         game._player.fighter.unspentPoints = 0;
                 }
-            }
-            if (inputType === 'click') {
-                let xx = randint_1.randint(-5, 5);
-                let yy = randint_1.randint(-5, 5);
-                game._entities[0].move(xx, yy, game._map);
             }
         }
     };

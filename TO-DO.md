@@ -32,4 +32,4 @@ Todo list to fill the void of our souls (but i really want to make it web)
 - [X] Boss fights! 
 - [X] Dummy fight on level zero
 - [ ] Switch screen animation
-- [ ] Leaderboards!
+- [X] Leaderboards!

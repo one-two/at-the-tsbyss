@@ -29,7 +29,7 @@ export function CreateMonster(monster_choice: string, x: number, y: number, dung
     else if (monster_choice == 'orc') {
         let fighter_component = new Fighter(40+40*qHp, 2+2*qDef, 4+4*qAtk, 35+35*qExp)
         let ai_component = new Orc();
-        let monster = new Entity(x, y, new Glyph('o', [0,0,0], [0, 128, 0]), 'Orc', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new Entity(x, y, new Glyph('o', [0,0,0], [0, 128, 0]), 'Orc', 1, true, 7, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'dummy') {
@@ -41,13 +41,13 @@ export function CreateMonster(monster_choice: string, x: number, y: number, dung
     else if (monster_choice == 'troll') {
         let fighter_component = new Fighter(90+90*qHp, 3+3*qDef, 8+8*qAtk, 60+60*qExp)
         let ai_component = new Troll()
-        let monster = new Entity(x,y, new Glyph('t', [0,0,0], [128, 0, 128]), 'Troll', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new Entity(x,y, new Glyph('t', [0,0,0], [128, 0, 128]), 'Troll', 1, true, 7, 2, fighter_component, ai_component);
         return monster;
     }
     else if (monster_choice == 'wyvern') {
         let fighter_component = new Fighter(30+30*qHp, 2+2*qDef, 5+5*qAtk, 20+20*qExp)
         let ai_component = new Wyvern()
-        let monster = new Entity(x,y, new Glyph('w', [0,0,0], [148, 0, 211]), 'Wyvern', 1, true, 5, 2, fighter_component, ai_component);
+        let monster = new Entity(x,y, new Glyph('w', [0,0,0], [148, 0, 211]), 'Wyvern', 1, true, 6, 2, fighter_component, ai_component);
         return monster
     }
     else if (monster_choice == 'ranger') {
