@@ -6,14 +6,14 @@ import { createDamageBlock } from "../../helper/createDamageBlock";
 import { qualityGenerator } from "../../helper/qualityGenerator";
 
 export class Spear extends Equipment {
-    power_bonus: number = 4;
+    power_bonus: number = 3.5;
     skill_bonus: number = 1.1;
     defense_bonus: number = 0;
     hp_bonus: number = 0;
     owner: Entity;
     name: string = 'spear';
     fullname: string = 'spear';
-    max_cooldown: number = 8
+    max_cooldown: number = 10
     cooldown: number = 13
 
     constructor(drop: Equipment = undefined, upgrades: number[] = undefined) {

@@ -8,15 +8,15 @@ import { qualityGenerator } from "../../helper/qualityGenerator";
 
 export class Firerod extends Equipment {
     power_bonus: number = -2;
-    skill_bonus: number = 1.5;
+    skill_bonus: number = 2;
     defense_bonus: number = 0;
     hp_bonus: number = 0;
     owner: Entity;
     prefix: string = '';
     name: string = 'firerod';
     fullname:string = 'firerod';
-    cooldown: number = 8
-    max_cooldown: number = 8
+    cooldown: number = 12
+    max_cooldown: number = 12
     glyph: Glyph;
 
     constructor(drop: Equipment = undefined, upgrades: number[] = undefined) {

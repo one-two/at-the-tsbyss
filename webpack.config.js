@@ -1,6 +1,6 @@
 module.exports = {
     entry: "./src/game.ts",
-    mode: "development",
+    mode: "production",
     output: {
         filename: "bundle.js",
         path: __dirname + "/dist"

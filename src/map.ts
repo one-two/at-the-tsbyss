@@ -185,21 +185,23 @@ export class Map {
         let xexit = randint(0, this._width - 1)
         let yexit = randint(0, this._height - 1)
         let emptyspace = true;
-
-        while (emptyspace) {
-            let dist = Math.sqrt( (this._entities[0].x - xexit)**2+(this._entities[0].y - yexit)**2 );
-            if ( dist > 30 && this.getTile(xexit, yexit)._isWalkable) emptyspace = false;
-            else {
-                xexit = randint(0, this._width - 1)
-                yexit = randint(0, this._height - 1)
+        for (let xts = 0; xts < 4; xts++) {
+                    
+            while (emptyspace) {
+                let dist = Math.sqrt( (this._entities[0].x - xexit)**2+(this._entities[0].y - yexit)**2 );
+                if ( dist > 30 && this.getTile(xexit, yexit)._isWalkable) emptyspace = false;
+                else {
+                    xexit = randint(0, this._width - 1)
+                    yexit = randint(0, this._height - 1)
+                }
             }
+
+            
+            let exit = new Exit(this);
+            let newex = new Entity(xexit, yexit, new Glyph("⍝", [0,0,0], [20,150,200]), "saida", 1, false, -1,2, undefined, undefined, false, undefined, undefined, undefined, exit);
+            this._entities.push(newex);
+            emptyspace = true
         }
-
-        
-        let exit = new Exit(this);
-        let newex = new Entity(xexit, yexit, new Glyph("⍝", [0,0,0], [20,150,200]), "saida", 1, false, -1,2, undefined, undefined, false, undefined, undefined, undefined, exit);
-        this._entities.push(newex);
-
         return null;
     }
 

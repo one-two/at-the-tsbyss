@@ -8,15 +8,15 @@ import { qualityGenerator } from "../../helper/qualityGenerator";
 
 export class Knife extends Equipment {
     power_bonus: number = 2;
-    skill_bonus: number = 0.5;
+    skill_bonus: number = 0.8;
     defense_bonus: number = 0;
     hp_bonus: number = 0;
     owner: Entity;
     prefix: string = '';
     name: string = 'knife';
     fullname:string = 'knife';
-    cooldown: number = 8
-    max_cooldown: number = 8
+    cooldown: number = 6
+    max_cooldown: number = 6
     glyph: Glyph;
 
     constructor(drop: Equipment = undefined, upgrades: number[] = undefined) {

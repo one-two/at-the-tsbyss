@@ -7,16 +7,16 @@ import { randperc } from "../../helper/randperc";
 import { qualityGenerator } from "../../helper/qualityGenerator";
 
 export class Icerod extends Equipment {
-    power_bonus: number = -1;
-    skill_bonus: number = 1.7;
+    power_bonus: number = -2;
+    skill_bonus: number = 2;
     defense_bonus: number = 0;
     hp_bonus: number = 0;
     owner: Entity;
     prefix: string = '';
     name: string = 'icerod';
     fullname:string = 'icerod';
-    cooldown: number = 8
-    max_cooldown: number = 8
+    cooldown: number = 12
+    max_cooldown: number = 12
     glyph: Glyph;
 
     constructor(drop: Equipment = undefined, upgrades: number[] = undefined) {

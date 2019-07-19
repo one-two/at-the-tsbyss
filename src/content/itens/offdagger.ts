@@ -7,9 +7,9 @@ import { qualityGenerator } from "../../helper/qualityGenerator";
 
 export class Offdagger extends Equipment {
     power_bonus: number = 1;
-    skill_bonus: number = 1;
-    defense_bonus: number = 0.5;
-    hp_bonus: number = -5;
+    skill_bonus: number = 0.5;
+    defense_bonus: number = -0.5;
+    hp_bonus: number = -10;
     owner: Entity;
     name: string = 'offdagger';
     fullname: string = 'offdagger';

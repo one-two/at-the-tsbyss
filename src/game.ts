@@ -41,6 +41,8 @@ export class Game {
 	iControl:number = 0;
 	clr = 255;
 	scores: {name: string, score: string, killedby: string}[] = [];
+	starttime: number=0;
+	endtime: number=0;
 
 	constructor() {
 		this._centerX = 0;
@@ -232,7 +234,7 @@ export class Game {
 			this._inventory.drawText(1, 13, "%c{rgb(140, 140, 160)}Exp: %c{}"+ this._player.fighter.current_exp.toFixed(2) + "/" + this._player.fighter.nextRank.toFixed(0));
 
 			if ( this._player.equipment != undefined) {
-				this._inventory.drawText(1, 15, "%c{rgb(140, 140, 160)}Principal: %c{rgb("+this._player.equipment.glyph.foreground.toString()+")}"+ this._player.equipment.name);
+				this._inventory.drawText(1, 15, "%c{rgb(140, 140, 160)}Prima: %c{rgb("+this._player.equipment.glyph.foreground.toString()+")}"+ this._player.equipment.name);
 				this._inventory.drawText(3, 16, "%c{rgb(140, 140, 160)}atq: %c{}"+ this._player.equipment.power_bonus.toFixed(2));
 				this._inventory.drawText(3, 17, "%c{rgb(140, 140, 160)}hab: %c{}"+ this._player.equipment.skill_bonus.toFixed(2));
 				this._inventory.drawText(3, 18, "%c{rgb(140, 140, 160)}def: %c{}"+ this._player.equipment.defense_bonus.toFixed(2));
@@ -242,7 +244,7 @@ export class Game {
 			}
 
 			if ( this._player.subequipment != undefined) {
-				this._inventory.drawText(1, 22, "%c{rgb(140, 140, 160)}Sub: %c{}"+ this._player.subequipment.name);
+				this._inventory.drawText(1, 22, "%c{rgb(140, 140, 160)}Secnd: %c{}"+ this._player.subequipment.name);
 				this._inventory.drawText(3, 23, "%c{rgb(140, 140, 160)}atq: %c{}"+ this._player.subequipment.power_bonus.toFixed(2));
 				this._inventory.drawText(3, 24, "%c{rgb(140, 140, 160)}hab: %c{}"+ this._player.subequipment.skill_bonus.toFixed(2));
 				this._inventory.drawText(3, 25, "%c{rgb(140, 140, 160)}def: %c{}"+ this._player.subequipment.defense_bonus.toFixed(2));

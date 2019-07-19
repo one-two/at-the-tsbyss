@@ -13,8 +13,8 @@ export class Sword extends Equipment {
     owner: Entity;
     name: string = 'sword';
     fullname: string = 'sword';
-    cooldown: number = 10
-    max_cooldown: number = 10;
+    cooldown: number = 12
+    max_cooldown: number = 12;
 
     constructor(drop: Equipment = undefined, upgrades: number[] = undefined) {
         super("main");

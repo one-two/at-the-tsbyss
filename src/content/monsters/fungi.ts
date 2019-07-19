@@ -7,7 +7,7 @@ import { createDamageBlock } from "../../helper/createDamageBlock";
 import { skilllist, poison_cloud, poison_shield } from "../../components/skilllist"
 
 export class Fungi implements Enemy {
-    skill_bonus: number = 1;
+    skill_bonus: number = 1.5;
     owner: Entity;
     skills: skilllist[];
 
@@ -61,7 +61,7 @@ export class Fungi implements Enemy {
             this.owner.wander();
         }
         if (dist < 2) if (this.skills[1].cooldown >= this.skills[1].maxCooldown) {
-            poison_shield(this.owner, player, 1);
+            poison_shield(this.owner, player, this.skill_bonus);
             this.skills[1].cooldown = 0
         }
     }

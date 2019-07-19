@@ -21,7 +21,7 @@ export function startScreen() {
     return {
         enter : (game: Game) => {
             let fighter = new Fighter(100, 1, 4, 0);
-            let player = new Entity(60, 45, new Glyph('@', [0,0,0], [0, 191, 255]), 'The Princess', 1, true, 1, 1, fighter, undefined, true);
+            let player = new Entity(60, 45, new Glyph('@', [0,0,0], [0, 191, 255]), '', 1, true, 1, 1, fighter, undefined, true);
             player.fighter.unspentPoints = 2;
             game._player = player
             game._entities = [game._player];
@@ -67,12 +67,12 @@ export function startScreen() {
             let blink = "";
 			if (game.blinkLevel < 2) blink = "%c{rgb(140, 140, 140)}";
 			if (game.blinkLevel >= 2) blink = "%c{rgb(240, 240, 240)}";
-			if (game.blinkLevel > 5) game.blinkLevel = 0;
+			if (game.blinkLevel > 4) game.blinkLevel = -1;
             game.blinkLevel += 1;
 
              // Render our prompt to the screen
             display.drawText((game._screenWidth/2)-3,game._screenHeight-13, "%c{rgb(0, 191, 255)}So... you are awake...");
-            display.drawText((game._screenWidth/2)-5,game._screenHeight-11, "%c{rgb(0, 191, 255)}Who are you? %c{}"+ game._entities[0].name + blink +"_");
+            display.drawText((game._screenWidth/2)-5,game._screenHeight-11, "%c{rgb(0, 191, 255)}Who are you? %c{}"+ game._entities[0].name + blink +"_<");
             if (game.mainmenuOpt == 0) display.drawText((game._screenWidth/2)-1,game._screenHeight-8, "%c{yellow}>Eng%c{}      Port");
             if (game.mainmenuOpt == 1) display.drawText((game._screenWidth/2),game._screenHeight-8, "Eng     %c{yellow}>Port%c{}"); 
 
@@ -103,6 +103,7 @@ export function startScreen() {
                     game._entities[0].glyph.foreground[1] = Color.fromString(hash)[1];
                     game._entities[0].glyph.foreground[2] = Color.fromString(hash)[2];
                     game.switchScreen(game.Screen.playScreen);
+                    if (game.starttime == 0) game.starttime = Math.floor(Date.now()/(1000*60));
                 }
                 // if (inputData.keyCode === KEYS.VK_COMMA) {
                 //     game.switchScreen(game.Screen.winScreen);
@@ -591,15 +592,15 @@ export function playScreen() {
                 if (game._player.fighter.unspentPoints > 0) {
                     switch (inputData.keyCode) {
                         case KEYS.VK_A:
-                            game._player.fighter.base_power += 0.8;
+                            game._player.fighter.base_power += 0.5;
                             game._player.fighter.unspentPoints -= 1;
                             break;
                         case KEYS.VK_S:
-                            game._player.fighter.base_defense += 0.8;
+                            game._player.fighter.base_defense += 0.5;
                             game._player.fighter.unspentPoints -= 1;
                             break;
                         case KEYS.VK_D:
-                            game._player.fighter.base_max_hp += 30;
+                            game._player.fighter.base_max_hp += 20;
                             game._player.fighter.hp += 20;
                             game._player.fighter.unspentPoints -= 1;
                             break;
@@ -753,9 +754,12 @@ export function winScreen() {
     return {
         enter : (game: Game) => {    
             console.log("Entered win screen."); 
+            game.endtime = Math.floor(Date.now()/(1000*60));
+            let gametime = game.endtime - game.starttime;
+            ((game._player.lastxp*(game.level > 8 ? 8 : game.level))/Math.sqrt(gametime));
             axios.post('https://at-the-tsbyss-leaderboard.herokuapp.com/api/score', {
                 name: game._player.name,
-                score: (game._player.lastxp*(game.level > 8 ? 10 : game.level)).toFixed(2).toString(),
+                score: (game._player.lastxp*(game.level > 8 ? 8+((game.level-8)/2) : game.level)).toFixed(2).toString(),
                 killedby: game._player.killedby,
             })
             .then(function (response) {
@@ -765,15 +769,15 @@ export function winScreen() {
                 console.log(error);
             });
         },
-        exit : () => { 
+        exit : (game: Game) => { 
             console.log("Exited win screen."); 
         },
         render : (display: any, game: Game) => {
             // Render our prompt to the screen
-
+            
             display.drawText(2, 16, "%c{rgb(200,200,200)}your future is here, welcome");
             display.drawText(35, 18, "%c{rgb(120,120,120)}l o o k a r o u n d");
-
+            
             let message = "or... do you want to [P]ress on...?";
             for (let index = 0; index < game.iControl; index++) {
                 display.draw(index+20, 30, message[index], Color.toRGB([game.clr, game.clr, game.clr]), Color.toRGB([0,0,0]))
@@ -791,6 +795,7 @@ export function winScreen() {
                     game.clr = 255;
                     game.iControl = 0;
                     game.level = 0; 
+                    game.starttime = 0;
                 }
                 if (inputData.keyCode === KEYS.VK_P) {
                     game.clr = 255;
@@ -803,14 +808,16 @@ export function winScreen() {
     }
 }
 
-// Define our winning screen
+// Define our lsoing screen
 export function loseScreen() {
     return {
         enter : (game: Game) => { 
             console.log("Entered lose screen."); 
+            game.endtime = Math.floor(Date.now()/(1000*60));
+            let gametime = game.endtime- game.starttime;
             axios.post('https://at-the-tsbyss-leaderboard.herokuapp.com/api/score', {
                 name: game._player.name,
-                score: (game._player.lastxp*(game.level > 8 ? 8 : game.level)).toFixed(2).toString(),
+                score: ((game._player.lastxp*(game.level > 8 ? 8+((game.level-8)/2) : game.level))/Math.sqrt(gametime)).toFixed(2).toString(),
                 killedby: game._player.killedby,
             })
             .then(function (response) {
@@ -819,7 +826,8 @@ export function loseScreen() {
             .catch(function (error) {
                 console.log(error);
             });
-            game.level = 0;   
+            game.level = 0;
+            game.starttime = 0;
         },
         exit : () => { console.log("Exited lose screen."); },
         render : (display: Display, game: Game) => {
@@ -893,7 +901,7 @@ export function scoreScreen() {
         },
         handleInput : (inputType: any, inputData: any, game: Game) => {
             if (inputType === "keydown") {
-                if (inputData.keyCode === KEYS.VK_A || inputData.keyCode === KEYS.VK_R || inputData.keyCode === KEYS.VK_RETURN) {
+                if (inputData.keyCode === KEYS.VK_A || inputData.keyCode === KEYS.VK_R || inputData.keyCode === KEYS.VK_RETURN || inputData.keyCode == 17) {
                     game.switchScreen(game.Screen.startScreen);
                     game.clr = 255;
                     game.iControl = 0;

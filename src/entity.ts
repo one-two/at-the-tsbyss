@@ -248,6 +248,7 @@ export class Entity {
                 this.equipment.owner = this;
                 item.item.expire = true;
                 this._map.messageLog.newMessage(this, 'switchEquip', droppedItem, item)
+                if (this.fighter.hp > this.fighter.max_hp()) this.fighter.hp = this.fighter.max_hp();
             }
         }
         else if (item.item.type == "sub") {
@@ -264,6 +265,7 @@ export class Entity {
                 this.subequipment.owner = this;
                 item.item.expire = true;
                 this._map.messageLog.newMessage(this, 'switchEquip', droppedItem, item);
+                if (this.fighter.hp > this.fighter.max_hp()) this.fighter.hp = this.fighter.max_hp();
             }
         }
         else if (item.item.type == "bag") {

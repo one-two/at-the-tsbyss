@@ -7,7 +7,7 @@ import { createDamageBlock } from "../../helper/createDamageBlock";
 import { skilllist, poison_cloud, poison_shield, flamestrike, firebreath } from "../../components/skilllist"
 
 export class Dragon implements Enemy {
-    skill_bonus: number = 3;
+    skill_bonus: number = 6;
     owner: Entity;
     skills: skilllist[];
 

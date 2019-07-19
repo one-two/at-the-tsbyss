@@ -15,8 +15,9 @@ export function CreateMonster(monster_choice: string, x: number, y: number, dung
     let dl = dungeon_level/10;
     let qHp = randperc(100)+0.2+dl;
     let qAtk = randperc(50)+dl;
-    let qDef = 0.5;
+    let qDef = randperc(30)+(dl/2);
     if (dungeon_level < 10 ) qDef = randperc(30)+dl;
+    else qHp += dl/8;
     let qExp = (qHp > 0 ? qHp : qHp*0.5)+(qAtk > 0 ? qAtk*2 : qAtk*0.5)+(qDef > 0 ? qDef*3 : qDef*0.5);
     qExp = qExp/3;
 
@@ -63,7 +64,7 @@ export function CreateMonster(monster_choice: string, x: number, y: number, dung
         return monster
     }
     else if (monster_choice == 'dragon') {
-        let fighter_component = new Fighter(100+100*qHp, 6+6*qDef, 10+10*qAtk, 300+300*qExp)
+        let fighter_component = new Fighter(100+100*qHp, 6+6*qDef, 12+12*qAtk, 300+300*qExp)
         let ai_component = new Dragon()
         let monster = new Entity(x,y, new Glyph('Đ', [0,0,0], [220, 20, 60]), 'Dragon', 1, true, 5, 2, fighter_component, ai_component);
         return monster 

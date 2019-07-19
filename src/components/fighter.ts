@@ -105,7 +105,7 @@ export class Fighter {
             color1 : [255,255,255],
             color2 : [255,255,255]
         };
-        let damage = this.power() * (1 - (target.fighter.defense()/(10 + target.fighter.defense())));
+        let damage = this.power() * (1 - (target.fighter.defense()/(11 + target.fighter.defense())));
         damage = +damage.toFixed(2);
 
         if (damage > 0) {
@@ -124,6 +124,7 @@ export class Fighter {
     }
 
     equipment_skill(target: Entity, dmgBlock: Entity) {
+        let weaponskillmod = dmgBlock.damage.multiplier;
         let result: MessageType = {
             message : '',
             type : 'skill',
@@ -131,7 +132,7 @@ export class Fighter {
             color1 : [255,255,255],
             color2 : [255,255,255]
         };
-        let damage = this.skill_power()*dmgBlock.damage.multiplier * (1 - (target.fighter.defense()/(10 + target.fighter.defense())));
+        let damage = (this.skill_power()+weaponskillmod) * (1 - (target.fighter.defense()/(7 + target.fighter.defense())));
         damage = +damage.toFixed(2);
 
         if (damage > 0) {

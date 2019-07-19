@@ -7,16 +7,16 @@ import { randperc } from "../../helper/randperc";
 import { qualityGenerator } from "../../helper/qualityGenerator";
 
 export class CrossedSwords extends Equipment {
-    power_bonus: number = 8;
+    power_bonus: number = 6;
     skill_bonus: number = 1;
-    defense_bonus: number = 0;
+    defense_bonus: number = -1;
     hp_bonus: number = 0;
     owner: Entity;
     prefix: string = '';
-    name: string = 'crossedswords';
-    fullname:string = 'crossedswords';
-    cooldown: number = 6
-    max_cooldown: number = 6
+    name: string = 'c-swords';
+    fullname:string = 'c-swords';
+    cooldown: number = 8
+    max_cooldown: number = 8
     glyph: Glyph;
 
     constructor(drop: Equipment = undefined, upgrades:number[] = undefined) {

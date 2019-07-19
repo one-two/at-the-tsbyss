@@ -7,8 +7,8 @@ import { qualityGenerator } from "../../helper/qualityGenerator";
 
 export class Shield extends Equipment {
     power_bonus: number = 0;
-    skill_bonus: number = 1;
-    defense_bonus: number = 2;
+    skill_bonus: number = 0.1;
+    defense_bonus: number = 3;
     hp_bonus: number = 15;
     owner: Entity;
     name: string = 'shield';
