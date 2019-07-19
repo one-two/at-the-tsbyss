@@ -56,7 +56,7 @@ export function startScreen() {
             console.log("Exited start screen."); 
         },
         render : (display : any, game: Game) => {
-            display.drawText(1,1, "%c{rgb(100, 100, 100)}Beta: v.190717");
+            display.drawText(1,1, "%c{rgb(100, 100, 100)}Beta: v.190719");
             let y = 8;
             for (const line of game.logo) {
                 display.drawText(10,y, line);
@@ -98,12 +98,14 @@ export function startScreen() {
                 if (inputData.keyCode === KEYS.VK_RETURN || inputData.keyCode === KEYS.VK_ENTER) {
                     if (game.mainmenuOpt == 0) game.lang = "En";
                     if (game.mainmenuOpt == 1) game.lang = "Pt";
-                    let hash = hashStringToColor(game._entities[0].name);
-                    game._entities[0].glyph.foreground[0] = Color.fromString(hash)[0];
-                    game._entities[0].glyph.foreground[1] = Color.fromString(hash)[1];
-                    game._entities[0].glyph.foreground[2] = Color.fromString(hash)[2];
-                    game.switchScreen(game.Screen.playScreen);
-                    if (game.starttime == 0) game.starttime = Math.floor(Date.now()/(1000*60));
+                    if (game._entities[0].name.length > 0) {
+                        let hash = hashStringToColor(game._entities[0].name);
+                        game._entities[0].glyph.foreground[0] = Color.fromString(hash)[0];
+                        game._entities[0].glyph.foreground[1] = Color.fromString(hash)[1];
+                        game._entities[0].glyph.foreground[2] = Color.fromString(hash)[2];
+                        game.switchScreen(game.Screen.playScreen);
+                        if (game.starttime == 0) game.starttime = Math.floor(Date.now()/(1000*60));
+                    }
                 }
                 // if (inputData.keyCode === KEYS.VK_COMMA) {
                 //     game.switchScreen(game.Screen.winScreen);
