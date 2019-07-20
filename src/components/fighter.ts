@@ -53,7 +53,8 @@ export class Fighter {
             if(this.owner.equipment != undefined) bonus += this.owner.equipment.defense_bonus;
             if(this.owner.subequipment != undefined) bonus += this.owner.equipment.defense_bonus;
         } 
-        return this.base_defense + bonus
+        let totalBase = (this.base_defense + bonus) < 0 ? 0 : this.base_defense + bonus 
+        return totalBase
     }
 
     max_hp() {
@@ -132,7 +133,14 @@ export class Fighter {
             color1 : [255,255,255],
             color2 : [255,255,255]
         };
-        let damage = (this.skill_power()+weaponskillmod) * (1 - (target.fighter.defense()/(7 + target.fighter.defense())));
+        console.log("power: " + this.power())
+        console.log("skill_power:" + this.skill_power())
+        console.log("weapon mod: " + weaponskillmod);
+        console.log("def mod: " + (1 - (target.fighter.defense()/(7 + target.fighter.defense()))));
+        console.log()
+        let damage = 0;
+        if (this.owner.ai != undefined) damage = (this.power()*weaponskillmod) * (1 - (target.fighter.defense()/(7 + target.fighter.defense())));
+        else damage = (this.skill_power()) * (1 - (target.fighter.defense()/(7 + target.fighter.defense())));
         damage = +damage.toFixed(2);
 
         if (damage > 0) {

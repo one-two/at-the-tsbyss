@@ -13,8 +13,8 @@ export class CrossedSwords extends Equipment {
     hp_bonus: number = 0;
     owner: Entity;
     prefix: string = '';
-    name: string = 'c-swords';
-    fullname:string = 'c-swords';
+    name: string = 'crossedswords';
+    fullname:string = 'crossedswords';
     cooldown: number = 8
     max_cooldown: number = 8
     glyph: Glyph;
