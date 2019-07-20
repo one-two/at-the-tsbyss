@@ -34,7 +34,7 @@ export function CreateMonster(monster_choice: string, x: number, y: number, dung
         return monster;
     }
     else if (monster_choice == 'dummy') {
-        let fighter_component = new Fighter(40+40*qHp, 0, 0+0*qAtk, 0)
+        let fighter_component = new Fighter(400+40*qHp, 0, 0+0*qAtk, 0)
         let ai_component = new DummyTarget();
         let monster = new Entity(x, y, new Glyph('☺', [0,0,0], [128, 128, 0]), 'Dummy', 1, true, 5, 2, fighter_component, ai_component);
         return monster;

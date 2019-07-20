@@ -20,9 +20,9 @@ export function startScreen() {
     //Game.Screen.startScreen = {
     return {
         enter : (game: Game) => {
-            let fighter = new Fighter(10000, 1, 4, 0);
+            let fighter = new Fighter(100, 1, 4, 0);
             let player = new Entity(60, 45, new Glyph('@', [0,0,0], [0, 191, 255]), '', 1, true, 1, 1, fighter, undefined, true);
-            player.fighter.unspentPoints = 12;
+            player.fighter.unspentPoints = 4;
             game._player = player
             game._entities = [game._player];
             //let knife = new Knife();
@@ -287,7 +287,7 @@ export function playScreen() {
                 let exit = new Exit(game._map);
                 let newex = new Entity(10, 2, new Glyph("⍝", [0,0,0], [20,150,200]), "saida", 1, false, -1,2, undefined, undefined, false, undefined, undefined, undefined, exit);
                 game._map._entities.push(newex);
-                let dummy = CreateMonster('dragon', 10, 5, 1);
+                let dummy = CreateMonster('dummy', 10, 5, 1);
                 dummy._map = game._map;
                 game._map._entities.push(dummy);
                 let posx = [6,10,14];
@@ -814,17 +814,17 @@ export function loseScreen() {
             console.log("Entered lose screen."); 
             game.endtime = Math.floor(Date.now()/(1000*60));
             let gametime = game.endtime- game.starttime;
-            // axios.post('https://at-the-tsbyss-leaderboard.herokuapp.com/api/score', {
-            //     name: game._player.name,
-            //     score: ((game._player.lastxp*(game.level > 8 ? 8+((game.level-8)/2) : game.level))/Math.sqrt(gametime)).toFixed(2).toString(),
-            //     killedby: game._player.killedby,
-            // })
-            // .then(function (response) {
-            //     console.log(response);
-            // })
-            // .catch(function (error) {
-            //     console.log(error);
-            // });
+            axios.post('https://at-the-tsbyss-leaderboard.herokuapp.com/api/score', {
+                name: game._player.name,
+                score: ((game._player.lastxp*(game.level > 8 ? 8+((game.level-8)/2) : game.level))/Math.sqrt(gametime)).toFixed(2).toString(),
+                killedby: game._player.killedby,
+            })
+            .then(function (response) {
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
             game.level = 0;
             game.starttime = 0;
         },

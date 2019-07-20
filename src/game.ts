@@ -256,7 +256,7 @@ export class Game {
 				this._inventory.drawText(1, 22, "%c{rgb(0, 255, 102)}Poções: %c{}"+ this._player.inventory + " [p]");
 			}
 
-			//this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Pos: %c{}"+ this._player.x + " " + this._player.y);
+			//this._inventory.drawText(1, 30, "%c{rgb(140, 140, 160)}Pos: %c{}"+ this._player.x + " " + this._player.y);
 			this._inventory.drawText(1, 31, "%c{rgb(140, 140, 160)}Andar: %c{}"+ this._map.dungeon_level);
 		}
 		

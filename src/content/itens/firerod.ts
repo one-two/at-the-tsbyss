@@ -8,7 +8,7 @@ import { qualityGenerator } from "../../helper/qualityGenerator";
 
 export class Firerod extends Equipment {
     power_bonus: number = -2;
-    skill_bonus: number = 2;
+    skill_bonus: number = 2.5;
     defense_bonus: number = 0;
     hp_bonus: number = 0;
     owner: Entity;

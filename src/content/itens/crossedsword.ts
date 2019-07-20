@@ -7,7 +7,7 @@ import { randperc } from "../../helper/randperc";
 import { qualityGenerator } from "../../helper/qualityGenerator";
 
 export class CrossedSwords extends Equipment {
-    power_bonus: number = 6;
+    power_bonus: number = 7;
     skill_bonus: number = 1;
     defense_bonus: number = -1;
     hp_bonus: number = 0;
