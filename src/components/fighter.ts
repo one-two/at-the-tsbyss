@@ -133,11 +133,7 @@ export class Fighter {
             color1 : [255,255,255],
             color2 : [255,255,255]
         };
-        console.log("power: " + this.power())
-        console.log("skill_power:" + this.skill_power())
-        console.log("weapon mod: " + weaponskillmod);
-        console.log("def mod: " + (1 - (target.fighter.defense()/(7 + target.fighter.defense()))));
-        console.log()
+
         let damage = 0;
         if (this.owner.ai != undefined) damage = (this.power()*weaponskillmod) * (1 - (target.fighter.defense()/(7 + target.fighter.defense())));
         else damage = (this.skill_power()) * (1 - (target.fighter.defense()/(7 + target.fighter.defense())));

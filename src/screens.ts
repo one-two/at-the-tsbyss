@@ -294,12 +294,13 @@ export function playScreen() {
                 let posy = [12,10,12];
                 for (let i = 0; i < 3; i++) {
 
-                    let rd = randint(0,3);
+                    let rd = randint(0,4);
                     let item_choice = "";
                     if (rd == 0) item_choice = 'potion';
                     if (rd == 1) item_choice = 'knife';
-                    if (rd == 2) item_choice = 'dagger';
-                    if (rd == 3) item_choice = 'sword';
+                    if (rd == 2) item_choice = 'knife';
+                    if (rd == 3) item_choice = 'dagger';
+                    if (rd == 4) item_choice = 'dagger';
                     let q = CreateItem(item_choice, posx[i], posy[i], game.level);
                     q._map = this;
                     game._map._entities.push(q);
