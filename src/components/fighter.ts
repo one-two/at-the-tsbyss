@@ -23,7 +23,7 @@ export class Fighter {
         this.xp = xp;
         this.status = 'normal'
         this.current_exp = 0;
-        this.nextRank = 10;
+        this.nextRank = 50;
         this.unspentPoints = 0;
         this.rank = 1;
     }
@@ -106,7 +106,7 @@ export class Fighter {
             color1 : [255,255,255],
             color2 : [255,255,255]
         };
-        let damage = this.power() * (1 - (target.fighter.defense()/(11 + target.fighter.defense())));
+        let damage = this.power() * (1 - (target.fighter.defense()/(10 + target.fighter.defense())));
         damage = +damage.toFixed(2);
 
         if (damage > 0) {
@@ -158,7 +158,7 @@ export class Fighter {
         this.current_exp += amount;
         while (this.current_exp >= this.nextRank) {
             this.rank += 1;
-            this.nextRank += (this.nextRank + 40)/2.9;
+            this.nextRank += (this.nextRank + 60)/2.9;
             this.unspentPoints += 1;
         }
     }

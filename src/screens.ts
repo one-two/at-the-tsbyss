@@ -20,9 +20,11 @@ export function startScreen() {
     //Game.Screen.startScreen = {
     return {
         enter : (game: Game) => {
+            game.bg = <HTMLVideoElement> document.getElementById("mainbg");
+            game.bg.play();
             let fighter = new Fighter(100, 1, 4, 0);
             let player = new Entity(60, 45, new Glyph('@', [0,0,0], [0, 191, 255]), '', 1, true, 1, 1, fighter, undefined, true);
-            player.fighter.unspentPoints = 4;
+            player.fighter.unspentPoints = 2;
             game._player = player
             game._entities = [game._player];
             //let knife = new Knife();
@@ -49,8 +51,9 @@ export function startScreen() {
                 game.scores.push({name: "failed to connect to leaderboads", score: "", killedby: ""})
             })
         },
-        exit : () => { 
+        exit : (game: Game) => { 
             console.log("Exited start screen."); 
+            game.bg.pause();
         },
         render : (display : any, game: Game) => {
             display.drawText(1,1, "%c{rgb(100, 100, 100)}Beta: v.190719");
@@ -271,6 +274,9 @@ export function playScreen() {
         enter : (game : Game) => {
             let corr = 99;
             if (game.level == 0) {
+                game.bg = <HTMLVideoElement> document.getElementById("introbg");
+                game.bg.play();
+                game.bg.loop = true;
                 createStart(game);
 
                 game._player.x = 10;
@@ -311,11 +317,21 @@ export function playScreen() {
             }
             let mapType = '';
             if (game.level > 0 && game.level <= 2) {
+                game.bg.pause();
+                game.bg = <HTMLVideoElement> document.getElementById("easybg");
+                game.bg.play();
+                game.bg.loop = true;
                 corr = createCave(game);
                 mapType = 'cave';
                 if (game.level == 1) corr = 1;
             }
             if ((game.level > 2 && game.level <= 4) || (game.level > 10 && game.level.toString()[game.level.toString().length-1] != "7")) {
+                if (game.level == 3) {
+                    game.bg.pause();
+                    game.bg = <HTMLVideoElement> document.getElementById("midbg");
+                    game.bg.play();
+                    game.bg.loop = true;
+                }
                 if( Math.random()*100 < 51 ) {
                     corr = createCave(game);
                     mapType = 'cave';
@@ -329,6 +345,10 @@ export function playScreen() {
                 mapType = 'dungeon';
             }
             if (game.level == 8) {
+                game.bg.pause();
+                game.bg = <HTMLVideoElement> document.getElementById("bossbg");
+                game.bg.play();
+                game.bg.loop = true;
                 game.switchScreen(winScreen);
             }
             if (game.level.toString()[game.level.toString().length-1] == "7") {
@@ -753,6 +773,7 @@ export function createArena(game: Game) {
 export function winScreen() {
     return {
         enter : (game: Game) => {    
+            game.bg.pause();
             console.log("Entered win screen."); 
             game.endtime = Math.floor(Date.now()/(1000*60));
             let gametime = game.endtime - game.starttime;

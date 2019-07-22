@@ -43,6 +43,7 @@ export class Game {
 	scores: {name: string, score: string, killedby: string}[] = [];
 	starttime: number=0;
 	endtime: number=0;
+	bg: HTMLMediaElement;
 
 	constructor() {
 		this._centerX = 0;

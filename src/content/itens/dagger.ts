@@ -7,8 +7,8 @@ import { randperc } from "../../helper/randperc";
 import { qualityGenerator } from "../../helper/qualityGenerator";
 
 export class Dagger extends Equipment {
-    power_bonus: number = 2.5;
-    skill_bonus: number = 0.7;
+    power_bonus: number = 1.5;
+    skill_bonus: number = 1.5;
     defense_bonus: number = 0;
     hp_bonus: number = 0;
     owner: Entity;
