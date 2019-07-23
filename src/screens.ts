@@ -833,6 +833,7 @@ export function winScreen() {
 export function loseScreen() {
     return {
         enter : (game: Game) => { 
+            game.bg.pause();
             console.log("Entered lose screen."); 
             game.endtime = Math.floor(Date.now()/(1000*60));
             let gametime = game.endtime- game.starttime;
