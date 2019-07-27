@@ -56,7 +56,7 @@ export function startScreen() {
             game.bg.pause();
         },
         render : (display : any, game: Game) => {
-            display.drawText(1,1, "%c{rgb(100, 100, 100)}Beta: v.190719");
+            display.drawText(1,1, "%c{rgb(100, 100, 100)}Beta: v.190726");
             let y = 8;
             for (const line of game.logo) {
                 display.drawText(10,y, line);
@@ -542,16 +542,30 @@ export function playScreen() {
 
             if (game.level == 0) {
                 if (game.lang == "En") {
-                    display.drawText((game._screenWidth/10),game._screenHeight-4, "%c{yellow}Arrow%c{}: move/attack"); 
-                    display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Enter%c{}: pickup itens/open door"); 
-                    display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}Space%c{}: use weapon skill"); 
-                    display.drawText((game._screenWidth/10),game._screenHeight-1, "%c{yellow}P Key%c{}: use potion"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-15, "%c{yellow}Bump%c{} enemies to trade damage!"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-14, "Blinking icons %c{yellow}hurt!%c{}"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-13, "Your spell (space key) has your @ shade color"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-12, "___You cant hurt yourself!"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-10, "Test with the Dummy target!");
+
+                    display.drawText((game._screenWidth/10),game._screenHeight-5, "%c{yellow}Arrow%c{}: move/attack"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-4, "%c{yellow}Enter%c{}: pickup itens/open door"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Space%c{}: use weapon skill"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}P Key%c{}: use potion"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-1, "%c{yellow}Events%c{} are logged below"); 
                 }
                 if (game.lang == "Pt") {
-                    display.drawText((game._screenWidth/10),game._screenHeight-4, "%c{yellow}Arrow%c{}: mover/atacar"); 
-                    display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Enter%c{}: pegar itens/abrir porta"); 
-                    display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}Space%c{}: usar habilidade da arma"); 
-                    display.drawText((game._screenWidth/10),game._screenHeight-1, "%c{yellow}P Key%c{}: usar poção");                     
+                    display.drawText((game._screenWidth/10),game._screenHeight-15, "%c{yellow}Esbarre%c{} em inimigos para trocar dano!"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-14, "Icones piscantes %c{yellow}machucam!%c{}"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-13, "Sua magia (barra de espaço) tem o mesmo tom do @"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-12, "___Voce não se machuca!"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-10, "Treine com o boneco desse nivel!"); 
+
+                    display.drawText((game._screenWidth/10),game._screenHeight-5, "%c{yellow}Setas%c{}: mover/atacar"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-4, "%c{yellow}Enter%c{}: pegar itens/abrir porta"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-3, "%c{yellow}Espaço%c{}: usar habilidade da arma"); 
+                    display.drawText((game._screenWidth/10),game._screenHeight-2, "%c{yellow}P Key%c{}: usar poção");                     
+                    display.drawText((game._screenWidth/10),game._screenHeight-1, "%c{yellow}Eventos%c{} são descritos abaixo");                     
                 }
             }
         },
