@@ -56,7 +56,7 @@ export function startScreen() {
             game.bg.pause();
         },
         render : (display : any, game: Game) => {
-            display.drawText(1,1, "%c{rgb(100, 100, 100)}Beta: v.190726");
+            display.drawText(1,1, "%c{rgb(100, 100, 100)}Beta: v.190728");
             let y = 8;
             for (const line of game.logo) {
                 display.drawText(10,y, line);
@@ -851,6 +851,7 @@ export function loseScreen() {
             console.log("Entered lose screen."); 
             game.endtime = Math.floor(Date.now()/(1000*60));
             let gametime = game.endtime- game.starttime;
+            if (gametime == 0) gametime = 1;
             axios.post('https://at-the-tsbyss-leaderboard.herokuapp.com/api/score', {
                 name: game._player.name,
                 score: ((game._player.lastxp*(game.level > 8 ? 8+((game.level-8)/2) : game.level))/Math.sqrt(gametime)).toFixed(2).toString(),
@@ -861,7 +862,7 @@ export function loseScreen() {
             })
             .catch(function (error) {
                 console.log(error);
-            });
+            }); 
             game.level = 0;
             game.starttime = 0;
         },

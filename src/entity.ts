@@ -74,6 +74,7 @@ export class Entity {
         this.inventory = 1;
         this.stairs = stairs;
         this.boss = boss;
+        this.lastxp =0;
 
         if (this.player == true) {
             this.startMoveCountDown();
