@@ -47,7 +47,7 @@ export function startScreen() {
             })
             .catch(function (error: any) {
                 // handle error
-                console.log(error);
+                //console.log(error);
                 game.scores.push({name: "failed to connect to leaderboads", score: "", killedby: ""})
             })
         },
@@ -580,7 +580,7 @@ export function playScreen() {
                                 gnd[0].stairs.climb();
                             }
                         } else {
-                            console.log("nada")
+                            //console.log("nada")
                         }
                         break;
                     case KEYS.VK_ESCAPE:
@@ -797,10 +797,10 @@ export function winScreen() {
                 killedby: game._player.killedby,
             })
             .then(function (response) {
-                console.log(response);
+                //console.log(response);
             })
             .catch(function (error) {
-                console.log(error);
+                //console.log(error);
             });
         },
         exit : (game: Game) => { 
@@ -857,10 +857,10 @@ export function loseScreen() {
                 killedby: game._player.killedby,
             })
             .then(function (response) {
-                console.log(response);
+                //console.log(response);
             })
             .catch(function (error) {
-                console.log(error);
+                //console.log(error);
             }); 
             game.level = 0;
             game.starttime = 0;
