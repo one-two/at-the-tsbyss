@@ -300,13 +300,11 @@ export function playScreen() {
                 let posy = [12,10,12];
                 for (let i = 0; i < 3; i++) {
 
-                    let rd = randint(0,4);
+                    let rd = randint(0,2);
                     let item_choice = "";
                     if (rd == 0) item_choice = 'potion';
-                    if (rd == 1) item_choice = 'knife';
+                    if (rd == 1) item_choice = 'dagger';
                     if (rd == 2) item_choice = 'knife';
-                    if (rd == 3) item_choice = 'dagger';
-                    if (rd == 4) item_choice = 'dagger';
                     let q = CreateItem(item_choice, posx[i], posy[i], game.level);
                     q._map = this;
                     game._map._entities.push(q);
@@ -316,6 +314,7 @@ export function playScreen() {
                 return;
             }
             let mapType = '';
+
             if (game.level > 0 && game.level <= 2) {
                 game.bg.pause();
                 game.bg = <HTMLVideoElement> document.getElementById("easybg");
@@ -630,12 +629,12 @@ export function playScreen() {
                             game._player.fighter.unspentPoints -= 1;
                             break;
                         case KEYS.VK_S:
-                            game._player.fighter.base_defense += 0.5;
+                            game._player.fighter.base_defense += 0.8;
                             game._player.fighter.unspentPoints -= 1;
                             break;
                         case KEYS.VK_D:
-                            game._player.fighter.base_max_hp += 20;
-                            game._player.fighter.hp += 20;
+                            game._player.fighter.base_max_hp += 25;
+                            game._player.fighter.hp += 25;
                             game._player.fighter.unspentPoints -= 1;
                             break;
                         default:

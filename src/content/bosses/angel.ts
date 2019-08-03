@@ -8,7 +8,7 @@ import { skilllist, poison_cloud, poison_shield } from "../../components/skillli
 import { angel_ring, angel_tri } from "../../components/bossSkills";
 
 export class Angel implements Enemy {
-    skill_bonus: number = 3;
+    skill_bonus: number = 2.5;
     owner: Entity;
     skills: skilllist[];
     dir: number[];
@@ -16,13 +16,13 @@ export class Angel implements Enemy {
     constructor() {
         this.skills = [{
             name: 'angel ring',
-            cooldown: 15,
-            maxCooldown: 15
+            cooldown: 20,
+            maxCooldown: 20
         },
         {
             name: 'angel lance',
             cooldown: 5,
-            maxCooldown: 15
+            maxCooldown: 25
         }]
         this.dir = [2,2];
     }
